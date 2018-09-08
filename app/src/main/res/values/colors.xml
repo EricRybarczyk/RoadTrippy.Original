@@ -1,6 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <!-- Palette: Amber and Light Blue-->
+    <color name="colorPrimary">#FFD54F</color><!--300-->
+    <color name="colorPrimaryLight">#FFECB3</color><!--100-->
+    <color name="colorPrimaryDark">#FFA000</color><!--700-->
+    <color name="colorPrimaryExtraLight">#FFF8E1</color><!--50-->
+    <color name="colorAccent">#03A9F4</color><!--500-->
+    <color name="colorAccentLight">#B3E5FC</color><!--100-->
+
+    <color name="colorTextPrimary">#000000</color>
+    <color name="colorTextSubdued">#212121</color><!--900-->
+    <color name="colorTextLight">#FAFAFA</color><!--50-->
+    <color name="colorTextWarning">#DD2C00</color><!--A700-->
+
+    <color name="colorControlNormal">#212121</color><!--900-->
+    <color name="colorControlActivated">#03A9F4</color><!--500-->
+    <color name="colorControlHighlight">#03A9F4</color><!--500-->
+
+    <color name="colorIconPrimary">#000000</color>
+    <color name="colorIconSubdued">#212121</color><!--900-->
+
+    <color name="colorBackground">#FFFFFF</color>
+    <color name="ic_launcher_background">#FFD54F</color><!--300-->
 </resources>
