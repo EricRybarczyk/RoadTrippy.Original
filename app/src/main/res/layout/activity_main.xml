@@ -23,6 +23,6 @@
         app:headerLayout="@layout/nav_header_main"
         app:menu="@menu/activity_main_drawer"
         app:itemIconTint="@color/colorIconSubdued"
-        app:itemTextColor="@color/colorIconSubdued"/>
+        app:itemTextColor="@color/colorIconSubdued" />
 
 </android.support.v4.widget.DrawerLayout>

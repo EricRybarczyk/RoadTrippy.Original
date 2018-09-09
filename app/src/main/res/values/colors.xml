@@ -18,7 +18,7 @@
     <color name="colorControlHighlight">#03A9F4</color><!--500-->
 
     <color name="colorIconPrimary">#000000</color>
-    <color name="colorIconSubdued">#212121</color><!--900-->
+    <color name="colorIconSubdued">#181818</color>
 
     <color name="colorBackground">#FFFFFF</color>
     <color name="ic_launcher_background">#FFD54F</color><!--300-->

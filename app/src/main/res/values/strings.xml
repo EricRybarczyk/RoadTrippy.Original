@@ -6,4 +6,8 @@
     <string name="nav_header_subtitle">Have a great trip!</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
+    <string name="menu_label_trip_plans">Trip Plans</string>
+    <string name="menu_label_trip_ideas">Trip Ideas</string>
+    <string name="menu_label_past_trips">Past Trips</string>
+    <string name="menu_label_settings">Settings</string>
 </resources>
