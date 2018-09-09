@@ -1,5 +1,6 @@
 package ericrybarczyk.me.roadtrippy;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -9,6 +10,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,7 +20,10 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener,
+                   CreateTripFragment.OnFragmentInteractionListener {
+
+    private static final String TAG = MainActivity.class.getSimpleName();
 
     @BindView(R.id.toolbar) protected Toolbar toolbar;
     @BindView(R.id.fab) protected FloatingActionButton fab;
@@ -95,5 +100,10 @@ public class MainActivity extends AppCompatActivity
 
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+        Log.i(TAG, "onFragmentInteraction");
     }
 }

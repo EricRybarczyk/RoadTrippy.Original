@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingStart="@dimen/activity_horizontal_margin"
+    android:paddingEnd="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".MainActivity">
+
+    <!-- TODO: look into using Guidelines instead of the Padding attributes above, as seen here: https://developer.android.com/reference/android/support/percent/PercentRelativeLayout -->
+
+    <android.support.constraint.Guideline
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/right_inset_guideline"
+        app:layout_constraintGuide_percent=".70"
+        android:orientation="vertical"/>
+
+    <TextView
+        android:id="@+id/heading_create_trip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/screen_heading_create_trip"
+        style="@style/ScreenHeading"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- trip name -->
+    <EditText
+        android:id="@+id/trip_name_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/input_vertical_spacing"
+        android:lines="1"
+        android:maxLines="1"
+        android:maxLength="50"
+        android:inputType="text|textCapSentences"
+        style="@style/TextInput"
+        android:hint="@string/input_trip_name_label"
+        app:layout_constraintTop_toBottomOf="@id/heading_create_trip"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/trip_name_sub_hint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/TextSubHint"
+        android:text="@string/input_trip_name_sub_hint"
+        app:layout_constraintTop_toBottomOf="@id/trip_name_text"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- departure date -->
+    <Button
+        android:id="@+id/departure_date_button"
+        style="@style/DatePickerButton"
+        android:background="@drawable/button_shape"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableEnd="@drawable/ic_menu_calendar"
+        android:text="@string/input_trip_departure_date_label"
+        app:layout_constraintTop_toBottomOf="@id/trip_name_sub_hint"
+        app:layout_constraintStart_toStartOf="parent"/>
+    <!-- TextView
+        android:id="@+id/departure_date_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/TextInputLabel"
+        android:text="@string/input_trip_departure_date_label"
+        app:layout_constraintTop_toBottomOf="@id/trip_name_sub_hint"
+        app:layout_constraintStart_toStartOf="parent" / -->
+    <!-- EditText
+        android:id="@+id/departure_date_value"
+        style="@style/TextInput"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:drawableEnd="@drawable/ic_action_arrow_drop_down"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/right_inset_guideline"
+        app:layout_constraintTop_toBottomOf="@id/departure_date_label" / -->
+
+    <!-- return date -->
+    <Button
+        android:id="@+id/return_date_button"
+        style="@style/DatePickerButton"
+        android:background="@drawable/button_shape"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableEnd="@drawable/ic_menu_calendar"
+        android:text="@string/input_trip_return_date_label"
+        app:layout_constraintTop_toBottomOf="@id/departure_date_button"
+        app:layout_constraintStart_toStartOf="parent"/>
+    <!-- TextView
+        android:id="@+id/return_date_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/TextInputLabel"
+        android:text="@string/input_trip_return_date_label"
+        app:layout_constraintTop_toBottomOf="@id/departure_date_button"
+        app:layout_constraintStart_toStartOf="parent" / -->
+    <!-- EditText
+        android:id="@+id/return_date_value"
+        style="@style/TextInput"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:drawableEnd="@drawable/ic_action_arrow_drop_down"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/right_inset_guideline"
+        app:layout_constraintTop_toBottomOf="@id/return_date_label" / -->
+
+    <!-- origin -->
+    <TextView
+        android:id="@+id/origin_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/TextInputLabel"
+        android:text="@string/input_trip_origin_label"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/return_date_button" />
+
+    <EditText
+        android:id="@+id/origin_value"
+        style="@style/TextInput"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:drawableEnd="@drawable/ic_action_arrow_drop_down"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/right_inset_guideline"
+        app:layout_constraintTop_toBottomOf="@id/origin_label" />
+
+    <!-- destination -->
+    <TextView
+        android:id="@+id/destination_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/TextInputLabel"
+        android:text="@string/input_trip_destination_label"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/origin_value" />
+
+    <EditText
+        android:id="@+id/destination_value"
+        style="@style/TextInput"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:drawableEnd="@drawable/ic_action_arrow_drop_down"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/right_inset_guideline"
+        app:layout_constraintTop_toBottomOf="@id/destination_label" />
+
+    <!-- return direction option-->
+    <CheckBox
+        android:id="@+id/option_return_directions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/input_trip_return_option_label"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/destination_value" />
+
+
+
+
+</android.support.constraint.ConstraintLayout>

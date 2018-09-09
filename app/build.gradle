@@ -53,6 +53,7 @@ dependencies {
     implementation "com.google.maps.android:android-maps-utils:$mapUtilsVersion"
 
     implementation "com.jakewharton:butterknife:$butterknifeVersion"
+    implementation 'com.android.support:support-v4:27.1.1'
     annotationProcessor "com.jakewharton:butterknife-compiler:$butterknifeVersion"
 
     implementation "com.google.code.gson:gson:$gsonVersion"

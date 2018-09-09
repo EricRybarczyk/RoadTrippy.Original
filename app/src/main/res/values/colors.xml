@@ -8,8 +8,10 @@
     <color name="colorAccent">#03A9F4</color><!--500-->
     <color name="colorAccentLight">#B3E5FC</color><!--100-->
 
-    <color name="colorTextPrimary">#000000</color>
+    <color name="colorTextPrimary">#151515</color>
     <color name="colorTextSubdued">#212121</color><!--900-->
+    <color name="colorTextSubHint">#757575</color><!--600-->
+    <color name="colorTextInputLabel">#757575</color><!--600-->
     <color name="colorTextLight">#FAFAFA</color><!--50-->
     <color name="colorTextWarning">#DD2C00</color><!--A700-->
 

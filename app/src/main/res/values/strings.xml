@@ -2,12 +2,25 @@
     <string name="app_name">Road Trippy</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+
     <string name="nav_header_title">Username</string>
     <string name="nav_header_subtitle">Have a great trip!</string>
     <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">Settings</string>
+
     <string name="menu_label_trip_plans">Trip Plans</string>
     <string name="menu_label_trip_ideas">Trip Ideas</string>
     <string name="menu_label_past_trips">Past Trips</string>
     <string name="menu_label_settings">Settings</string>
+
+    <string name="screen_heading_create_trip">Start planning your trip</string>
+
+    <string name="input_trip_name_label">Trip name or short description</string>
+    <string name="input_trip_departure_date_label">Departure date</string>
+    <string name="input_trip_return_date_label">Return date</string>
+    <string name="input_trip_origin_label">Starting from</string>
+    <string name="input_trip_destination_label">Destination</string>
+    <string name="input_trip_return_option_label">Include return driving directions</string>
+
+    <string name="input_trip_name_sub_hint">This name will identify the trip throughout this app</string>
+
 </resources>
