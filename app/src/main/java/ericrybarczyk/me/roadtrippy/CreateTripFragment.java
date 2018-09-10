@@ -37,12 +37,10 @@ public class CreateTripFragment extends Fragment {
     private String mParam2;
 
     @BindView(R.id.trip_name_text) protected EditText tripNameText;
-//    @BindView(R.id.departure_date_value) protected EditText departureDateText;
-//    @BindView(R.id.return_date_value) protected EditText returnDateText;
     @BindView(R.id.departure_date_button) protected Button departureDateButton;
     @BindView(R.id.return_date_button) protected Button returnDateButton;
-    @BindView(R.id.origin_value) protected EditText originText;
-    @BindView(R.id.destination_value) protected EditText destinationText;
+    @BindView(R.id.origin_button) protected Button originButton;
+    @BindView(R.id.destination_button) protected Button destinationButton;
     @BindView(R.id.option_return_directions) protected CheckBox optionReturnDirections;
 
     private OnFragmentInteractionListener fragmentInteractionListener;
@@ -94,28 +92,13 @@ public class CreateTripFragment extends Fragment {
             datePickerDialog.show(getChildFragmentManager(), "returnDatePicker");
         });
 
-//        departureDateText.setOnFocusChangeListener((v, hasFocus) -> {
-//            if (hasFocus) {
-//                Log.i(TAG, "onFocusChange for departureDateText");
-//                InputUtil.hideKeyboardFrom(v.getContext(), v.getRootView());
-//                DialogFragment datePickerDialog = new DatePickerFragment();
-//                datePickerDialog.show(getChildFragmentManager(), "departureDatePicker");
-//            }
-//        });
-//
-//        returnDateText.setOnFocusChangeListener((v, hasFocus) -> {
-//            if (hasFocus) {
-//                Log.i(TAG, "onFocusChange for returnDateText");
-//                DialogFragment datePickerDialog = new DatePickerFragment();
-//                datePickerDialog.show(getChildFragmentManager(), "returnDatePicker");
-//            }
-//        });
+        // originButton open a custom dialog where they can pick "Home" as starting point or else "somewhere else" which would take them to a map/search
+
+        // destinationButton might just show the map/search but maybe give option to pick from a "trip idea"
+
 
         return rootView;
     }
-
-//    @OnClick(R.id.departure_date_button) onClick()
-
 
 
     // TODO: Rename method, update argument and hook method into UI event
