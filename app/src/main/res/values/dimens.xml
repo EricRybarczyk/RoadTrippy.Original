@@ -8,4 +8,7 @@
 
     <dimen name="input_vertical_spacing">16dp</dimen>
     <dimen name="sub_hint_vertical_spacing">6dp</dimen>
+
+    <dimen name="trip_list_item_margin_start">8dp</dimen>
+    <dimen name="trip_list_item_margin_top">4dp</dimen>
 </resources>

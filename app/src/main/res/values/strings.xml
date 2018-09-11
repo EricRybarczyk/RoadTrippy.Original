@@ -23,4 +23,9 @@
 
     <string name="input_trip_name_sub_hint">This name will identify the trip throughout this app</string>
 
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="aria_trip_item_image_description">Simple map image for trip</string>
+
 </resources>

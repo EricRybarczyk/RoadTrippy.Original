@@ -30,7 +30,7 @@
             android:id="@+id/create_trip_fragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:name="ericrybarczyk.me.roadtrippy.CreateTripFragment" />
+            android:name="ericrybarczyk.me.roadtrippy.CreateTripFragment" /><!-- TripListFragment will go here -->
 
     </FrameLayout>
 

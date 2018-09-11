@@ -21,7 +21,9 @@
 
     <color name="colorIconPrimary">#000000</color>
     <color name="colorIconSubdued">#181818</color>
+    <color name="colorIconWhite">#FFFFFF</color>
 
     <color name="colorBackground">#FFFFFF</color>
+    <color name="colorBackgroundAlt">#D4D4D4</color>
     <color name="ic_launcher_background">#FFD54F</color><!--300-->
 </resources>
