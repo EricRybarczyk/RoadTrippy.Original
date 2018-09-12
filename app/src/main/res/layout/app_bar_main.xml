@@ -22,15 +22,15 @@
     </android.support.design.widget.AppBarLayout>
 
     <FrameLayout
+        android:id="@+id/content_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <fragment
-            android:id="@+id/create_trip_fragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:name="ericrybarczyk.me.roadtrippy.CreateTripFragment" /><!-- TripListFragment will go here -->
+            android:name="ericrybarczyk.me.roadtrippy.CreateTripFragment" /><!-- TripListFragment will go here | android:id="@+id/screen_fragment" -->
 
     </FrameLayout>
 

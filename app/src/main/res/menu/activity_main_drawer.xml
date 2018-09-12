@@ -10,6 +10,10 @@
             android:icon="@drawable/ic_menu_calendar"
             android:title="@string/menu_label_trip_plans" />
         <item
+            android:id="@+id/nav_create_trip"
+            android:icon="@drawable/ic_action_add_circle_outline"
+            android:title="@string/menu_label_create_trip" />
+        <item
             android:id="@+id/nav_trip_ideas"
             android:icon="@drawable/ic_menu_lightbulb"
             android:title="@string/menu_label_trip_ideas" />
