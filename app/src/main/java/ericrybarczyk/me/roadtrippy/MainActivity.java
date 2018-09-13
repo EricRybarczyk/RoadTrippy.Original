@@ -51,8 +51,14 @@ public class MainActivity extends AppCompatActivity
 
     @OnClick(R.id.fab)
     public void onFabClick(View view) {
-        Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show();
+        try {
+            Fragment fragment = (CreateTripFragment.class).newInstance();
+            swapFragment(fragment);
+        } catch (InstantiationException e) {
+            Log.e(TAG, "Unable to instantiate instance of CreateTripFragment : " + e.getMessage());
+        } catch (IllegalAccessException e) {
+            Log.e(TAG, "Illegal Access on instance of CreateTripFragment : " + e.getMessage());
+        }
     }
 
     @Override
@@ -90,7 +96,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation clicks by loading the appropriate fragment
-        Fragment fragment= null;
+        Fragment fragment;
         Class fragmentClass = null;
 
         switch (item.getItemId()) {
@@ -117,20 +123,24 @@ public class MainActivity extends AppCompatActivity
         } else {
             try {
                 fragment = (Fragment) fragmentClass.newInstance();
+                swapFragment(fragment);
             } catch (InstantiationException e) {
                 Log.e(TAG, "Unable to instantiate instance of " + fragmentClass.getSimpleName() + " : " + e.getMessage());
-                e.printStackTrace();
             } catch (IllegalAccessException e) {
                 Log.e(TAG, "Illegal Access on instance of " + fragmentClass.getSimpleName() + " : " + e.getMessage());
-                e.printStackTrace();
             }
-            // show the fragment
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.content_container, fragment).commit();
         }
     
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void swapFragment(Fragment fragment) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.content_container, fragment)
+                .addToBackStack(null)
+                .commit();
     }
 
     @Override

@@ -9,11 +9,19 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.app.DatePickerDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.DatePicker;
 
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 
-public class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
+public class DatePickerFragment extends DialogFragment
+        implements  DatePickerDialog.OnDateSetListener {
+
+    private TripDateSelectedListener tripDateSelectedListener;
+    private GregorianCalendar departureDate, returnDate;
+    private static final String TAG = DatePickerFragment.class.getSimpleName();
+
 
     @NonNull
     @Override
@@ -31,5 +39,24 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
         // TODO - save the date
+        try {
+//            TripDateSelectedListener listener = (TripDateSelectedListener) getTargetFragment();
+            if (tripDateSelectedListener == null) {
+                Log.e(TAG, "TripDateSelectedListener is null");
+                return;
+            }
+            tripDateSelectedListener.onTripDateSelected(year, month, dayOfMonth, this.getTag());
+        } catch (ClassCastException e) {
+            Log.e(TAG, "Containing fragment must implement DatePickerFragment.TripDateSelectedListener");
+            throw e;
+        }
+    }
+
+    public void setTripDateSelectedListener(TripDateSelectedListener listener) {
+        this.tripDateSelectedListener = listener;
+    }
+
+    public interface TripDateSelectedListener {
+        void onTripDateSelected(int year, int month, int dayOfMonth, String tag);
     }
 }
