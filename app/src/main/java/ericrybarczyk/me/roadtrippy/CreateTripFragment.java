@@ -3,6 +3,7 @@ package ericrybarczyk.me.roadtrippy;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -18,6 +19,7 @@ import java.util.GregorianCalendar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import ericrybarczyk.me.roadtrippy.util.DateUtils;
 
 
 /**
@@ -52,6 +54,8 @@ public class CreateTripFragment extends Fragment implements DatePickerFragment.T
 
     private OnFragmentInteractionListener fragmentInteractionListener;
     private static final String TAG = CreateTripFragment.class.getSimpleName();
+    private static final String KEY_DEPARTURE_DATE = "departure_date_object";
+    private static final String KEY_RETURN_DATE = "return_date_object";
 
     public CreateTripFragment() {
     }
@@ -88,15 +92,38 @@ public class CreateTripFragment extends Fragment implements DatePickerFragment.T
         final View rootView = inflater.inflate(R.layout.fragment_create_trip, container, false);
         ButterKnife.bind(this, rootView);
 
+        if (savedInstanceState != null) {
+            if (savedInstanceState.getSerializable(KEY_DEPARTURE_DATE) != null) {
+                departureDate = (GregorianCalendar) savedInstanceState.getSerializable(KEY_DEPARTURE_DATE);
+                departureDateButton.setText(DateUtils.formatDate(departureDate));
+            }
+            if (savedInstanceState.getSerializable(KEY_RETURN_DATE) != null) {
+                returnDate = (GregorianCalendar) savedInstanceState.getSerializable(KEY_RETURN_DATE);
+                returnDateButton.setText(DateUtils.formatDate(returnDate));
+            }
+        }
+        if (departureDate == null) { departureDate = new GregorianCalendar(); }
+        if (returnDate == null) { returnDate = new GregorianCalendar(); }
+
         departureDateButton.setOnClickListener(v -> {
             Log.i(TAG, "onClick for departureDateButton");
             DatePickerFragment datePickerDialog = new DatePickerFragment();
+
+            Bundle args = new Bundle();
+            args.putSerializable(DatePickerFragment.KEY_CALENDAR_FOR_DISPLAY, departureDate);
+            datePickerDialog.setArguments(args);
+
             datePickerDialog.setTripDateSelectedListener(this);
             datePickerDialog.show(getChildFragmentManager(), TAG_DEPARTURE_DATE_DIALOG);
         });
         returnDateButton.setOnClickListener(v -> {
             Log.i(TAG, "onClick for returnDateButton");
             DatePickerFragment datePickerDialog = new DatePickerFragment();
+
+            Bundle args = new Bundle();
+            args.putSerializable(DatePickerFragment.KEY_CALENDAR_FOR_DISPLAY, returnDate);
+            datePickerDialog.setArguments(args);
+
             datePickerDialog.setTripDateSelectedListener(this);
             datePickerDialog.show(getChildFragmentManager(), TAG_RETURN_DATE_DIALOG);
         });
@@ -108,6 +135,18 @@ public class CreateTripFragment extends Fragment implements DatePickerFragment.T
 
         return rootView;
     }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
+        if (departureDate != null) {
+            savedInstanceState.putSerializable(KEY_DEPARTURE_DATE, departureDate);
+        }
+        if (returnDate != null) {
+            savedInstanceState.putSerializable(KEY_RETURN_DATE, returnDate);
+        }
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
 
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -152,12 +191,21 @@ public class CreateTripFragment extends Fragment implements DatePickerFragment.T
 
     @Override
     public void onTripDateSelected(int year, int month, int dayOfMonth, String tag) {
+        // TODO: consider changing param to a GregorianCalendar (or Calendar?) to avoid instantiating new objects all the time
         if (tag.equals(TAG_DEPARTURE_DATE_DIALOG)) {
-            departureDate = new GregorianCalendar(year, month, dayOfMonth);
+            GregorianCalendar baseDate = new GregorianCalendar(year, month, dayOfMonth);
+            departureDate = baseDate;
+            departureDateButton.setText(DateUtils.formatDate(departureDate));
+            // also bump the returnDate so display will base calendar on the following day
+            baseDate.add(Calendar.DATE, 1);
+            returnDate = baseDate;
             Log.i(TAG, "onDateSelected: DEPART: " + String.valueOf(departureDate.get(Calendar.MONTH)+1) + "/" + departureDate.get(Calendar.DATE));
         } else if (tag.equals(TAG_RETURN_DATE_DIALOG)) {
             returnDate =  new GregorianCalendar(year, month, dayOfMonth);
+            returnDateButton.setText(DateUtils.formatDate(returnDate));
             Log.i(TAG, "onDateSelected: RETURN: " + String.valueOf(returnDate.get(Calendar.MONTH)+1) + "/" + returnDate.get(Calendar.DATE));
         }
     }
+
+
 }

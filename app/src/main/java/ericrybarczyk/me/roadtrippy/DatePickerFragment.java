@@ -19,33 +19,51 @@ public class DatePickerFragment extends DialogFragment
         implements  DatePickerDialog.OnDateSetListener {
 
     private TripDateSelectedListener tripDateSelectedListener;
-    private GregorianCalendar departureDate, returnDate;
     private static final String TAG = DatePickerFragment.class.getSimpleName();
+    private Calendar calendarForDisplay = null;
+    static final String KEY_CALENDAR_FOR_DISPLAY = "calendar_for_display";
 
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        // Use the current date as the default date in the picker
-        final Calendar c = Calendar.getInstance();
-        int year = c.get(Calendar.YEAR);
-        int month = c.get(Calendar.MONTH);
-        int day = c.get(Calendar.DAY_OF_MONTH);
+        if (savedInstanceState != null) {
+            if (savedInstanceState.getSerializable(KEY_CALENDAR_FOR_DISPLAY) != null) {
+                calendarForDisplay = (GregorianCalendar) savedInstanceState.getSerializable(KEY_CALENDAR_FOR_DISPLAY);
+            }
+        }
+        if (calendarForDisplay == null) {
+            Bundle args = this.getArguments();
+            if (args != null && args.getSerializable(KEY_CALENDAR_FOR_DISPLAY) != null) {
+                calendarForDisplay = (GregorianCalendar) args.getSerializable(KEY_CALENDAR_FOR_DISPLAY);
+            }
+        }
+        if (calendarForDisplay == null) {
+            calendarForDisplay = Calendar.getInstance(); // Use current date if we have nothing else
+        }
+        int year = calendarForDisplay.get(Calendar.YEAR);
+        int month = calendarForDisplay.get(Calendar.MONTH);
+        int day = calendarForDisplay.get(Calendar.DAY_OF_MONTH);
 
         // Create a new instance of DatePickerDialog and return it
         return new DatePickerDialog(getActivity(), this, year, month, day);
     }
 
     @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putSerializable(KEY_CALENDAR_FOR_DISPLAY, calendarForDisplay);
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-        // TODO - save the date
+        calendarForDisplay.set(year, month, dayOfMonth);
         try {
-//            TripDateSelectedListener listener = (TripDateSelectedListener) getTargetFragment();
             if (tripDateSelectedListener == null) {
                 Log.e(TAG, "TripDateSelectedListener is null");
                 return;
             }
-            tripDateSelectedListener.onTripDateSelected(year, month, dayOfMonth, this.getTag());
+            tripDateSelectedListener.onTripDateSelected(year, month, dayOfMonth, this.getTag()); // TODO: see to-do in handler method about param type
         } catch (ClassCastException e) {
             Log.e(TAG, "Containing fragment must implement DatePickerFragment.TripDateSelectedListener");
             throw e;
