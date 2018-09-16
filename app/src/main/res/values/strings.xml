@@ -29,10 +29,13 @@
     <string name="dialog_trip_origin_picker_title">Where will you start?</string>
 
     <string name="map_select_location_instructions">Search or tap the map to choose a location</string>
+    <string name="map_select_location_search_hint">Search…</string>
+    <string name="map_select_location_button_search_label">SEARCH</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <string name="aria_trip_item_image_description">Simple map image for trip</string>
+    <string name="map_select_location_button_save_label">Set Location</string>
 
 </resources>

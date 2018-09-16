@@ -59,6 +59,7 @@ public class CreateTripFragment extends Fragment
     @BindView(R.id.option_return_directions) protected CheckBox optionReturnDirections;
 
     private OnFragmentInteractionListener fragmentInteractionListener;
+    private MapDisplayRequestListener mapDisplayRequestListener;
     private static final String TAG = CreateTripFragment.class.getSimpleName();
     private static final String KEY_DEPARTURE_DATE = "departure_date_object";
     private static final String KEY_RETURN_DATE = "return_date_object";
@@ -147,7 +148,7 @@ public class CreateTripFragment extends Fragment
 
         // TODO: destinationButton might just show the map/search but maybe give option to pick from a "trip idea"
 
-        rootView.clearFocus(); // helps prevent showing keyboard when app is opened from background
+        rootView.clearFocus(); // TODO: test if this helps prevent showing keyboard when app is opened from background
         return rootView;
     }
 
@@ -159,6 +160,7 @@ public class CreateTripFragment extends Fragment
         if (returnDate != null) {
             savedInstanceState.putSerializable(KEY_RETURN_DATE, returnDate);
         }
+        // TODO: save all the things (restore them too)
         super.onSaveInstanceState(savedInstanceState);
     }
 
@@ -227,12 +229,19 @@ public class CreateTripFragment extends Fragment
         if (key.equals(TripOriginPickerFragment.KEY_HOME_ORIGIN)) {
             originLatLng = HOME_LOCATION;
         } else {
-            // show them a map to find their starting location
-
+            // show them a map to find their starting location;
+            //((MainActivity) getActivity()).onMapDisplayRequested();
+            this.mapDisplayRequestListener.onMapDisplayRequested();
         }
 
     }
 
+    public void setMapDisplayRequestListener(MapDisplayRequestListener listener) {
+        this.mapDisplayRequestListener = listener;
+    }
 
+    public interface MapDisplayRequestListener {
+        void onMapDisplayRequested();
+    }
 
 }

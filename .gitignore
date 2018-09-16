@@ -47,6 +47,8 @@ captures/
 
 # Google Services (e.g. APIs or Firebase)
 google-services.json
+# Google Maps api key
+app/src/main/res/values/google_maps_api.xml
 
 # Freeline
 freeline.py

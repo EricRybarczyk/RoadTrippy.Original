@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -16,7 +15,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -25,13 +23,15 @@ import butterknife.OnClick;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
                     CreateTripFragment.OnFragmentInteractionListener,
-                    TripListFragment.OnFragmentInteractionListener {
+                    TripListFragment.OnFragmentInteractionListener,
+                    CreateTripFragment.MapDisplayRequestListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final String KEY_ACTIVE_FRAGMENT_TAG = "active_fragment_tag";
     private String activeFragmentTag;
     private static final String FRAG_TAG_CREATE_TRIP = "create_trip_fragment";
     private static final String FRAG_TAG_TRIP_LIST = "trip_list_fragment";
+    private static final String FRAG_TAG_MAP_SELECT_LOCATION = "google_map_select_location_fragment";
 
     @BindView(R.id.toolbar) protected Toolbar toolbar;
     @BindView(R.id.fab) protected FloatingActionButton fab;
@@ -173,6 +173,10 @@ public class MainActivity extends AppCompatActivity
             Log.e(TAG, "Illegal Access on instance of " + fragmentClass.getSimpleName() + " : " + e.getMessage());
         }
 
+        if (fragmentTag.equals(FRAG_TAG_CREATE_TRIP)) {
+            ((CreateTripFragment) result).setMapDisplayRequestListener(this);
+        }
+
         return result;
     }
 
@@ -183,7 +187,7 @@ public class MainActivity extends AppCompatActivity
                 .addToBackStack(null)
                 .commit();
         activeFragmentTag = fragmentTag;
-        if (fragmentTag.equals(FRAG_TAG_CREATE_TRIP)) {
+        if (fragmentTag.equals(FRAG_TAG_CREATE_TRIP) || fragmentTag.equals(FRAG_TAG_MAP_SELECT_LOCATION)) {
             fab.setVisibility(View.INVISIBLE);
         } else {
             fab.setVisibility(View.VISIBLE);
@@ -193,5 +197,11 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onFragmentInteraction(Uri uri) {
         Log.i(TAG, "onFragmentInteraction for Uri: " + uri.toString());
+    }
+
+    @Override
+    public void onMapDisplayRequested() {
+        Fragment fragment = GoogleMapFragment.newInstance();
+        loadFragment(fragment, FRAG_TAG_MAP_SELECT_LOCATION);
     }
 }
