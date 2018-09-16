@@ -4,7 +4,6 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,12 +13,15 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import ericrybarczyk.me.roadtrippy.util.DateUtils;
+import ericrybarczyk.me.roadtrippy.util.InputUtils;
 
 
 /**
@@ -30,7 +32,9 @@ import ericrybarczyk.me.roadtrippy.util.DateUtils;
  * Use the {@link CreateTripFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CreateTripFragment extends Fragment implements DatePickerFragment.TripDateSelectedListener {
+public class CreateTripFragment extends Fragment
+        implements  DatePickerFragment.TripDateSelectedListener,
+                    TripOriginPickerFragment.TripOriginSelectedListener {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -38,12 +42,14 @@ public class CreateTripFragment extends Fragment implements DatePickerFragment.T
     private static final String ARG_PARAM2 = "param2";
     private static final String TAG_DEPARTURE_DATE_DIALOG = "departure_date_dialog";
     private static final String TAG_RETURN_DATE_DIALOG= "return_date_dialog";
+    private static final String TAG_PICK_ORIGIN_DIALOG= "pick_origin_dialog";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
     private GregorianCalendar departureDate, returnDate;
+    private LatLng originLatLng;
 
     @BindView(R.id.trip_name_text) protected EditText tripNameText;
     @BindView(R.id.departure_date_button) protected Button departureDateButton;
@@ -56,6 +62,9 @@ public class CreateTripFragment extends Fragment implements DatePickerFragment.T
     private static final String TAG = CreateTripFragment.class.getSimpleName();
     private static final String KEY_DEPARTURE_DATE = "departure_date_object";
     private static final String KEY_RETURN_DATE = "return_date_object";
+
+    // TODO: implement preference for user's home location
+    private static final LatLng HOME_LOCATION = new LatLng(36.375148,-94.207480);
 
     public CreateTripFragment() {
     }
@@ -107,6 +116,7 @@ public class CreateTripFragment extends Fragment implements DatePickerFragment.T
 
         departureDateButton.setOnClickListener(v -> {
             Log.i(TAG, "onClick for departureDateButton");
+            InputUtils.hideKeyboardFrom(getContext(), rootView);
             DatePickerFragment datePickerDialog = new DatePickerFragment();
 
             Bundle args = new Bundle();
@@ -118,6 +128,7 @@ public class CreateTripFragment extends Fragment implements DatePickerFragment.T
         });
         returnDateButton.setOnClickListener(v -> {
             Log.i(TAG, "onClick for returnDateButton");
+            InputUtils.hideKeyboardFrom(getContext(), rootView);
             DatePickerFragment datePickerDialog = new DatePickerFragment();
 
             Bundle args = new Bundle();
@@ -128,11 +139,15 @@ public class CreateTripFragment extends Fragment implements DatePickerFragment.T
             datePickerDialog.show(getChildFragmentManager(), TAG_RETURN_DATE_DIALOG);
         });
 
-        // originButton open a custom dialog where they can pick "Home" as starting point or else "somewhere else" which would take them to a map/search
+        // TODO: originButton open a custom dialog where they can pick "Home" as starting point or else "somewhere else" which would take them to a map/search
+        originButton.setOnClickListener(v -> {
+            TripOriginPickerFragment pickerFragment = TripOriginPickerFragment.newInstance(this);
+            pickerFragment.show(getChildFragmentManager(), TAG_PICK_ORIGIN_DIALOG);
+        });
 
-        // destinationButton might just show the map/search but maybe give option to pick from a "trip idea"
+        // TODO: destinationButton might just show the map/search but maybe give option to pick from a "trip idea"
 
-
+        rootView.clearFocus(); // helps prevent showing keyboard when app is opened from background
         return rootView;
     }
 
@@ -173,7 +188,6 @@ public class CreateTripFragment extends Fragment implements DatePickerFragment.T
         fragmentInteractionListener = null;
     }
 
-
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -206,6 +220,19 @@ public class CreateTripFragment extends Fragment implements DatePickerFragment.T
             Log.i(TAG, "onDateSelected: RETURN: " + String.valueOf(returnDate.get(Calendar.MONTH)+1) + "/" + returnDate.get(Calendar.DATE));
         }
     }
+
+    @Override
+    public void onTripOriginSelected(String key) {
+        Log.i(TAG, "onTripOriginSelected: key = " + key);
+        if (key.equals(TripOriginPickerFragment.KEY_HOME_ORIGIN)) {
+            originLatLng = HOME_LOCATION;
+        } else {
+            // show them a map to find their starting location
+
+        }
+
+    }
+
 
 
 }

@@ -63,8 +63,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState); // call super first to restore view hierarchy
-        activeFragmentTag = savedInstanceState.getString(KEY_ACTIVE_FRAGMENT_TAG);
-        if (activeFragmentTag == null) activeFragmentTag = FRAG_TAG_TRIP_LIST;
+        activeFragmentTag = savedInstanceState.getString(KEY_ACTIVE_FRAGMENT_TAG, FRAG_TAG_TRIP_LIST);
         Fragment fragment = getFragmentInstance(activeFragmentTag);
         loadFragment(fragment, activeFragmentTag);
     }
@@ -142,7 +141,7 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    private Fragment getFragmentInstance(@NonNull String fragmentTag) {
+    private Fragment getFragmentInstance(String fragmentTag) {
         Class fragmentClass;
         Fragment result = null;
 
@@ -184,6 +183,11 @@ public class MainActivity extends AppCompatActivity
                 .addToBackStack(null)
                 .commit();
         activeFragmentTag = fragmentTag;
+        if (fragmentTag.equals(FRAG_TAG_CREATE_TRIP)) {
+            fab.setVisibility(View.INVISIBLE);
+        } else {
+            fab.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override

@@ -13,6 +13,7 @@
     <color name="colorTextSubHint">#757575</color><!--600-->
     <color name="colorTextInputLabel">#757575</color><!--600-->
     <color name="colorTextLight">#FAFAFA</color><!--50-->
+    <color name="colorTextOverAccent">#FAFAFA</color><!--50-->
     <color name="colorTextWarning">#DD2C00</color><!--A700-->
 
     <color name="colorControlNormal">#212121</color><!--900-->

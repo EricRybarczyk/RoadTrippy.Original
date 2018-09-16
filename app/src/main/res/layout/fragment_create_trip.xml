@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true">
+
+<android.support.constraint.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:paddingStart="@dimen/activity_horizontal_margin"
     android:paddingEnd="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
@@ -59,17 +64,9 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <!-- departure date -->
-    <!-- TextView
-        android:id="@+id/departure_date_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@style/TextInputLabel"
-        android:text="@string/input_trip_departure_date_label"
-        app:layout_constraintTop_toBottomOf="@id/trip_name_sub_hint"
-        app:layout_constraintStart_toStartOf="parent" / -->
     <Button
         android:id="@+id/departure_date_button"
-        style="@style/DatePickerButton"
+        style="@style/AppButton"
         android:background="@drawable/button_shape"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -79,17 +76,9 @@
         app:layout_constraintStart_toStartOf="parent"/>
 
     <!-- return date -->
-    <!-- TextView
-        android:id="@+id/return_date_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@style/TextInputLabel"
-        android:text="@string/input_trip_return_date_label"
-        app:layout_constraintTop_toBottomOf="@id/departure_date_button"
-        app:layout_constraintStart_toStartOf="parent" / -->
     <Button
         android:id="@+id/return_date_button"
-        style="@style/DatePickerButton"
+        style="@style/AppButton"
         android:background="@drawable/button_shape"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -99,17 +88,9 @@
         app:layout_constraintStart_toStartOf="parent"/>
 
     <!-- origin -->
-    <!-- TextView
-        android:id="@+id/origin_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@style/TextInputLabel"
-        android:text="@string/input_trip_origin_label"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/return_date_button" / -->
     <Button
         android:id="@+id/origin_button"
-        style="@style/DatePickerButton"
+        style="@style/AppButton"
         android:background="@drawable/button_shape"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -119,17 +100,9 @@
         app:layout_constraintStart_toStartOf="parent"/>
 
     <!-- destination -->
-    <!--TextView
-        android:id="@+id/destination_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@style/TextInputLabel"
-        android:text="@string/input_trip_destination_label"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/origin_button" / -->
     <Button
         android:id="@+id/destination_button"
-        style="@style/DatePickerButton"
+        style="@style/AppButton"
         android:background="@drawable/button_shape"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -143,12 +116,24 @@
         android:id="@+id/option_return_directions"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="@dimen/input_vertical_spacing"
         android:text="@string/input_trip_return_option_label"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/destination_button" />
 
-
+    <Button
+        android:id="@+id/create_trip_next_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/AccentButton"
+        android:text="@string/input_trip_next_button_label"
+        app:layout_constraintTop_toBottomOf="@id/option_return_directions"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="1"/>
 
 
 </android.support.constraint.ConstraintLayout>
+
+
+</ScrollView>
