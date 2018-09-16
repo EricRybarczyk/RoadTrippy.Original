@@ -16,6 +16,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.firebase.ui.auth.AuthUI;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -28,10 +37,14 @@ public class MainActivity extends AppCompatActivity
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final String KEY_ACTIVE_FRAGMENT_TAG = "active_fragment_tag";
-    private String activeFragmentTag;
     private static final String FRAG_TAG_CREATE_TRIP = "create_trip_fragment";
     private static final String FRAG_TAG_TRIP_LIST = "trip_list_fragment";
     private static final String FRAG_TAG_MAP_SELECT_LOCATION = "google_map_select_location_fragment";
+
+    private String activeFragmentTag;
+    private FirebaseDatabase firebaseDatabase;
+    private FirebaseAuth firebaseAuth;
+    private FirebaseAuth.AuthStateListener authStateListener;
 
     @BindView(R.id.toolbar) protected Toolbar toolbar;
     @BindView(R.id.fab) protected FloatingActionButton fab;
@@ -51,6 +64,10 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
 
         navigationView.setNavigationItemSelectedListener(this);
+
+        // initialize Firebase components
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance();
 
     }
 

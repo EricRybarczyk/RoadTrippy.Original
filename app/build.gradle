@@ -27,6 +27,10 @@ ext {
     supportLibVersion = "27.1.1"
     googlePlayVersion = "15.0.1"
     mapUtilsVersion = "0.5"
+    firebaseCoreVersion = "16.0.3"
+    firebaseDatabaseVersion = "16.0.2"
+    firebaseAuthVersion = "16.0.3"
+    firebaseUiAuthVersion = "4.1.0"
     constraintLayoutVersion = "1.1.3"
     butterknifeVersion = "8.8.1"
     gsonVersion = "2.8.2"
@@ -52,6 +56,11 @@ dependencies {
     implementation "com.google.android.gms:play-services-location:$googlePlayVersion"
     implementation "com.google.maps.android:android-maps-utils:$mapUtilsVersion"
 
+    implementation "com.google.firebase:firebase-core:$firebaseCoreVersion"
+    implementation "com.google.firebase:firebase-database:$firebaseDatabaseVersion"
+    implementation "com.google.firebase:firebase-auth:$firebaseAuthVersion"
+    implementation "com.firebaseui:firebase-ui-auth:$firebaseUiAuthVersion"
+
     implementation "com.jakewharton:butterknife:$butterknifeVersion"
     implementation 'com.android.support:support-v4:27.1.1'
     annotationProcessor "com.jakewharton:butterknife-compiler:$butterknifeVersion"
@@ -69,3 +78,5 @@ dependencies {
     androidTestImplementation "com.android.support.test.espresso:espresso-intents:$espressoVersion"
     androidTestImplementation "com.android.support.test.espresso:espresso-contrib:$espressoVersion"
 }
+
+apply plugin: 'com.google.gms.google-services'
