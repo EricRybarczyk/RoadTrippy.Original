@@ -27,7 +27,8 @@
         android:inputType="text"
         app:layout_constraintEnd_toStartOf="@+id/search_button"
         app:layout_constraintStart_toStartOf="@+id/guideline_start"
-        app:layout_constraintTop_toBottomOf="@+id/instructions_text" />
+        app:layout_constraintTop_toBottomOf="@+id/instructions_text"
+        app:layout_constraintBaseline_toBaselineOf="@id/search_button"/>
 
     <Button
         android:id="@+id/search_button"
@@ -36,8 +37,7 @@
         app:layout_constraintTop_toBottomOf="@+id/instructions_text"
         app:layout_constraintEnd_toEndOf="@id/guideline_end"
         android:text="@string/map_select_location_button_search_label"
-        style="@style/AccentButton"
-        tools:layout_editor_absoluteY="8dp" />
+        style="@style/AccentButton.Condensed" />
 
 
     <FrameLayout

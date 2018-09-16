@@ -24,7 +24,6 @@ import butterknife.ButterKnife;
 public class GoogleMapFragment extends Fragment implements OnMapReadyCallback {
 
     @BindView(R.id.instructions_text) protected TextView instructionsText;
-//    @BindView(R.id.map) protected MapFragment mapFragment;
     private SupportMapFragment mapFragment;
 
     private String googleMapsApiKey;

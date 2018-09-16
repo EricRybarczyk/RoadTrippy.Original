@@ -72,14 +72,28 @@
         <item name="android:focusable">true</item>
         <item name="android:clickable">true</item>
         <item name="android:gravity">center_vertical|center_horizontal</item>
-        <item name="android:width">125sp</item>
         <item name="android:background">@color/colorAccent</item>
         <item name="android:textColor">@color/colorTextOverAccent</item>
+        <item name="android:height">22sp</item>
         <item name="android:textSize">18sp</item>
         <item name="android:textStyle">normal</item>
         <item name="android:paddingStart">8dp</item>
         <item name="android:paddingEnd">8dp</item>
-        <item name="android:layout_marginTop">24dp</item>
+        <item name="android:paddingTop">2dp</item>
+        <item name="android:paddingBottom">2dp</item>
+        <item name="android:layout_marginTop">12dp</item>
+        <item name="android:layout_marginBottom">4dp</item>
+    </style>
+
+    <style name="AccentButton.Condensed">
+        <item name="android:textSize">14sp</item>
+        <item name="android:maxHeight">20dp</item>
+        <item name="android:height">20dp</item>
+        <item name="android:paddingStart">4dp</item>
+        <item name="android:paddingEnd">4dp</item>
+        <item name="android:paddingTop">2dp</item>
+        <item name="android:paddingBottom">2dp</item>
+        <item name="android:layout_marginTop">12dp</item>
         <item name="android:layout_marginBottom">4dp</item>
     </style>
 
