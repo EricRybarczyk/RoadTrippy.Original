@@ -10,6 +10,7 @@ android {
         applicationId "ericrybarczyk.me.roadtrippy"
         minSdkVersion 19
         targetSdkVersion 27
+        resConfigs "en" // recommended by https://github.com/firebase/FirebaseUI-Android/blob/master/auth/README.md
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"

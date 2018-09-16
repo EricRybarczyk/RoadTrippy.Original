@@ -1,5 +1,6 @@
 package ericrybarczyk.me.roadtrippy;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,6 +16,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -24,6 +27,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -40,6 +47,10 @@ public class MainActivity extends AppCompatActivity
     private static final String FRAG_TAG_CREATE_TRIP = "create_trip_fragment";
     private static final String FRAG_TAG_TRIP_LIST = "trip_list_fragment";
     private static final String FRAG_TAG_MAP_SELECT_LOCATION = "google_map_select_location_fragment";
+    public static final int RC_SIGN_IN = 1;
+
+    public static final String ANONYMOUS = "anonymous";
+    private String activeUsername = ANONYMOUS;
 
     private String activeFragmentTag;
     private FirebaseDatabase firebaseDatabase;
@@ -69,6 +80,65 @@ public class MainActivity extends AppCompatActivity
         firebaseDatabase = FirebaseDatabase.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
 
+
+        // SOURCE: FirebaseAuth code is directly adapted from Udacity & Google materials,
+        // including the Firebase extracurricular module in the Android Developer Nanodegree program,
+        // and https://github.com/firebase/FirebaseUI-Android/blob/master/auth/README.md
+        authStateListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+                    // TODO: look at this https://stackoverflow.com/questions/32806735/refresh-header-in-navigation-drawer/35952939#35952939 and consider different spot to set this username textview
+                    View header = navigationView.getHeaderView(0);
+                    TextView usernameText = header.findViewById(R.id.username_display_text);
+                    usernameText.setText(user.getDisplayName());
+
+                    onSignedInInitialize(user.getDisplayName());
+
+                } else {
+
+                    onSignedOutCleanup();
+
+                    // configure supported signin providers
+                    List<AuthUI.IdpConfig> providers = Arrays.asList(
+                            new AuthUI.IdpConfig.GoogleBuilder().build(),
+                            new AuthUI.IdpConfig.EmailBuilder().build());
+
+                    // Create and launch sign-in intent
+                    startActivityForResult(
+                            AuthUI.getInstance()
+                                    .createSignInIntentBuilder()
+                                    .setIsSmartLockEnabled(false) // TODO: set true. Udacity tutorial set this to false (default is true: system will basically keep user automatically logged in)
+                                    .setAvailableProviders(providers)
+                                    .build(),
+                            RC_SIGN_IN);
+                }
+            }
+        };
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RC_SIGN_IN) {
+            if (resultCode == RESULT_OK) { // TODO: decide what I want to really do here. And maybe snackbar instead of toast?
+                Toast.makeText(this, "Signed in!", Toast.LENGTH_SHORT).show();
+            } else if (resultCode == RESULT_CANCELED) {
+                Toast.makeText(this, "Sign in cancelled", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        }
+    }
+
+    private void onSignedInInitialize(String username) {
+        this.activeUsername = username;
+        // TODO: attachDatabaseReadListener();
+    }
+
+    private void onSignedOutCleanup() {
+        this.activeUsername = ANONYMOUS;
+        // TODO: someDataAdapter.clear() and detachDatabaseReadListener();
     }
 
     @Override
@@ -83,6 +153,19 @@ public class MainActivity extends AppCompatActivity
         activeFragmentTag = savedInstanceState.getString(KEY_ACTIVE_FRAGMENT_TAG, FRAG_TAG_TRIP_LIST);
         Fragment fragment = getFragmentInstance(activeFragmentTag);
         loadFragment(fragment, activeFragmentTag);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        firebaseAuth.addAuthStateListener(authStateListener);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        firebaseAuth.removeAuthStateListener(authStateListener);
+        // TODO: someDataAdapter.clear() and detachDatabaseReadListener();
     }
 
     @OnClick(R.id.fab)
@@ -109,17 +192,20 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        // TODO: determine if I will use the options menu and adjust accordingly. Maybe just for log-out?
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (item.getItemId()) {
+            case R.id.action_sign_out:
+                AuthUI.getInstance().signOut(this);
+                return true;
+            case R.id.action_settings:
+                Toast.makeText(this, "Not implemented yet!", Toast.LENGTH_SHORT).show();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-
-        return super.onOptionsItemSelected(item);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
