@@ -1,12 +1,18 @@
 package ericrybarczyk.me.roadtrippy;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -19,6 +25,10 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -29,15 +39,17 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import ericrybarczyk.me.roadtrippy.util.RequestCodes;
+
+
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,
+        implements  NavigationView.OnNavigationItemSelectedListener,
                     CreateTripFragment.OnFragmentInteractionListener,
                     TripListFragment.OnFragmentInteractionListener,
                     CreateTripFragment.MapDisplayRequestListener {
@@ -47,7 +59,6 @@ public class MainActivity extends AppCompatActivity
     private static final String FRAG_TAG_CREATE_TRIP = "create_trip_fragment";
     private static final String FRAG_TAG_TRIP_LIST = "trip_list_fragment";
     private static final String FRAG_TAG_MAP_SELECT_LOCATION = "google_map_select_location_fragment";
-    public static final int RC_SIGN_IN = 1;
 
     public static final String ANONYMOUS = "anonymous";
     private String activeUsername = ANONYMOUS;
@@ -56,6 +67,8 @@ public class MainActivity extends AppCompatActivity
     private FirebaseDatabase firebaseDatabase;
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener authStateListener;
+    private Location lastKnownLocation;
+    private FusedLocationProviderClient fusedLocationProviderClient;
 
     @BindView(R.id.toolbar) protected Toolbar toolbar;
     @BindView(R.id.fab) protected FloatingActionButton fab;
@@ -75,6 +88,10 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
 
         navigationView.setNavigationItemSelectedListener(this);
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+
+        verifyPermissions();
+        updateLastKnownLocation();
 
         // initialize Firebase components
         firebaseDatabase = FirebaseDatabase.getInstance();
@@ -112,7 +129,7 @@ public class MainActivity extends AppCompatActivity
                                     .setIsSmartLockEnabled(false) // TODO: set true. Udacity tutorial set this to false (default is true: system will basically keep user automatically logged in)
                                     .setAvailableProviders(providers)
                                     .build(),
-                            RC_SIGN_IN);
+                            RequestCodes.SIGN_IN_REQUEST_CODE);
                 }
             }
         };
@@ -121,7 +138,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RC_SIGN_IN) {
+        if (requestCode == RequestCodes.SIGN_IN_REQUEST_CODE) {
             if (resultCode == RESULT_OK) { // TODO: decide what I want to really do here. And maybe snackbar instead of toast?
                 Toast.makeText(this, "Signed in!", Toast.LENGTH_SHORT).show();
             } else if (resultCode == RESULT_CANCELED) {
@@ -239,7 +256,7 @@ public class MainActivity extends AppCompatActivity
 
         fragment = getFragmentInstance(fragmentTag);
         loadFragment(fragment, fragmentTag);
-    
+
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -303,8 +320,53 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onMapDisplayRequested() {
-        Fragment fragment = GoogleMapFragment.newInstance();
+    public void onMapDisplayRequested(GoogleMapFragment.LocationSelectedListener callbackListener, int requestCode) {
+        Fragment fragment = GoogleMapFragment.newInstance(lastKnownLocation, callbackListener, requestCode);
         loadFragment(fragment, FRAG_TAG_MAP_SELECT_LOCATION);
+    }
+
+
+    private void verifyPermissions() {
+        // Here, thisActivity is the current activity
+        if (ContextCompat.checkSelfPermission(this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            // Permission is not granted - request the permission
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    RequestCodes.LOCATION_PERMISSIONS_REQUEST_CODE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case RequestCodes.LOCATION_PERMISSIONS_REQUEST_CODE: {
+                updateLastKnownLocation();
+                break;
+            }
+            default: {
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+                break;
+            }
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private void updateLastKnownLocation() {
+        fusedLocationProviderClient.getLastLocation()
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        lastKnownLocation = location;
+                    }
+
+                })
+                .addOnFailureListener(this, new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e(TAG, "fusedLocationProviderClient onFailure: " + e.getMessage());
+                    }
+                });
     }
 }

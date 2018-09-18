@@ -22,6 +22,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import ericrybarczyk.me.roadtrippy.util.DateUtils;
 import ericrybarczyk.me.roadtrippy.util.InputUtils;
+import ericrybarczyk.me.roadtrippy.util.RequestCodes;
 
 
 /**
@@ -34,7 +35,9 @@ import ericrybarczyk.me.roadtrippy.util.InputUtils;
  */
 public class CreateTripFragment extends Fragment
         implements  DatePickerFragment.TripDateSelectedListener,
-                    TripOriginPickerFragment.TripOriginSelectedListener {
+                    TripOriginPickerFragment.TripOriginSelectedListener,
+                    GoogleMapFragment.LocationSelectedListener {
+
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -49,7 +52,7 @@ public class CreateTripFragment extends Fragment
     private String mParam2;
 
     private GregorianCalendar departureDate, returnDate;
-    private LatLng originLatLng;
+    private LatLng originLatLng, destinationLatLng;
 
     @BindView(R.id.trip_name_text) protected EditText tripNameText;
     @BindView(R.id.departure_date_button) protected Button departureDateButton;
@@ -190,6 +193,22 @@ public class CreateTripFragment extends Fragment
         fragmentInteractionListener = null;
     }
 
+    @Override
+    public void onLocationSelected(LatLng location, int requestCode) {
+        switch (requestCode) {
+            case RequestCodes.TRIP_ORIGIN_REQUEST_CODE:
+                originLatLng = location;
+                originButton.setText(String.valueOf(requestCode)); // TODO: shift to a Model object that has appropriate text
+                break;
+            case RequestCodes.TRIP_DESTINATION_REQUEST_CODE:
+                destinationLatLng = location;
+                destinationButton.setText(String.valueOf(requestCode)); // TODO: shift to a Model object that has appropriate text
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid requestCode argument: " + String.valueOf(requestCode));
+        }
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -231,7 +250,7 @@ public class CreateTripFragment extends Fragment
         } else {
             // show them a map to find their starting location;
             //((MainActivity) getActivity()).onMapDisplayRequested();
-            this.mapDisplayRequestListener.onMapDisplayRequested();
+            this.mapDisplayRequestListener.onMapDisplayRequested(this, RequestCodes.TRIP_ORIGIN_REQUEST_CODE);
         }
 
     }
@@ -241,7 +260,7 @@ public class CreateTripFragment extends Fragment
     }
 
     public interface MapDisplayRequestListener {
-        void onMapDisplayRequested();
+        void onMapDisplayRequested(GoogleMapFragment.LocationSelectedListener callback, int requestCode);
     }
 
 }
