@@ -51,8 +51,10 @@ public class CreateTripFragment extends Fragment
     private String mParam1;
     private String mParam2;
 
+    private String tripDescription;
     private GregorianCalendar departureDate, returnDate;
     private LatLng originLatLng, destinationLatLng;
+    private boolean includeReturnDirections = true;
 
     @BindView(R.id.trip_name_text) protected EditText tripNameText;
     @BindView(R.id.departure_date_button) protected Button departureDateButton;
@@ -64,8 +66,13 @@ public class CreateTripFragment extends Fragment
     private OnFragmentInteractionListener fragmentInteractionListener;
     private MapDisplayRequestListener mapDisplayRequestListener;
     private static final String TAG = CreateTripFragment.class.getSimpleName();
+
+    private static final String KEY_TRIP_DESCRIPTION = "trip_description";
     private static final String KEY_DEPARTURE_DATE = "departure_date_object";
     private static final String KEY_RETURN_DATE = "return_date_object";
+    private static final String KEY_ORIGIN_LATLNG = "origin_lat_lng";
+    private static final String KEY_DESTINATION_LATLNG = "destination_lat_lng";
+    private static final String KEY_INCLUDE_RETURN_DIRECTIONS = "include_return_directions";
 
     // TODO: implement preference for user's home location
     private static final LatLng HOME_LOCATION = new LatLng(36.375148,-94.207480);
@@ -97,6 +104,26 @@ public class CreateTripFragment extends Fragment
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
+        }
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(KEY_TRIP_DESCRIPTION)) {
+                tripDescription = savedInstanceState.getString(KEY_TRIP_DESCRIPTION);
+            }
+            if (savedInstanceState.containsKey(KEY_DEPARTURE_DATE)) {
+                departureDate = (GregorianCalendar) savedInstanceState.getSerializable(KEY_DEPARTURE_DATE);
+            }
+            if (savedInstanceState.containsKey(KEY_RETURN_DATE)) {
+                returnDate = (GregorianCalendar) savedInstanceState.getSerializable(KEY_RETURN_DATE);
+            }
+            if (savedInstanceState.containsKey(KEY_ORIGIN_LATLNG)) {
+                originLatLng = savedInstanceState.getParcelable(KEY_ORIGIN_LATLNG);
+            }
+            if (savedInstanceState.containsKey(KEY_DESTINATION_LATLNG)) {
+                destinationLatLng = savedInstanceState.getParcelable(KEY_DESTINATION_LATLNG);
+            }
+            if (savedInstanceState.containsKey(KEY_INCLUDE_RETURN_DIRECTIONS)) {
+                includeReturnDirections = savedInstanceState.getBoolean(KEY_INCLUDE_RETURN_DIRECTIONS);
+            }
         }
     }
 
@@ -157,13 +184,23 @@ public class CreateTripFragment extends Fragment
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
+        if (tripDescription != null) {
+            savedInstanceState.putString(KEY_TRIP_DESCRIPTION, tripDescription);
+        }
         if (departureDate != null) {
             savedInstanceState.putSerializable(KEY_DEPARTURE_DATE, departureDate);
         }
         if (returnDate != null) {
             savedInstanceState.putSerializable(KEY_RETURN_DATE, returnDate);
         }
-        // TODO: save all the things (restore them too)
+        if (originLatLng != null) {
+            savedInstanceState.putParcelable(KEY_ORIGIN_LATLNG, originLatLng);
+        }
+        if (destinationLatLng != null) {
+            savedInstanceState.putParcelable(KEY_DESTINATION_LATLNG, destinationLatLng);
+        }
+        savedInstanceState.putBoolean(KEY_INCLUDE_RETURN_DIRECTIONS, includeReturnDirections);
+
         super.onSaveInstanceState(savedInstanceState);
     }
 
@@ -226,15 +263,19 @@ public class CreateTripFragment extends Fragment
 
     @Override
     public void onTripDateSelected(int year, int month, int dayOfMonth, String tag) {
-        // TODO: consider changing param to a GregorianCalendar (or Calendar?) to avoid instantiating new objects all the time
         if (tag.equals(TAG_DEPARTURE_DATE_DIALOG)) {
-            GregorianCalendar baseDate = new GregorianCalendar(year, month, dayOfMonth);
-            departureDate = baseDate;
+            departureDate = new GregorianCalendar(year, month, dayOfMonth);
             departureDateButton.setText(DateUtils.formatDate(departureDate));
-            // also bump the returnDate so display will base calendar on the following day
-            baseDate.add(Calendar.DATE, 1);
-            returnDate = baseDate;
             Log.i(TAG, "onDateSelected: DEPART: " + String.valueOf(departureDate.get(Calendar.MONTH)+1) + "/" + departureDate.get(Calendar.DATE));
+
+            // prevent illogical returnDate before departureDate
+            if (departureDate.compareTo(returnDate) > 0) {
+                // bump the returnDate so display will base calendar on the following day
+                GregorianCalendar baseDate = new GregorianCalendar(year, month, dayOfMonth);
+                baseDate.add(Calendar.DATE, 1);
+                returnDate = baseDate;
+            }
+
         } else if (tag.equals(TAG_RETURN_DATE_DIALOG)) {
             returnDate =  new GregorianCalendar(year, month, dayOfMonth);
             returnDateButton.setText(DateUtils.formatDate(returnDate));
@@ -249,7 +290,9 @@ public class CreateTripFragment extends Fragment
             originLatLng = HOME_LOCATION;
         } else {
             // show them a map to find their starting location;
-            //((MainActivity) getActivity()).onMapDisplayRequested();
+            if (this.mapDisplayRequestListener == null) {
+                this.setMapDisplayRequestListener((MapDisplayRequestListener) getActivity());
+            }
             this.mapDisplayRequestListener.onMapDisplayRequested(this, RequestCodes.TRIP_ORIGIN_REQUEST_CODE);
         }
 
