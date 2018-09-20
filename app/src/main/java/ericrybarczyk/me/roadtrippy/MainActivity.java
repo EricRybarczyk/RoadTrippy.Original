@@ -5,7 +5,6 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -29,10 +28,6 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
@@ -50,8 +45,6 @@ import ericrybarczyk.me.roadtrippy.util.RequestCodes;
 
 public class MainActivity extends AppCompatActivity
         implements  NavigationView.OnNavigationItemSelectedListener,
-                    CreateTripFragment.OnFragmentInteractionListener,
-                    TripListFragment.OnFragmentInteractionListener,
                     CreateTripFragment.MapDisplayRequestListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -71,7 +64,6 @@ public class MainActivity extends AppCompatActivity
     private FusedLocationProviderClient fusedLocationProviderClient;
 
     @BindView(R.id.toolbar) protected Toolbar toolbar;
-    @BindView(R.id.fab) protected FloatingActionButton fab;
     @BindView(R.id.drawer_layout) protected DrawerLayout drawer;
     @BindView(R.id.nav_view) protected NavigationView navigationView;
 
@@ -108,10 +100,10 @@ public class MainActivity extends AppCompatActivity
                 if (user != null) {
                     // TODO: look at this https://stackoverflow.com/questions/32806735/refresh-header-in-navigation-drawer/35952939#35952939 and consider different spot to set this username textview
                     View header = navigationView.getHeaderView(0);
+                    activeUsername = user.getDisplayName();
                     TextView usernameText = header.findViewById(R.id.username_display_text);
-                    usernameText.setText(user.getDisplayName());
-
-                    onSignedInInitialize(user.getDisplayName());
+                    usernameText.setText(activeUsername);
+                    onSignedInInitialize(activeUsername);
 
                 } else {
 
@@ -293,10 +285,6 @@ public class MainActivity extends AppCompatActivity
             Log.e(TAG, "Illegal Access on instance of " + fragmentClass.getSimpleName() + " : " + e.getMessage());
         }
 
-        if (fragmentTag.equals(FRAG_TAG_CREATE_TRIP)) {
-            ((CreateTripFragment) result).setMapDisplayRequestListener(this);
-        }
-
         return result;
     }
 
@@ -307,16 +295,6 @@ public class MainActivity extends AppCompatActivity
                 .addToBackStack(null)
                 .commit();
         activeFragmentTag = fragmentTag;
-        if (fragmentTag.equals(FRAG_TAG_CREATE_TRIP) || fragmentTag.equals(FRAG_TAG_MAP_SELECT_LOCATION)) {
-            fab.setVisibility(View.INVISIBLE);
-        } else {
-            fab.setVisibility(View.VISIBLE);
-        }
-    }
-
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-        Log.i(TAG, "onFragmentInteraction for Uri: " + uri.toString());
     }
 
     @Override
