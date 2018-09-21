@@ -32,6 +32,7 @@ ext {
     firebaseDatabaseVersion = "16.0.2"
     firebaseAuthVersion = "16.0.3"
     firebaseUiAuthVersion = "4.1.0"
+    lifecycleVersion = "1.1.1"
     constraintLayoutVersion = "1.1.3"
     butterknifeVersion = "8.8.1"
     gsonVersion = "2.8.2"
@@ -50,6 +51,7 @@ dependencies {
     implementation "com.android.support:support-media-compat:$supportLibVersion"
     implementation "com.android.support:support-v4:$supportLibVersion"
     implementation "com.android.support:design:$supportLibVersion"
+    implementation "android.arch.lifecycle:viewmodel:$lifecycleVersion"
 
     implementation "com.android.support.constraint:constraint-layout:$constraintLayoutVersion"
 

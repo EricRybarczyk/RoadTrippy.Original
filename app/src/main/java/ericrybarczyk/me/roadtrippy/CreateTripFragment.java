@@ -1,8 +1,8 @@
 package ericrybarczyk.me.roadtrippy;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,24 +20,17 @@ import java.util.GregorianCalendar;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import ericrybarczyk.me.roadtrippy.util.DateUtils;
+import ericrybarczyk.me.roadtrippy.util.FragmentTags;
 import ericrybarczyk.me.roadtrippy.util.InputUtils;
 import ericrybarczyk.me.roadtrippy.util.RequestCodes;
+import ericrybarczyk.me.roadtrippy.viewmodels.TripViewModel;
 
 
 public class CreateTripFragment extends Fragment
-        implements  DatePickerFragment.TripDateSelectedListener,
-                    TripOriginPickerFragment.TripOriginSelectedListener,
+        implements  TripOriginPickerFragment.TripOriginSelectedListener,
                     GoogleMapFragment.LocationSelectedListener {
 
-
-    private static final String TAG_DEPARTURE_DATE_DIALOG = "departure_date_dialog";
-    private static final String TAG_RETURN_DATE_DIALOG= "return_date_dialog";
-    private static final String TAG_PICK_ORIGIN_DIALOG= "pick_origin_dialog";
-
-    private String tripDescription;
-    private GregorianCalendar departureDate, returnDate;
-    private LatLng originLatLng, destinationLatLng;
-    private boolean includeReturnDirections = true;
+    private TripViewModel tripViewModel;
 
     @BindView(R.id.trip_name_text) protected EditText tripNameText;
     @BindView(R.id.departure_date_button) protected Button departureDateButton;
@@ -48,13 +41,7 @@ public class CreateTripFragment extends Fragment
 
     private MapDisplayRequestListener mapDisplayRequestListener;
     private static final String TAG = CreateTripFragment.class.getSimpleName();
-
-    private static final String KEY_TRIP_DESCRIPTION = "trip_description";
-    private static final String KEY_DEPARTURE_DATE = "departure_date_object";
-    private static final String KEY_RETURN_DATE = "return_date_object";
-    private static final String KEY_ORIGIN_LATLNG = "origin_lat_lng";
-    private static final String KEY_DESTINATION_LATLNG = "destination_lat_lng";
-    private static final String KEY_INCLUDE_RETURN_DIRECTIONS = "include_return_directions";
+    private static final String TAG_PICK_ORIGIN_DIALOG= "pick_origin_dialog";
 
     // TODO: implement preference for user's home location
     private static final LatLng HOME_LOCATION = new LatLng(36.375148,-94.207480);
@@ -67,26 +54,7 @@ public class CreateTripFragment extends Fragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(KEY_TRIP_DESCRIPTION)) {
-                tripDescription = savedInstanceState.getString(KEY_TRIP_DESCRIPTION);
-            }
-            if (savedInstanceState.containsKey(KEY_DEPARTURE_DATE)) {
-                departureDate = (GregorianCalendar) savedInstanceState.getSerializable(KEY_DEPARTURE_DATE);
-            }
-            if (savedInstanceState.containsKey(KEY_RETURN_DATE)) {
-                returnDate = (GregorianCalendar) savedInstanceState.getSerializable(KEY_RETURN_DATE);
-            }
-            if (savedInstanceState.containsKey(KEY_ORIGIN_LATLNG)) {
-                originLatLng = savedInstanceState.getParcelable(KEY_ORIGIN_LATLNG);
-            }
-            if (savedInstanceState.containsKey(KEY_DESTINATION_LATLNG)) {
-                destinationLatLng = savedInstanceState.getParcelable(KEY_DESTINATION_LATLNG);
-            }
-            if (savedInstanceState.containsKey(KEY_INCLUDE_RETURN_DIRECTIONS)) {
-                includeReturnDirections = savedInstanceState.getBoolean(KEY_INCLUDE_RETURN_DIRECTIONS);
-            }
-        }
+        tripViewModel = ViewModelProviders.of(getActivity()).get(TripViewModel.class);
     }
 
     @Override
@@ -94,18 +62,9 @@ public class CreateTripFragment extends Fragment
         final View rootView = inflater.inflate(R.layout.fragment_create_trip, container, false);
         ButterKnife.bind(this, rootView);
 
-        if (savedInstanceState != null) {
-            if (savedInstanceState.getSerializable(KEY_DEPARTURE_DATE) != null) {
-                departureDate = (GregorianCalendar) savedInstanceState.getSerializable(KEY_DEPARTURE_DATE);
-                departureDateButton.setText(DateUtils.formatDate(departureDate));
-            }
-            if (savedInstanceState.getSerializable(KEY_RETURN_DATE) != null) {
-                returnDate = (GregorianCalendar) savedInstanceState.getSerializable(KEY_RETURN_DATE);
-                returnDateButton.setText(DateUtils.formatDate(returnDate));
-            }
-        }
-        if (departureDate == null) { departureDate = new GregorianCalendar(); }
-        if (returnDate == null) { returnDate = new GregorianCalendar(); }
+        // TODO: handle not showing the date if user hasn't actually set anything yet (don't show default date unless they picked that date)
+        departureDateButton.setText(DateUtils.formatDate(tripViewModel.getStartDate()));
+        returnDateButton.setText(DateUtils.formatDate(tripViewModel.getEndDate()));
 
         departureDateButton.setOnClickListener(v -> {
             Log.i(TAG, "onClick for departureDateButton");
@@ -113,11 +72,11 @@ public class CreateTripFragment extends Fragment
             DatePickerFragment datePickerDialog = new DatePickerFragment();
 
             Bundle args = new Bundle();
-            args.putSerializable(DatePickerFragment.KEY_CALENDAR_FOR_DISPLAY, departureDate);
+            args.putSerializable(DatePickerFragment.KEY_CALENDAR_FOR_DISPLAY, tripViewModel.getStartDate());
             datePickerDialog.setArguments(args);
 
-            datePickerDialog.setTripDateSelectedListener(this);
-            datePickerDialog.show(getChildFragmentManager(), TAG_DEPARTURE_DATE_DIALOG);
+//            datePickerDialog.setTripDateSelectedListener(this);
+            datePickerDialog.show(getChildFragmentManager(), FragmentTags.TAG_DEPARTURE_DATE_DIALOG);
         });
         returnDateButton.setOnClickListener(v -> {
             Log.i(TAG, "onClick for returnDateButton");
@@ -125,11 +84,11 @@ public class CreateTripFragment extends Fragment
             DatePickerFragment datePickerDialog = new DatePickerFragment();
 
             Bundle args = new Bundle();
-            args.putSerializable(DatePickerFragment.KEY_CALENDAR_FOR_DISPLAY, returnDate);
+            args.putSerializable(DatePickerFragment.KEY_CALENDAR_FOR_DISPLAY, tripViewModel.getEndDate());
             datePickerDialog.setArguments(args);
 
-            datePickerDialog.setTripDateSelectedListener(this);
-            datePickerDialog.show(getChildFragmentManager(), TAG_RETURN_DATE_DIALOG);
+//            datePickerDialog.setTripDateSelectedListener(this);
+            datePickerDialog.show(getChildFragmentManager(), FragmentTags.TAG_RETURN_DATE_DIALOG);
         });
 
         // TODO: originButton open a custom dialog where they can pick "Home" as starting point or else "somewhere else" which would take them to a map/search
@@ -144,27 +103,6 @@ public class CreateTripFragment extends Fragment
         return rootView;
     }
 
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
-        if (tripDescription != null) {
-            savedInstanceState.putString(KEY_TRIP_DESCRIPTION, tripDescription);
-        }
-        if (departureDate != null) {
-            savedInstanceState.putSerializable(KEY_DEPARTURE_DATE, departureDate);
-        }
-        if (returnDate != null) {
-            savedInstanceState.putSerializable(KEY_RETURN_DATE, returnDate);
-        }
-        if (originLatLng != null) {
-            savedInstanceState.putParcelable(KEY_ORIGIN_LATLNG, originLatLng);
-        }
-        if (destinationLatLng != null) {
-            savedInstanceState.putParcelable(KEY_DESTINATION_LATLNG, destinationLatLng);
-        }
-        savedInstanceState.putBoolean(KEY_INCLUDE_RETURN_DIRECTIONS, includeReturnDirections);
-
-        super.onSaveInstanceState(savedInstanceState);
-    }
 
     @Override
     public void onResume() {
@@ -192,11 +130,11 @@ public class CreateTripFragment extends Fragment
     public void onLocationSelected(LatLng location, int requestCode) {
         switch (requestCode) {
             case RequestCodes.TRIP_ORIGIN_REQUEST_CODE:
-                originLatLng = location;
+                tripViewModel.setOriginLatLng(location);
                 originButton.setText(String.valueOf(requestCode)); // TODO: shift to a Model object that has appropriate text
                 break;
             case RequestCodes.TRIP_DESTINATION_REQUEST_CODE:
-                destinationLatLng = location;
+                tripViewModel.setDestinationLatLng(location);
                 destinationButton.setText(String.valueOf(requestCode)); // TODO: shift to a Model object that has appropriate text
                 break;
             default:
@@ -205,25 +143,26 @@ public class CreateTripFragment extends Fragment
     }
 
 
-    @Override
+//    @Override
+    // TODO: implement the logic somewhere, just not via the callback since shared ViewModel took over
     public void onTripDateSelected(int year, int month, int dayOfMonth, String tag) {
-        if (tag.equals(TAG_DEPARTURE_DATE_DIALOG)) {
-            departureDate = new GregorianCalendar(year, month, dayOfMonth);
-            departureDateButton.setText(DateUtils.formatDate(departureDate));
-            Log.i(TAG, "onDateSelected: DEPART: " + String.valueOf(departureDate.get(Calendar.MONTH)+1) + "/" + departureDate.get(Calendar.DATE));
+        if (tag.equals(FragmentTags.TAG_DEPARTURE_DATE_DIALOG)) {
+            tripViewModel.setStartDate(new GregorianCalendar(year, month, dayOfMonth));
+            departureDateButton.setText(DateUtils.formatDate(tripViewModel.getStartDate()));
+            Log.i(TAG, "onDateSelected: DEPART: " + String.valueOf(tripViewModel.getStartDate().get(Calendar.MONTH)+1) + "/" + tripViewModel.getStartDate().get(Calendar.DATE));
 
             // prevent illogical returnDate before departureDate
-            if (departureDate.compareTo(returnDate) > 0) {
+            if (tripViewModel.getStartDate().compareTo(tripViewModel.getEndDate()) > 0) {
                 // bump the returnDate so display will base calendar on the following day
                 GregorianCalendar baseDate = new GregorianCalendar(year, month, dayOfMonth);
                 baseDate.add(Calendar.DATE, 1);
-                returnDate = baseDate;
+                tripViewModel.setEndDate(baseDate);
             }
 
-        } else if (tag.equals(TAG_RETURN_DATE_DIALOG)) {
-            returnDate =  new GregorianCalendar(year, month, dayOfMonth);
-            returnDateButton.setText(DateUtils.formatDate(returnDate));
-            Log.i(TAG, "onDateSelected: RETURN: " + String.valueOf(returnDate.get(Calendar.MONTH)+1) + "/" + returnDate.get(Calendar.DATE));
+        } else if (tag.equals(FragmentTags.TAG_RETURN_DATE_DIALOG)) {
+            tripViewModel.setEndDate(new GregorianCalendar(year, month, dayOfMonth));
+            returnDateButton.setText(DateUtils.formatDate(tripViewModel.getEndDate()));
+            Log.i(TAG, "onDateSelected: RETURN: " + String.valueOf(tripViewModel.getEndDate().get(Calendar.MONTH)+1) + "/" + tripViewModel.getEndDate().get(Calendar.DATE));
         }
     }
 
@@ -231,7 +170,7 @@ public class CreateTripFragment extends Fragment
     public void onTripOriginSelected(String key) {
         Log.i(TAG, "onTripOriginSelected: key = " + key);
         if (key.equals(TripOriginPickerFragment.KEY_HOME_ORIGIN)) {
-            originLatLng = HOME_LOCATION;
+            tripViewModel.setOriginLatLng(HOME_LOCATION);
         } else {
             mapDisplayRequestListener.onMapDisplayRequested(this, RequestCodes.TRIP_ORIGIN_REQUEST_CODE);
         }

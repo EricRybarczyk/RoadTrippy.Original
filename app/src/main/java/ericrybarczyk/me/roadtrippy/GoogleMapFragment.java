@@ -1,6 +1,7 @@
 package ericrybarczyk.me.roadtrippy;
 
 import android.annotation.SuppressLint;
+import android.arch.lifecycle.ViewModelProviders;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -25,6 +26,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import ericrybarczyk.me.roadtrippy.viewmodels.TripViewModel;
 
 public class GoogleMapFragment extends Fragment
         implements  OnMapReadyCallback,
@@ -32,8 +34,9 @@ public class GoogleMapFragment extends Fragment
 
     @BindView(R.id.instructions_text) protected TextView instructionsText;
     @BindView(R.id.set_location_button) protected Button setLocationButton;
-    private SupportMapFragment mapFragment;
 
+    private TripViewModel tripViewModel;
+    private SupportMapFragment mapFragment;
     private String googleMapsApiKey;
     private GoogleMap googleMap;
 
@@ -66,6 +69,20 @@ public class GoogleMapFragment extends Fragment
         this.locationSelectedListener = listener;
     }
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        googleMapsApiKey = getString(R.string.google_maps_key);
+
+        if (getArguments() != null) {
+            requestCode = getArguments().getInt(KEY_REQUEST_CODE);
+            mapLocation = new LatLng(getArguments().getDouble(KEY_START_LAT), getArguments().getDouble(KEY_START_LNG));
+        }
+
+        tripViewModel = ViewModelProviders.of(getActivity()).get(TripViewModel.class);
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -79,18 +96,11 @@ public class GoogleMapFragment extends Fragment
             }
         });
 
-        googleMapsApiKey = getString(R.string.google_maps_key);
-
-        if (this.getArguments() != null) {
-            requestCode = getArguments().getInt(KEY_REQUEST_CODE);
-            mapLocation = new LatLng(getArguments().getDouble(KEY_START_LAT), getArguments().getDouble(KEY_START_LNG));
-            cameraPosition = new CameraPosition.Builder().target(mapLocation)
-                            .zoom(12.0f)
-                            .bearing(360f)
-                            .tilt(0f)
-                            .build();
-            Log.i(TAG, "Map set to LatLng: " + mapLocation.toString());
-        }
+        cameraPosition = new CameraPosition.Builder().target(mapLocation)
+                        .zoom(12.0f)
+                        .bearing(360f)
+                        .tilt(0f)
+                        .build();
 
         rootView.clearFocus(); // TODO: test if this helps prevent showing keyboard when app is opened from background
 
@@ -117,13 +127,9 @@ public class GoogleMapFragment extends Fragment
         map.animateCamera(cameraUpdate);
     }
 
-
-    // TODO: save instance state
-
-
     @Override
     public void onMapClick(LatLng latLng) {
-        this.mapLocation = latLng;
+        mapLocation = latLng;
         googleMap.clear();
         googleMap.addMarker(new MarkerOptions().position(latLng));
     }
