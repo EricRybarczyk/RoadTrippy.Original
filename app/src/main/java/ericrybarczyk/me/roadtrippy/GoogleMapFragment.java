@@ -8,12 +8,13 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -27,15 +28,24 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import ericrybarczyk.me.roadtrippy.endpoints.FindPlacesEndpoint;
+import ericrybarczyk.me.roadtrippy.endpoints.SearchService;
+import ericrybarczyk.me.roadtrippy.places.Candidate;
+import ericrybarczyk.me.roadtrippy.places.PlacesResponse;
+import ericrybarczyk.me.roadtrippy.util.InputUtils;
 import ericrybarczyk.me.roadtrippy.viewmodels.TripViewModel;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class GoogleMapFragment extends Fragment
         implements  OnMapReadyCallback,
-                    GoogleMap.OnMapClickListener {
+                    GoogleMap.OnMapClickListener, View.OnClickListener {
 
-    @BindView(R.id.instructions_text) protected TextView instructionsText;
+    @BindView(R.id.search_button) protected Button searchButton;
     @BindView(R.id.set_location_button) protected Button setLocationButton;
     @BindView(R.id.description_text) protected EditText locationDescription;
+    @BindView(R.id.search_text) protected EditText searchText;
 
     private TripViewModel tripViewModel;
     private SupportMapFragment mapFragment;
@@ -95,6 +105,7 @@ public class GoogleMapFragment extends Fragment
         final View rootView = inflater.inflate(R.layout.fragment_google_map, container, false);
         ButterKnife.bind(this, rootView);
         mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        searchButton.setOnClickListener(this);
 
         setLocationButton.setOnClickListener(v -> {
             if (v.getId() == setLocationButton.getId()) {
@@ -103,11 +114,11 @@ public class GoogleMapFragment extends Fragment
             }
         });
 
-        cameraPosition = new CameraPosition.Builder().target(mapLocation)
-                        .zoom(12.0f)
-                        .bearing(360f)
-                        .tilt(0f)
-                        .build();
+//        cameraPosition = new CameraPosition.Builder().target(mapLocation)
+//                        .zoom(12.0f)
+//                        .bearing(360f)
+//                        .tilt(0f)
+//                        .build();
 
         rootView.clearFocus(); // TODO: test if this helps prevent showing keyboard when app is opened from background
 
@@ -139,23 +150,81 @@ public class GoogleMapFragment extends Fragment
         googleMap.setOnMapClickListener(this);
         googleMap.setMyLocationEnabled(true);
 
-        googleMap.addMarker(new MarkerOptions().position(mapLocation));
+        //googleMap.addMarker(new MarkerOptions().position(mapLocation));
 
         UiSettings uiSettings = googleMap.getUiSettings();
         //uiSettings.setMyLocationButtonEnabled(true); // when something is selected on map, this shows two Maps Intents button icons (Directions, Map)
         uiSettings.setZoomControlsEnabled(true);
         uiSettings.setZoomGesturesEnabled(true);
 
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition);
-        map.animateCamera(cameraUpdate);
+//        CameraUpdate cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition);
+//        map.animateCamera(cameraUpdate);
+        updateMapView();
     }
 
     @Override
     public void onMapClick(LatLng latLng) {
         mapLocation = latLng;
+        updateMapView();
+    }
+
+    private void updateMapView() {
         googleMap.clear();
         googleMap.addMarker(new MarkerOptions().position(mapLocation));
+            cameraPosition = new CameraPosition.Builder().target(mapLocation)
+                    .zoom(12.0f)
+                    .bearing(360f)
+                    .tilt(0f)
+                    .build();
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition);
+        googleMap.animateCamera(cameraUpdate);
     }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == searchButton.getId()) {
+            String searchValue;
+            if (searchText.getText() == null) { return; }
+            searchValue = searchText.getText().toString();
+
+            InputUtils.hideKeyboardFrom(getContext(), getView());
+            FindPlacesEndpoint endpoint = SearchService.getClient().create(FindPlacesEndpoint.class);
+            Call<PlacesResponse> findPlacesCall = endpoint.findPlaces(googleMapsApiKey, SearchService.PLACES_API_TEXT_QUERY_INPUT_TYPE, searchValue, SearchService.PLACES_API_QUERY_FIELDS);
+
+            findPlacesCall.enqueue(new Callback<PlacesResponse>() {
+                @Override
+                public void onResponse(Call<PlacesResponse> call, Response<PlacesResponse> response) {
+                    PlacesResponse placesResponse = response.body();
+                    if ((placesResponse != null && placesResponse.getCandidates() != null ? placesResponse.getCandidates().size() : 0) > 0) {
+
+                        // if one result, set that as the location and update UI
+                        if (placesResponse.getCandidates().size() == 1) {
+                            Candidate place = placesResponse.getCandidates().get(0);
+                            mapLocation = new LatLng(place.getGeometry().getLocation().getLat(), place.getGeometry().getLocation().getLng());
+                            locationDescription.setText(place.getName());
+                            updateMapView();
+                        } else {
+                            Log.d(TAG, "Too many Places Search results. Result count = " + String.valueOf(placesResponse.getCandidates().size()));
+                            Toast.makeText(getContext(), R.string.map_search_too_many_results_message, Toast.LENGTH_LONG).show();
+                        }
+
+                    } else {
+                        Log.d(TAG, "Retrofit onResponse: No Places Search results.");
+                        Toast.makeText(getContext(), R.string.map_search_no_results_message, Toast.LENGTH_LONG).show();
+                    }
+
+                }
+
+                @Override
+                public void onFailure(Call<PlacesResponse> call, Throwable t) {
+                    Log.e(TAG, "Failed to call Places API. Error: " + t.getMessage());
+                    Toast.makeText(getContext(), R.string.map_search_call_error_message, Toast.LENGTH_LONG).show();
+                }
+            });
+
+        }
+    }
+
 
     public interface LocationSelectedListener {
         void onLocationSelected(LatLng location, int requestCode, String locationDescription);

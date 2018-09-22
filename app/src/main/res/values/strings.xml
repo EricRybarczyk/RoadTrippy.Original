@@ -39,5 +39,8 @@
 
     <string name="aria_trip_item_image_description">Simple map image for trip</string>
     <string name="aria_nav_header_desc">Application Logo</string>
+    <string name="map_search_no_results_message">No results found. Please try again.</string>
+    <string name="map_search_too_many_results_message">Too many results, please narrow your search.</string>
+    <string name="map_search_call_error_message">Error: unable to perform search</string>
 
 </resources>
