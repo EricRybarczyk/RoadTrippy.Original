@@ -60,16 +60,30 @@
 
     </FrameLayout>
 
+    <EditText
+        android:id="@+id/description_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
+        android:hint="@string/map_location_description_hint"
+        android:inputType="text"
+        app:layout_constraintTop_toBottomOf="@+id/map_container"
+        app:layout_constraintStart_toStartOf="@+id/guideline_start"
+        app:layout_constraintEnd_toStartOf="@+id/set_location_button"
+        app:layout_constraintBaseline_toBaselineOf="@id/set_location_button"/>
+
     <Button
         android:id="@+id/set_location_button"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/map_container"
         app:layout_constraintBottom_toTopOf="@+id/guideline_bottom"
-        app:layout_constraintStart_toStartOf="@+id/guideline_start"
+
         app:layout_constraintEnd_toEndOf="@id/guideline_end"
         android:text="@string/map_select_location_button_save_label"
         style="@style/AccentButton"/>
+    <!-- app:layout_constraintStart_toStartOf="@+id/guideline_start" -->
 
 
     <android.support.constraint.Guideline

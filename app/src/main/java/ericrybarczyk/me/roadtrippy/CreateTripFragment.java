@@ -28,6 +28,7 @@ import ericrybarczyk.me.roadtrippy.viewmodels.TripViewModel;
 
 public class CreateTripFragment extends Fragment
         implements  TripOriginPickerFragment.TripOriginSelectedListener,
+                    DatePickerFragment.TripDateSelectedListener,
                     GoogleMapFragment.LocationSelectedListener {
 
     private TripViewModel tripViewModel;
@@ -63,8 +64,11 @@ public class CreateTripFragment extends Fragment
         ButterKnife.bind(this, rootView);
 
         // TODO: handle not showing the date if user hasn't actually set anything yet (don't show default date unless they picked that date)
-        departureDateButton.setText(DateUtils.formatDate(tripViewModel.getStartDate()));
-        returnDateButton.setText(DateUtils.formatDate(tripViewModel.getEndDate()));
+        if (tripViewModel.isEdited()) {
+            departureDateButton.setText(DateUtils.formatDate(tripViewModel.getDepartureDate()));
+            returnDateButton.setText(DateUtils.formatDate(tripViewModel.getReturnDate()));
+            originButton.setText(String.valueOf(tripViewModel.getOriginLatLng().toString()));
+        }
 
         departureDateButton.setOnClickListener(v -> {
             Log.i(TAG, "onClick for departureDateButton");
@@ -72,10 +76,10 @@ public class CreateTripFragment extends Fragment
             DatePickerFragment datePickerDialog = new DatePickerFragment();
 
             Bundle args = new Bundle();
-            args.putSerializable(DatePickerFragment.KEY_CALENDAR_FOR_DISPLAY, tripViewModel.getStartDate());
+            args.putSerializable(DatePickerFragment.KEY_CALENDAR_FOR_DISPLAY, tripViewModel.getDepartureDate());
             datePickerDialog.setArguments(args);
 
-//            datePickerDialog.setTripDateSelectedListener(this);
+            datePickerDialog.setTripDateSelectedListener(this);
             datePickerDialog.show(getChildFragmentManager(), FragmentTags.TAG_DEPARTURE_DATE_DIALOG);
         });
         returnDateButton.setOnClickListener(v -> {
@@ -84,10 +88,10 @@ public class CreateTripFragment extends Fragment
             DatePickerFragment datePickerDialog = new DatePickerFragment();
 
             Bundle args = new Bundle();
-            args.putSerializable(DatePickerFragment.KEY_CALENDAR_FOR_DISPLAY, tripViewModel.getEndDate());
+            args.putSerializable(DatePickerFragment.KEY_CALENDAR_FOR_DISPLAY, tripViewModel.getReturnDate());
             datePickerDialog.setArguments(args);
 
-//            datePickerDialog.setTripDateSelectedListener(this);
+            datePickerDialog.setTripDateSelectedListener(this);
             datePickerDialog.show(getChildFragmentManager(), FragmentTags.TAG_RETURN_DATE_DIALOG);
         });
 
@@ -142,27 +146,21 @@ public class CreateTripFragment extends Fragment
         }
     }
 
-
-//    @Override
-    // TODO: implement the logic somewhere, just not via the callback since shared ViewModel took over
+    @Override
     public void onTripDateSelected(int year, int month, int dayOfMonth, String tag) {
         if (tag.equals(FragmentTags.TAG_DEPARTURE_DATE_DIALOG)) {
-            tripViewModel.setStartDate(new GregorianCalendar(year, month, dayOfMonth));
-            departureDateButton.setText(DateUtils.formatDate(tripViewModel.getStartDate()));
-            Log.i(TAG, "onDateSelected: DEPART: " + String.valueOf(tripViewModel.getStartDate().get(Calendar.MONTH)+1) + "/" + tripViewModel.getStartDate().get(Calendar.DATE));
-
-            // prevent illogical returnDate before departureDate
-            if (tripViewModel.getStartDate().compareTo(tripViewModel.getEndDate()) > 0) {
-                // bump the returnDate so display will base calendar on the following day
-                GregorianCalendar baseDate = new GregorianCalendar(year, month, dayOfMonth);
-                baseDate.add(Calendar.DATE, 1);
-                tripViewModel.setEndDate(baseDate);
+            tripViewModel.setDepartureDate(new GregorianCalendar(year, month, dayOfMonth));
+            if (tripViewModel.isEdited()) {
+                departureDateButton.setText(DateUtils.formatDate(tripViewModel.getDepartureDate()));
             }
+            Log.i(TAG, "onDateSelected: DEPART: " + String.valueOf(tripViewModel.getDepartureDate().get(Calendar.MONTH)+1) + "/" + tripViewModel.getDepartureDate().get(Calendar.DATE));
 
         } else if (tag.equals(FragmentTags.TAG_RETURN_DATE_DIALOG)) {
-            tripViewModel.setEndDate(new GregorianCalendar(year, month, dayOfMonth));
-            returnDateButton.setText(DateUtils.formatDate(tripViewModel.getEndDate()));
-            Log.i(TAG, "onDateSelected: RETURN: " + String.valueOf(tripViewModel.getEndDate().get(Calendar.MONTH)+1) + "/" + tripViewModel.getEndDate().get(Calendar.DATE));
+            tripViewModel.setReturnDate(new GregorianCalendar(year, month, dayOfMonth));
+            if (tripViewModel.isEdited()) {
+                returnDateButton.setText(DateUtils.formatDate(tripViewModel.getReturnDate()));
+            }
+            Log.i(TAG, "onDateSelected: RETURN: " + String.valueOf(tripViewModel.getReturnDate().get(Calendar.MONTH)+1) + "/" + tripViewModel.getReturnDate().get(Calendar.DATE));
         }
     }
 
@@ -172,12 +170,12 @@ public class CreateTripFragment extends Fragment
         if (key.equals(TripOriginPickerFragment.KEY_HOME_ORIGIN)) {
             tripViewModel.setOriginLatLng(HOME_LOCATION);
         } else {
-            mapDisplayRequestListener.onMapDisplayRequested(this, RequestCodes.TRIP_ORIGIN_REQUEST_CODE);
+            mapDisplayRequestListener.onMapDisplayRequested(this, RequestCodes.TRIP_ORIGIN_REQUEST_CODE, FragmentTags.FRAG_TAG_CREATE_TRIP);
         }
     }
 
     public interface MapDisplayRequestListener {
-        void onMapDisplayRequested(GoogleMapFragment.LocationSelectedListener callback, int requestCode);
+        void onMapDisplayRequested(GoogleMapFragment.LocationSelectedListener callback, int requestCode, String returnToFragmentTag);
     }
 
 }

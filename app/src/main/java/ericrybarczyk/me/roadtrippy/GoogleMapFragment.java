@@ -2,12 +2,12 @@ package ericrybarczyk.me.roadtrippy;
 
 import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +30,7 @@ import ericrybarczyk.me.roadtrippy.viewmodels.TripViewModel;
 
 public class GoogleMapFragment extends Fragment
         implements  OnMapReadyCallback,
-                    GoogleMap.OnMapClickListener{
+                    GoogleMap.OnMapClickListener {
 
     @BindView(R.id.instructions_text) protected TextView instructionsText;
     @BindView(R.id.set_location_button) protected Button setLocationButton;
@@ -43,24 +43,27 @@ public class GoogleMapFragment extends Fragment
     public static final String KEY_START_LAT = "start_location_latitude";
     public static final String KEY_START_LNG = "start_location_longitude";
     public static final String KEY_REQUEST_CODE = "request_code_from_caller";
+    public static final String KEY_RETURN_FRAGMENT_TAG = "return_fragment_tag";
     private static final String TAG = GoogleMapFragment.class.getSimpleName();
 
     private LatLng mapLocation;
     private CameraPosition cameraPosition;
     private LocationSelectedListener locationSelectedListener;
     private int requestCode; // passed in from caller to be returned with map location
-
+    private FragmentNavigationRequestListener fragmentNavigationRequestListener;
+    private String returnFragmentTag;
 
     public GoogleMapFragment() {
     }
 
-    public static GoogleMapFragment newInstance(Location initialLocation, LocationSelectedListener listener, int requestCode) {
+    public static GoogleMapFragment newInstance(Location initialLocation, LocationSelectedListener listener, int requestCode, String returnToFragmentTag) {
         GoogleMapFragment mapFragment = new GoogleMapFragment();
         mapFragment.setLocationSelectedListener(listener);
         Bundle args = new Bundle();
         args.putDouble(KEY_START_LAT, initialLocation.getLatitude());
         args.putDouble(KEY_START_LNG, initialLocation.getLongitude());
         args.putInt(KEY_REQUEST_CODE, requestCode);
+        args.putString(KEY_RETURN_FRAGMENT_TAG, returnToFragmentTag);
         mapFragment.setArguments(args);
         return mapFragment;
     }
@@ -78,6 +81,7 @@ public class GoogleMapFragment extends Fragment
         if (getArguments() != null) {
             requestCode = getArguments().getInt(KEY_REQUEST_CODE);
             mapLocation = new LatLng(getArguments().getDouble(KEY_START_LAT), getArguments().getDouble(KEY_START_LNG));
+            returnFragmentTag = getArguments().getString(KEY_RETURN_FRAGMENT_TAG);
         }
 
         tripViewModel = ViewModelProviders.of(getActivity()).get(TripViewModel.class);
@@ -93,6 +97,7 @@ public class GoogleMapFragment extends Fragment
         setLocationButton.setOnClickListener(v -> {
             if (v.getId() == setLocationButton.getId()) {
                 locationSelectedListener.onLocationSelected(mapLocation, requestCode);
+                fragmentNavigationRequestListener.onFragmentNavigationRequest(returnFragmentTag);
             }
         });
 
@@ -109,6 +114,22 @@ public class GoogleMapFragment extends Fragment
         return rootView;
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof FragmentNavigationRequestListener) {
+            fragmentNavigationRequestListener = (FragmentNavigationRequestListener) context;
+        } else {
+            throw new RuntimeException(context.toString() + " must implement FragmentNavigationRequestListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        fragmentNavigationRequestListener = null;
+    }
+
     @SuppressLint("MissingPermission")
     @Override
     public void onMapReady(GoogleMap map) {
@@ -119,7 +140,7 @@ public class GoogleMapFragment extends Fragment
         googleMap.addMarker(new MarkerOptions().position(mapLocation));
 
         UiSettings uiSettings = googleMap.getUiSettings();
-        uiSettings.setMyLocationButtonEnabled(true); // when something is selected on map, this shows two Maps Intents button icons (Directions, Map)
+        //uiSettings.setMyLocationButtonEnabled(true); // when something is selected on map, this shows two Maps Intents button icons (Directions, Map)
         uiSettings.setZoomControlsEnabled(true);
         uiSettings.setZoomGesturesEnabled(true);
 
@@ -131,9 +152,8 @@ public class GoogleMapFragment extends Fragment
     public void onMapClick(LatLng latLng) {
         mapLocation = latLng;
         googleMap.clear();
-        googleMap.addMarker(new MarkerOptions().position(latLng));
+        googleMap.addMarker(new MarkerOptions().position(mapLocation));
     }
-
 
     public interface LocationSelectedListener {
         void onLocationSelected(LatLng location, int requestCode);

@@ -40,18 +40,17 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import ericrybarczyk.me.roadtrippy.util.FragmentTags;
 import ericrybarczyk.me.roadtrippy.util.RequestCodes;
 
 
 public class MainActivity extends AppCompatActivity
         implements  NavigationView.OnNavigationItemSelectedListener,
-                    CreateTripFragment.MapDisplayRequestListener {
+                    CreateTripFragment.MapDisplayRequestListener,
+                    FragmentNavigationRequestListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final String KEY_ACTIVE_FRAGMENT_TAG = "active_fragment_tag";
-    private static final String FRAG_TAG_CREATE_TRIP = "create_trip_fragment";
-    private static final String FRAG_TAG_TRIP_LIST = "trip_list_fragment";
-    private static final String FRAG_TAG_MAP_SELECT_LOCATION = "google_map_select_location_fragment";
 
     public static final String ANONYMOUS = "anonymous";
     private String activeUsername = ANONYMOUS;
@@ -127,6 +126,7 @@ public class MainActivity extends AppCompatActivity
         };
     }
 
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -159,7 +159,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState); // call super first to restore view hierarchy
-        activeFragmentTag = savedInstanceState.getString(KEY_ACTIVE_FRAGMENT_TAG, FRAG_TAG_TRIP_LIST);
+        activeFragmentTag = savedInstanceState.getString(KEY_ACTIVE_FRAGMENT_TAG, FragmentTags.FRAG_TAG_TRIP_LIST);
         Fragment fragment = getFragmentInstance(activeFragmentTag);
         loadFragment(fragment, activeFragmentTag);
     }
@@ -179,8 +179,8 @@ public class MainActivity extends AppCompatActivity
 
     @OnClick(R.id.fab)
     public void onFabClick(View view) {
-        Fragment fragment = getFragmentInstance(FRAG_TAG_CREATE_TRIP);
-        loadFragment(fragment, FRAG_TAG_CREATE_TRIP);
+        Fragment fragment = getFragmentInstance(FragmentTags.FRAG_TAG_CREATE_TRIP);
+        loadFragment(fragment, FragmentTags.FRAG_TAG_CREATE_TRIP);
     }
 
     @Override
@@ -227,10 +227,10 @@ public class MainActivity extends AppCompatActivity
         // TODO: support all fragments here
         switch (item.getItemId()) {
             case R.id.nav_trip_plans:
-                fragmentTag = FRAG_TAG_TRIP_LIST;
+                fragmentTag = FragmentTags.FRAG_TAG_TRIP_LIST;
                 break;
             case R.id.nav_create_trip:
-                fragmentTag = FRAG_TAG_CREATE_TRIP;
+                fragmentTag = FragmentTags.FRAG_TAG_CREATE_TRIP;
                 break;
             case R.id.nav_trip_ideas:
 
@@ -242,7 +242,7 @@ public class MainActivity extends AppCompatActivity
 
                 break;
             default:
-                fragmentTag = FRAG_TAG_TRIP_LIST;
+                fragmentTag = FragmentTags.FRAG_TAG_TRIP_LIST;
                 break;
         }
 
@@ -264,10 +264,10 @@ public class MainActivity extends AppCompatActivity
         }
 
         switch (fragmentTag) {
-            case FRAG_TAG_TRIP_LIST:
+            case FragmentTags.FRAG_TAG_TRIP_LIST:
                 fragmentClass = TripListFragment.class;
                 break;
-            case FRAG_TAG_CREATE_TRIP:
+            case FragmentTags.FRAG_TAG_CREATE_TRIP:
                 fragmentClass = CreateTripFragment.class;
                 break;
 
@@ -298,9 +298,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onMapDisplayRequested(GoogleMapFragment.LocationSelectedListener callbackListener, int requestCode) {
-        Fragment fragment = GoogleMapFragment.newInstance(lastKnownLocation, callbackListener, requestCode);
-        loadFragment(fragment, FRAG_TAG_MAP_SELECT_LOCATION);
+    public void onMapDisplayRequested(GoogleMapFragment.LocationSelectedListener callbackListener, int requestCode, String returnToFragmentTag) {
+        Fragment fragment = GoogleMapFragment.newInstance(lastKnownLocation, callbackListener, requestCode, returnToFragmentTag);
+        loadFragment(fragment, FragmentTags.FRAG_TAG_MAP_SELECT_LOCATION);
     }
 
 
@@ -346,5 +346,11 @@ public class MainActivity extends AppCompatActivity
                         Log.e(TAG, "fusedLocationProviderClient onFailure: " + e.getMessage());
                     }
                 });
+    }
+
+    @Override
+    public void onFragmentNavigationRequest(String fragmentTag) {
+        Fragment fragment = getFragmentInstance(fragmentTag);
+        loadFragment(fragment, fragmentTag);
     }
 }

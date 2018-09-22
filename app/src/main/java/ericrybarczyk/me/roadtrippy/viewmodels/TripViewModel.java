@@ -11,79 +11,100 @@ public class TripViewModel extends ViewModel {
     private String tripId;
     private String userId;
     private String description;
-    private GregorianCalendar startDate;
-    private GregorianCalendar endDate;
+    private GregorianCalendar departureDate;
+    private GregorianCalendar returnDate;
     private LatLng originLatLng;
+    private String originDescription;
     private LatLng destinationLatLng;
+    private String destinationDescription;
     private boolean includeReturn;
+    private boolean isEdited; // to help UI know if dates are selected by user or if just new instance defaults
 
     public TripViewModel() {
         tripId = UUID.randomUUID().toString();
-        startDate = new GregorianCalendar();
-        endDate = new GregorianCalendar();
+        departureDate = new GregorianCalendar();
+        returnDate = new GregorianCalendar();
     }
 
     public String getTripId() {
         return tripId;
     }
-
-    public void setTripId(String tripId) {
-        this.tripId = tripId;
-    }
-
     public String getUserId() {
         return userId;
     }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
     public String getDescription() {
         return description;
     }
-
-    public void setDescription(String description) {
-        this.description = description;
+    public GregorianCalendar getDepartureDate() {
+        return departureDate;
     }
-
-    public GregorianCalendar getStartDate() {
-        return startDate;
+    public GregorianCalendar getReturnDate() {
+        return returnDate;
     }
-
-    public void setStartDate(GregorianCalendar startDate) {
-        this.startDate = startDate;
+    public boolean isEdited() {
+        return isEdited;
     }
-
-    public GregorianCalendar getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(GregorianCalendar endDate) {
-        this.endDate = endDate;
-    }
-
-    public LatLng getOriginLatLng() {
-        return originLatLng;
-    }
-
-    public void setOriginLatLng(LatLng originLatLng) {
-        this.originLatLng = originLatLng;
-    }
-
     public LatLng getDestinationLatLng() {
         return destinationLatLng;
     }
-
-    public void setDestinationLatLng(LatLng destinationLatLng) {
-        this.destinationLatLng = destinationLatLng;
+    public LatLng getOriginLatLng() {
+        return originLatLng;
     }
-
+    public String getOriginDescription() {
+        return originDescription;
+    }
+    public String getDestinationDescription() {
+        return destinationDescription;
+    }
     public boolean isIncludeReturn() {
         return includeReturn;
     }
 
+    public void setTripId(String tripId) {
+        this.tripId = tripId;
+        isEdited = true;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+        isEdited = true;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+        isEdited = true;
+    }
+
+    public void setDepartureDate(GregorianCalendar departureDate) {
+        this.departureDate = departureDate;
+        isEdited = true;
+    }
+
+    public void setReturnDate(GregorianCalendar returnDate) {
+        this.returnDate = returnDate;
+        isEdited = true;
+    }
+
+    public void setOriginLatLng(LatLng originLatLng) {
+        this.originLatLng = originLatLng;
+        isEdited = true;
+    }
+
+    public void setDestinationLatLng(LatLng destinationLatLng) {
+        this.destinationLatLng = destinationLatLng;
+        isEdited = true;
+    }
+
     public void setIncludeReturn(boolean includeReturn) {
         this.includeReturn = includeReturn;
+        isEdited = true;
+    }
+
+    public void setOriginDescription(String originDescription) {
+        this.originDescription = originDescription;
+    }
+
+    public void setDestinationDescription(String destinationDescription) {
+        this.destinationDescription = destinationDescription;
     }
 }
