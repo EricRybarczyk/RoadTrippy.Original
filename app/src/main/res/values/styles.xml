@@ -57,7 +57,7 @@
         <item name="android:focusable">true</item>
         <item name="android:clickable">true</item>
         <item name="android:gravity">center_vertical|start</item>
-        <item name="android:width">175sp</item>
+        <item name="android:width">185sp</item>
         <item name="android:textColor">@color/colorTextSubdued</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textStyle">normal</item>

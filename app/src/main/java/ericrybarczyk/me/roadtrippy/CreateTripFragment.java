@@ -64,11 +64,12 @@ public class CreateTripFragment extends Fragment
         ButterKnife.bind(this, rootView);
         InputUtils.hideKeyboardFrom(getContext(), rootView);
 
-        // TODO: handle not showing the date if user hasn't actually set anything yet (don't show default date unless they picked that date)
+        // TODO: probably need to refine isEdited to be per-value and not just the ViewModel as a whole, so only edited items update the display
         if (tripViewModel.isEdited()) {
             departureDateButton.setText(DateUtils.formatDate(tripViewModel.getDepartureDate()));
             returnDateButton.setText(DateUtils.formatDate(tripViewModel.getReturnDate()));
             originButton.setText(tripViewModel.getOriginDescription());
+            destinationButton.setText(tripViewModel.getDestinationDescription());
         }
 
         departureDateButton.setOnClickListener(v -> {
@@ -96,13 +97,15 @@ public class CreateTripFragment extends Fragment
             datePickerDialog.show(getChildFragmentManager(), FragmentTags.TAG_RETURN_DATE_DIALOG);
         });
 
-        // TODO: originButton open a custom dialog where they can pick "Home" as starting point or else "somewhere else" which would take them to a map/search
         originButton.setOnClickListener(v -> {
             TripOriginPickerFragment pickerFragment = TripOriginPickerFragment.newInstance(this);
             pickerFragment.show(getChildFragmentManager(), TAG_PICK_ORIGIN_DIALOG);
         });
 
-        // TODO: destinationButton might just show the map/search but maybe give option to pick from a "trip idea"
+        destinationButton.setOnClickListener(v -> {
+            mapDisplayRequestListener.onMapDisplayRequested(this, RequestCodes.TRIP_DESTINATION_REQUEST_CODE, FragmentTags.FRAG_TAG_CREATE_TRIP);
+        });
+
 
         rootView.clearFocus(); // TODO: test if this helps prevent showing keyboard when app is opened from background
         return rootView;

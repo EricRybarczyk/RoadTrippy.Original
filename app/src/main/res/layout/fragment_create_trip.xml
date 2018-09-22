@@ -20,9 +20,6 @@
 
     <!-- TODO: look into using Guidelines instead of the Padding attributes above, as seen here: https://developer.android.com/reference/android/support/percent/PercentRelativeLayout -->
 
-    <!-- TODO: this layout needs some spacing adjustments -->
-    <!-- TODO: make sure we have scrolling on smaller screens -->
-
     <android.support.constraint.Guideline
         android:id="@+id/right_inset_guideline"
         android:layout_width="wrap_content"
@@ -39,7 +36,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <!-- trip name -->
     <EditText
         android:id="@+id/trip_name_text"
         android:layout_width="match_parent"
@@ -63,7 +59,6 @@
         app:layout_constraintTop_toBottomOf="@id/trip_name_text"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <!-- departure date -->
     <Button
         android:id="@+id/departure_date_button"
         style="@style/AppButton"
@@ -75,7 +70,6 @@
         app:layout_constraintTop_toBottomOf="@id/trip_name_sub_hint"
         app:layout_constraintStart_toStartOf="parent"/>
 
-    <!-- return date -->
     <Button
         android:id="@+id/return_date_button"
         style="@style/AppButton"
@@ -87,7 +81,6 @@
         app:layout_constraintTop_toBottomOf="@id/departure_date_button"
         app:layout_constraintStart_toStartOf="parent"/>
 
-    <!-- origin -->
     <Button
         android:id="@+id/origin_button"
         style="@style/AppButton"
@@ -99,7 +92,6 @@
         app:layout_constraintTop_toBottomOf="@id/return_date_button"
         app:layout_constraintStart_toStartOf="parent"/>
 
-    <!-- destination -->
     <Button
         android:id="@+id/destination_button"
         style="@style/AppButton"
@@ -111,7 +103,6 @@
         app:layout_constraintTop_toBottomOf="@id/origin_button"
         app:layout_constraintStart_toStartOf="parent"/>
 
-    <!-- return direction option-->
     <CheckBox
         android:id="@+id/option_return_directions"
         android:layout_width="wrap_content"
