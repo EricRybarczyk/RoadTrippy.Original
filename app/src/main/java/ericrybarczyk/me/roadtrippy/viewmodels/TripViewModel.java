@@ -8,8 +8,6 @@ import java.util.GregorianCalendar;
 import java.util.UUID;
 
 public class TripViewModel extends ViewModel {
-    private String tripId;
-    private String userId;
     private String description;
     private GregorianCalendar departureDate;
     private GregorianCalendar returnDate;
@@ -21,23 +19,8 @@ public class TripViewModel extends ViewModel {
     private boolean isEdited; // to help UI know if dates are selected by user or if just new instance defaults
 
     public TripViewModel() {
-        tripId = UUID.randomUUID().toString();
         departureDate = new GregorianCalendar();
         returnDate = new GregorianCalendar();
-    }
-
-    public String getTripId() {
-        return tripId;
-    }
-
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-        isEdited = true;
     }
 
     public String getDescription() {

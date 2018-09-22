@@ -70,6 +70,7 @@ public class CreateTripFragment extends Fragment
             returnDateButton.setText(DateUtils.formatDate(tripViewModel.getReturnDate()));
             originButton.setText(tripViewModel.getOriginDescription());
             destinationButton.setText(tripViewModel.getDestinationDescription());
+            optionReturnDirections.setChecked(tripViewModel.isIncludeReturn());
         }
 
         departureDateButton.setOnClickListener(v -> {
