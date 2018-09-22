@@ -29,40 +29,10 @@ public class TripViewModel extends ViewModel {
     public String getTripId() {
         return tripId;
     }
+
+
     public String getUserId() {
         return userId;
-    }
-    public String getDescription() {
-        return description;
-    }
-    public GregorianCalendar getDepartureDate() {
-        return departureDate;
-    }
-    public GregorianCalendar getReturnDate() {
-        return returnDate;
-    }
-    public boolean isEdited() {
-        return isEdited;
-    }
-    public LatLng getDestinationLatLng() {
-        return destinationLatLng;
-    }
-    public LatLng getOriginLatLng() {
-        return originLatLng;
-    }
-    public String getOriginDescription() {
-        return originDescription;
-    }
-    public String getDestinationDescription() {
-        return destinationDescription;
-    }
-    public boolean isIncludeReturn() {
-        return includeReturn;
-    }
-
-    public void setTripId(String tripId) {
-        this.tripId = tripId;
-        isEdited = true;
     }
 
     public void setUserId(String userId) {
@@ -70,9 +40,17 @@ public class TripViewModel extends ViewModel {
         isEdited = true;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
     public void setDescription(String description) {
         this.description = description;
         isEdited = true;
+    }
+
+    public GregorianCalendar getDepartureDate() {
+        return departureDate;
     }
 
     public void setDepartureDate(GregorianCalendar departureDate) {
@@ -80,9 +58,17 @@ public class TripViewModel extends ViewModel {
         isEdited = true;
     }
 
+    public GregorianCalendar getReturnDate() {
+        return returnDate;
+    }
+
     public void setReturnDate(GregorianCalendar returnDate) {
         this.returnDate = returnDate;
         isEdited = true;
+    }
+
+    public LatLng getOriginLatLng() {
+        return originLatLng;
     }
 
     public void setOriginLatLng(LatLng originLatLng) {
@@ -90,9 +76,41 @@ public class TripViewModel extends ViewModel {
         isEdited = true;
     }
 
+    public LatLng getDestinationLatLng() {
+        return destinationLatLng;
+    }
+
     public void setDestinationLatLng(LatLng destinationLatLng) {
         this.destinationLatLng = destinationLatLng;
         isEdited = true;
+    }
+
+    public String getOriginDescription() {
+        if (originDescription == null) {
+            return "";
+        }
+        return originDescription;
+    }
+
+    public void setOriginDescription(String originDescription) {
+        this.originDescription = originDescription;
+        isEdited = true;
+    }
+
+    public String getDestinationDescription() {
+        if (destinationDescription == null) {
+            return "";
+        }
+        return destinationDescription;
+    }
+
+    public void setDestinationDescription(String destinationDescription) {
+        this.destinationDescription = destinationDescription;
+        isEdited = true;
+    }
+
+    public boolean isIncludeReturn() {
+        return includeReturn;
     }
 
     public void setIncludeReturn(boolean includeReturn) {
@@ -100,11 +118,7 @@ public class TripViewModel extends ViewModel {
         isEdited = true;
     }
 
-    public void setOriginDescription(String originDescription) {
-        this.originDescription = originDescription;
-    }
-
-    public void setDestinationDescription(String destinationDescription) {
-        this.destinationDescription = destinationDescription;
+    public boolean isEdited() {
+        return isEdited;
     }
 }

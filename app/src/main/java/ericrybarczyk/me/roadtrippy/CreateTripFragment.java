@@ -62,16 +62,17 @@ public class CreateTripFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_create_trip, container, false);
         ButterKnife.bind(this, rootView);
+        InputUtils.hideKeyboardFrom(getContext(), rootView);
 
         // TODO: handle not showing the date if user hasn't actually set anything yet (don't show default date unless they picked that date)
         if (tripViewModel.isEdited()) {
             departureDateButton.setText(DateUtils.formatDate(tripViewModel.getDepartureDate()));
             returnDateButton.setText(DateUtils.formatDate(tripViewModel.getReturnDate()));
-            originButton.setText(String.valueOf(tripViewModel.getOriginLatLng().toString()));
+            originButton.setText(tripViewModel.getOriginDescription());
         }
 
         departureDateButton.setOnClickListener(v -> {
-            Log.i(TAG, "onClick for departureDateButton");
+            departureDateButton.requestFocus();
             InputUtils.hideKeyboardFrom(getContext(), rootView);
             DatePickerFragment datePickerDialog = new DatePickerFragment();
 
@@ -83,7 +84,7 @@ public class CreateTripFragment extends Fragment
             datePickerDialog.show(getChildFragmentManager(), FragmentTags.TAG_DEPARTURE_DATE_DIALOG);
         });
         returnDateButton.setOnClickListener(v -> {
-            Log.i(TAG, "onClick for returnDateButton");
+            returnDateButton.requestFocus();
             InputUtils.hideKeyboardFrom(getContext(), rootView);
             DatePickerFragment datePickerDialog = new DatePickerFragment();
 
@@ -131,15 +132,15 @@ public class CreateTripFragment extends Fragment
     }
 
     @Override
-    public void onLocationSelected(LatLng location, int requestCode) {
+    public void onLocationSelected(LatLng location, int requestCode, String locationDescription) {
         switch (requestCode) {
             case RequestCodes.TRIP_ORIGIN_REQUEST_CODE:
                 tripViewModel.setOriginLatLng(location);
-                originButton.setText(String.valueOf(requestCode)); // TODO: shift to a Model object that has appropriate text
+                tripViewModel.setOriginDescription(locationDescription);
                 break;
             case RequestCodes.TRIP_DESTINATION_REQUEST_CODE:
                 tripViewModel.setDestinationLatLng(location);
-                destinationButton.setText(String.valueOf(requestCode)); // TODO: shift to a Model object that has appropriate text
+                tripViewModel.setDestinationDescription(locationDescription);
                 break;
             default:
                 throw new IllegalArgumentException("Invalid requestCode argument: " + String.valueOf(requestCode));

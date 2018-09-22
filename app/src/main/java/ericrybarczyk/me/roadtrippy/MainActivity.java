@@ -7,7 +7,6 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -41,6 +40,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import ericrybarczyk.me.roadtrippy.util.FragmentTags;
+import ericrybarczyk.me.roadtrippy.util.InputUtils;
 import ericrybarczyk.me.roadtrippy.util.RequestCodes;
 
 
@@ -289,6 +289,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void loadFragment(Fragment fragment, String fragmentTag) {
+        InputUtils.hideKeyboard(this);
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.content_container, fragment, fragmentTag)

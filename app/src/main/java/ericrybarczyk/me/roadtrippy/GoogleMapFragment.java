@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -34,6 +35,7 @@ public class GoogleMapFragment extends Fragment
 
     @BindView(R.id.instructions_text) protected TextView instructionsText;
     @BindView(R.id.set_location_button) protected Button setLocationButton;
+    @BindView(R.id.description_text) protected EditText locationDescription;
 
     private TripViewModel tripViewModel;
     private SupportMapFragment mapFragment;
@@ -96,7 +98,7 @@ public class GoogleMapFragment extends Fragment
 
         setLocationButton.setOnClickListener(v -> {
             if (v.getId() == setLocationButton.getId()) {
-                locationSelectedListener.onLocationSelected(mapLocation, requestCode);
+                locationSelectedListener.onLocationSelected(mapLocation, requestCode, locationDescription.getText().toString());
                 fragmentNavigationRequestListener.onFragmentNavigationRequest(returnFragmentTag);
             }
         });
@@ -156,7 +158,7 @@ public class GoogleMapFragment extends Fragment
     }
 
     public interface LocationSelectedListener {
-        void onLocationSelected(LatLng location, int requestCode);
+        void onLocationSelected(LatLng location, int requestCode, String locationDescription);
     }
 
 }
