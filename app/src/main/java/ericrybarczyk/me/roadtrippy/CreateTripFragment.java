@@ -28,8 +28,7 @@ import ericrybarczyk.me.roadtrippy.viewmodels.TripViewModel;
 
 public class CreateTripFragment extends Fragment
         implements  TripOriginPickerFragment.TripOriginSelectedListener,
-                    DatePickerFragment.TripDateSelectedListener,
-                    GoogleMapFragment.LocationSelectedListener {
+                    DatePickerFragment.TripDateSelectedListener {
 
     private TripViewModel tripViewModel;
 
@@ -104,7 +103,7 @@ public class CreateTripFragment extends Fragment
         });
 
         destinationButton.setOnClickListener(v -> {
-            mapDisplayRequestListener.onMapDisplayRequested(this, RequestCodes.TRIP_DESTINATION_REQUEST_CODE, FragmentTags.FRAG_TAG_CREATE_TRIP);
+            mapDisplayRequestListener.onMapDisplayRequested(RequestCodes.TRIP_DESTINATION_REQUEST_CODE, FragmentTags.FRAG_TAG_CREATE_TRIP);
         });
 
 
@@ -124,7 +123,7 @@ public class CreateTripFragment extends Fragment
         if (context instanceof MapDisplayRequestListener) {
             mapDisplayRequestListener = (MapDisplayRequestListener) context;
         } else {
-            throw new RuntimeException(context.toString() + " must implement OnFabDisplayRequestListener");
+            throw new RuntimeException(context.toString() + " must implement MapDisplayRequestListener");
         }
 
     }
@@ -133,22 +132,6 @@ public class CreateTripFragment extends Fragment
     public void onDetach() {
         super.onDetach();
         mapDisplayRequestListener = null;
-    }
-
-    @Override
-    public void onLocationSelected(LatLng location, int requestCode, String locationDescription) {
-        switch (requestCode) {
-            case RequestCodes.TRIP_ORIGIN_REQUEST_CODE:
-                tripViewModel.setOriginLatLng(location);
-                tripViewModel.setOriginDescription(locationDescription);
-                break;
-            case RequestCodes.TRIP_DESTINATION_REQUEST_CODE:
-                tripViewModel.setDestinationLatLng(location);
-                tripViewModel.setDestinationDescription(locationDescription);
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid requestCode argument: " + String.valueOf(requestCode));
-        }
     }
 
     @Override
@@ -175,12 +158,10 @@ public class CreateTripFragment extends Fragment
         if (key.equals(TripOriginPickerFragment.KEY_HOME_ORIGIN)) {
             tripViewModel.setOriginLatLng(HOME_LOCATION);
         } else {
-            mapDisplayRequestListener.onMapDisplayRequested(this, RequestCodes.TRIP_ORIGIN_REQUEST_CODE, FragmentTags.FRAG_TAG_CREATE_TRIP);
+            mapDisplayRequestListener.onMapDisplayRequested(RequestCodes.TRIP_ORIGIN_REQUEST_CODE, FragmentTags.FRAG_TAG_CREATE_TRIP);
         }
     }
 
-    public interface MapDisplayRequestListener {
-        void onMapDisplayRequested(GoogleMapFragment.LocationSelectedListener callback, int requestCode, String returnToFragmentTag);
-    }
+
 
 }

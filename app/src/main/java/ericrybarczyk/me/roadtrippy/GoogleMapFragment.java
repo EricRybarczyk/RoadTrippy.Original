@@ -72,9 +72,9 @@ public class GoogleMapFragment extends Fragment
     public GoogleMapFragment() {
     }
 
-    public static GoogleMapFragment newInstance(Location initialLocation, LocationSelectedListener listener, int requestCode, String returnToFragmentTag) {
+    public static GoogleMapFragment newInstance(Location initialLocation, int requestCode, String returnToFragmentTag) {
         GoogleMapFragment mapFragment = new GoogleMapFragment();
-        mapFragment.setLocationSelectedListener(listener);
+        //mapFragment.setLocationSelectedListener(listener);
         Bundle args = new Bundle();
         args.putDouble(KEY_START_LAT, initialLocation.getLatitude());
         args.putDouble(KEY_START_LNG, initialLocation.getLongitude());
@@ -139,12 +139,18 @@ public class GoogleMapFragment extends Fragment
         } else {
             throw new RuntimeException(context.toString() + " must implement FragmentNavigationRequestListener");
         }
+        if (context instanceof LocationSelectedListener) {
+            locationSelectedListener = (LocationSelectedListener) context;
+        } else {
+            throw new RuntimeException(context.toString() + " must implement LocationSelectedListener");
+        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         fragmentNavigationRequestListener = null;
+        locationSelectedListener = null;
     }
 
     @SuppressLint("MissingPermission")

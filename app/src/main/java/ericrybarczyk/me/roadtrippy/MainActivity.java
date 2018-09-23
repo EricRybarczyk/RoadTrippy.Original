@@ -2,6 +2,7 @@ package ericrybarczyk.me.roadtrippy;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -25,6 +26,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.FirebaseDatabase;
@@ -33,20 +35,25 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import ericrybarczyk.me.roadtrippy.util.DateUtils;
 import ericrybarczyk.me.roadtrippy.util.FragmentTags;
 import ericrybarczyk.me.roadtrippy.util.InputUtils;
 import ericrybarczyk.me.roadtrippy.util.RequestCodes;
+import ericrybarczyk.me.roadtrippy.viewmodels.TripViewModel;
 
 
 public class MainActivity extends AppCompatActivity
         implements  NavigationView.OnNavigationItemSelectedListener,
-                    CreateTripFragment.MapDisplayRequestListener,
+                    MapDisplayRequestListener,
+                    GoogleMapFragment.LocationSelectedListener,
                     FragmentNavigationRequestListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -61,6 +68,7 @@ public class MainActivity extends AppCompatActivity
     private FirebaseAuth.AuthStateListener authStateListener;
     private Location lastKnownLocation;
     private FusedLocationProviderClient fusedLocationProviderClient;
+    private TripViewModel tripViewModel;
 
     @BindView(R.id.toolbar) protected Toolbar toolbar;
     @BindView(R.id.drawer_layout) protected DrawerLayout drawer;
@@ -72,6 +80,8 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
+
+        tripViewModel = ViewModelProviders.of(this).get(TripViewModel.class);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -299,9 +309,25 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onMapDisplayRequested(GoogleMapFragment.LocationSelectedListener callbackListener, int requestCode, String returnToFragmentTag) {
-        Fragment fragment = GoogleMapFragment.newInstance(lastKnownLocation, callbackListener, requestCode, returnToFragmentTag);
+    public void onMapDisplayRequested(int requestCode, String returnToFragmentTag) {
+        Fragment fragment = GoogleMapFragment.newInstance(lastKnownLocation, requestCode, returnToFragmentTag);
         loadFragment(fragment, FragmentTags.FRAG_TAG_MAP_SELECT_LOCATION);
+    }
+
+    @Override
+    public void onLocationSelected(LatLng location, int requestCode, String locationDescription) {
+        switch (requestCode) {
+            case RequestCodes.TRIP_ORIGIN_REQUEST_CODE:
+                tripViewModel.setOriginLatLng(location);
+                tripViewModel.setOriginDescription(locationDescription);
+                break;
+            case RequestCodes.TRIP_DESTINATION_REQUEST_CODE:
+                tripViewModel.setDestinationLatLng(location);
+                tripViewModel.setDestinationDescription(locationDescription);
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid requestCode argument: " + String.valueOf(requestCode));
+        }
     }
 
 
