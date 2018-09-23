@@ -35,15 +35,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import ericrybarczyk.me.roadtrippy.util.DateUtils;
 import ericrybarczyk.me.roadtrippy.util.FragmentTags;
 import ericrybarczyk.me.roadtrippy.util.InputUtils;
 import ericrybarczyk.me.roadtrippy.util.RequestCodes;
@@ -169,7 +166,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState); // call super first to restore view hierarchy
-        activeFragmentTag = savedInstanceState.getString(KEY_ACTIVE_FRAGMENT_TAG, FragmentTags.FRAG_TAG_TRIP_LIST);
+        activeFragmentTag = savedInstanceState.getString(KEY_ACTIVE_FRAGMENT_TAG, FragmentTags.TAG_TRIP_LIST);
         Fragment fragment = getFragmentInstance(activeFragmentTag);
         loadFragment(fragment, activeFragmentTag);
     }
@@ -189,8 +186,8 @@ public class MainActivity extends AppCompatActivity
 
     @OnClick(R.id.fab)
     public void onFabClick(View view) {
-        Fragment fragment = getFragmentInstance(FragmentTags.FRAG_TAG_CREATE_TRIP);
-        loadFragment(fragment, FragmentTags.FRAG_TAG_CREATE_TRIP);
+        Fragment fragment = getFragmentInstance(FragmentTags.TAG_CREATE_TRIP);
+        loadFragment(fragment, FragmentTags.TAG_CREATE_TRIP);
     }
 
     @Override
@@ -237,10 +234,10 @@ public class MainActivity extends AppCompatActivity
         // TODO: support all fragments here
         switch (item.getItemId()) {
             case R.id.nav_trip_plans:
-                fragmentTag = FragmentTags.FRAG_TAG_TRIP_LIST;
+                fragmentTag = FragmentTags.TAG_TRIP_LIST;
                 break;
             case R.id.nav_create_trip:
-                fragmentTag = FragmentTags.FRAG_TAG_CREATE_TRIP;
+                fragmentTag = FragmentTags.TAG_CREATE_TRIP;
                 break;
             case R.id.nav_trip_ideas:
 
@@ -252,7 +249,7 @@ public class MainActivity extends AppCompatActivity
 
                 break;
             default:
-                fragmentTag = FragmentTags.FRAG_TAG_TRIP_LIST;
+                fragmentTag = FragmentTags.TAG_TRIP_LIST;
                 break;
         }
 
@@ -274,11 +271,14 @@ public class MainActivity extends AppCompatActivity
         }
 
         switch (fragmentTag) {
-            case FragmentTags.FRAG_TAG_TRIP_LIST:
+            case FragmentTags.TAG_TRIP_LIST:
                 fragmentClass = TripListFragment.class;
                 break;
-            case FragmentTags.FRAG_TAG_CREATE_TRIP:
+            case FragmentTags.TAG_CREATE_TRIP:
                 fragmentClass = CreateTripFragment.class;
+                break;
+            case FragmentTags.TAG_TRIP_OVERVIEW_MAP:
+                fragmentClass = TripOverviewMapFragment.class;
                 break;
 
             // TODO: support all fragments here
@@ -311,7 +311,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onMapDisplayRequested(int requestCode, String returnToFragmentTag) {
         Fragment fragment = GoogleMapFragment.newInstance(lastKnownLocation, requestCode, returnToFragmentTag);
-        loadFragment(fragment, FragmentTags.FRAG_TAG_MAP_SELECT_LOCATION);
+        loadFragment(fragment, FragmentTags.TAG_MAP_SELECT_LOCATION);
     }
 
     @Override

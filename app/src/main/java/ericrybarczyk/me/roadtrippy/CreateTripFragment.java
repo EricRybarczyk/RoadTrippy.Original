@@ -38,8 +38,10 @@ public class CreateTripFragment extends Fragment
     @BindView(R.id.origin_button) protected Button originButton;
     @BindView(R.id.destination_button) protected Button destinationButton;
     @BindView(R.id.option_return_directions) protected CheckBox optionReturnDirections;
+    @BindView(R.id.create_trip_next_button) protected Button nextStepButton;
 
     private MapDisplayRequestListener mapDisplayRequestListener;
+    private FragmentNavigationRequestListener fragmentNavigationRequestListener;
     private static final String TAG = CreateTripFragment.class.getSimpleName();
     private static final String TAG_PICK_ORIGIN_DIALOG= "pick_origin_dialog";
 
@@ -65,6 +67,7 @@ public class CreateTripFragment extends Fragment
 
         // TODO: probably need to refine isEdited to be per-value and not just the ViewModel as a whole, so only edited items update the display
         if (tripViewModel.isEdited()) {
+            tripNameText.setText(tripViewModel.getDescription());
             departureDateButton.setText(DateUtils.formatDate(tripViewModel.getDepartureDate()));
             returnDateButton.setText(DateUtils.formatDate(tripViewModel.getReturnDate()));
             originButton.setText(tripViewModel.getOriginDescription());
@@ -103,9 +106,14 @@ public class CreateTripFragment extends Fragment
         });
 
         destinationButton.setOnClickListener(v -> {
-            mapDisplayRequestListener.onMapDisplayRequested(RequestCodes.TRIP_DESTINATION_REQUEST_CODE, FragmentTags.FRAG_TAG_CREATE_TRIP);
+            mapDisplayRequestListener.onMapDisplayRequested(RequestCodes.TRIP_DESTINATION_REQUEST_CODE, FragmentTags.TAG_CREATE_TRIP);
         });
 
+        nextStepButton.setOnClickListener(v -> {
+            // TODO: input validation
+            tripViewModel.setDescription(tripNameText.getText().toString());
+            fragmentNavigationRequestListener.onFragmentNavigationRequest(FragmentTags.TAG_TRIP_OVERVIEW_MAP);
+        });
 
         rootView.clearFocus(); // TODO: test if this helps prevent showing keyboard when app is opened from background
         return rootView;
@@ -125,13 +133,18 @@ public class CreateTripFragment extends Fragment
         } else {
             throw new RuntimeException(context.toString() + " must implement MapDisplayRequestListener");
         }
-
+        if (context instanceof FragmentNavigationRequestListener) {
+            fragmentNavigationRequestListener = (FragmentNavigationRequestListener) context;
+        } else {
+            throw new RuntimeException(context.toString() + " must implement FragmentNavigationRequestListener");
+        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         mapDisplayRequestListener = null;
+        fragmentNavigationRequestListener = null;
     }
 
     @Override
@@ -158,7 +171,7 @@ public class CreateTripFragment extends Fragment
         if (key.equals(TripOriginPickerFragment.KEY_HOME_ORIGIN)) {
             tripViewModel.setOriginLatLng(HOME_LOCATION);
         } else {
-            mapDisplayRequestListener.onMapDisplayRequested(RequestCodes.TRIP_ORIGIN_REQUEST_CODE, FragmentTags.FRAG_TAG_CREATE_TRIP);
+            mapDisplayRequestListener.onMapDisplayRequested(RequestCodes.TRIP_ORIGIN_REQUEST_CODE, FragmentTags.TAG_CREATE_TRIP);
         }
     }
 

@@ -74,7 +74,6 @@ public class GoogleMapFragment extends Fragment
 
     public static GoogleMapFragment newInstance(Location initialLocation, int requestCode, String returnToFragmentTag) {
         GoogleMapFragment mapFragment = new GoogleMapFragment();
-        //mapFragment.setLocationSelectedListener(listener);
         Bundle args = new Bundle();
         args.putDouble(KEY_START_LAT, initialLocation.getLatitude());
         args.putDouble(KEY_START_LNG, initialLocation.getLongitude());
@@ -82,10 +81,6 @@ public class GoogleMapFragment extends Fragment
         args.putString(KEY_RETURN_FRAGMENT_TAG, returnToFragmentTag);
         mapFragment.setArguments(args);
         return mapFragment;
-    }
-
-    void setLocationSelectedListener(LocationSelectedListener listener) {
-        this.locationSelectedListener = listener;
     }
 
     @Override

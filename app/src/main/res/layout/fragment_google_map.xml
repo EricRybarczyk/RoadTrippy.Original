@@ -79,7 +79,6 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/map_container"
         app:layout_constraintBottom_toTopOf="@+id/guideline_bottom"
-
         app:layout_constraintEnd_toEndOf="@id/guideline_end"
         android:text="@string/map_select_location_button_save_label"
         style="@style/AccentButton"/>
