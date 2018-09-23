@@ -52,6 +52,10 @@ public class GoogleMapFragment extends Fragment
     private String googleMapsApiKey;
     private GoogleMap googleMap;
 
+    private static final float MAP_DEFAULT_ZOOM = 12.0f;
+    private static final float MAP_DEFAULT_BEARING = 360.0f;
+    private static final float MAP_DEFAULT_TILT = 0.0f;
+
     public static final String KEY_START_LAT = "start_location_latitude";
     public static final String KEY_START_LNG = "start_location_longitude";
     public static final String KEY_REQUEST_CODE = "request_code_from_caller";
@@ -90,9 +94,15 @@ public class GoogleMapFragment extends Fragment
 
         googleMapsApiKey = getString(R.string.google_maps_key);
 
-        if (getArguments() != null) {
-            requestCode = getArguments().getInt(KEY_REQUEST_CODE);
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(KEY_START_LAT)) {
+                mapLocation = new LatLng(savedInstanceState.getDouble(KEY_START_LAT), savedInstanceState.getDouble(KEY_START_LNG));
+                requestCode = savedInstanceState.getInt(KEY_REQUEST_CODE);
+                returnFragmentTag = savedInstanceState.getString(KEY_RETURN_FRAGMENT_TAG);
+            }
+        } else if (getArguments() != null) {
             mapLocation = new LatLng(getArguments().getDouble(KEY_START_LAT), getArguments().getDouble(KEY_START_LNG));
+            requestCode = getArguments().getInt(KEY_REQUEST_CODE);
             returnFragmentTag = getArguments().getString(KEY_RETURN_FRAGMENT_TAG);
         }
 
@@ -113,12 +123,6 @@ public class GoogleMapFragment extends Fragment
                 fragmentNavigationRequestListener.onFragmentNavigationRequest(returnFragmentTag);
             }
         });
-
-//        cameraPosition = new CameraPosition.Builder().target(mapLocation)
-//                        .zoom(12.0f)
-//                        .bearing(360f)
-//                        .tilt(0f)
-//                        .build();
 
         rootView.clearFocus(); // TODO: test if this helps prevent showing keyboard when app is opened from background
 
@@ -150,15 +154,11 @@ public class GoogleMapFragment extends Fragment
         googleMap.setOnMapClickListener(this);
         googleMap.setMyLocationEnabled(true);
 
-        //googleMap.addMarker(new MarkerOptions().position(mapLocation));
-
         UiSettings uiSettings = googleMap.getUiSettings();
         //uiSettings.setMyLocationButtonEnabled(true); // when something is selected on map, this shows two Maps Intents button icons (Directions, Map)
         uiSettings.setZoomControlsEnabled(true);
         uiSettings.setZoomGesturesEnabled(true);
 
-//        CameraUpdate cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition);
-//        map.animateCamera(cameraUpdate);
         updateMapView();
     }
 
@@ -171,11 +171,11 @@ public class GoogleMapFragment extends Fragment
     private void updateMapView() {
         googleMap.clear();
         googleMap.addMarker(new MarkerOptions().position(mapLocation));
-            cameraPosition = new CameraPosition.Builder().target(mapLocation)
-                    .zoom(12.0f)
-                    .bearing(360f)
-                    .tilt(0f)
-                    .build();
+        cameraPosition = new CameraPosition.Builder().target(mapLocation)
+                .zoom(MAP_DEFAULT_ZOOM)
+                .bearing(MAP_DEFAULT_BEARING)
+                .tilt(MAP_DEFAULT_TILT)
+                .build();
         CameraUpdate cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition);
         googleMap.animateCamera(cameraUpdate);
     }
@@ -225,6 +225,14 @@ public class GoogleMapFragment extends Fragment
         }
     }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
+        savedInstanceState.putDouble(KEY_START_LAT, mapLocation.latitude);
+        savedInstanceState.putDouble(KEY_START_LNG, mapLocation.longitude);
+        savedInstanceState.putInt(KEY_REQUEST_CODE, requestCode);
+        savedInstanceState.putString(KEY_RETURN_FRAGMENT_TAG, returnFragmentTag);
+        super.onSaveInstanceState(savedInstanceState);
+    }
 
     public interface LocationSelectedListener {
         void onLocationSelected(LatLng location, int requestCode, String locationDescription);
