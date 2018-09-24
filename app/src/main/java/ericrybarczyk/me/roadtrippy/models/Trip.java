@@ -10,19 +10,26 @@ public class Trip {
     private String tripId;
     private String userId;
     private String description;
-    private GregorianCalendar departureDate;
-    private GregorianCalendar returnDate;
-    private LatLng originLatLng;
-    private LatLng destinationLatLng;
+    private double originLatitude;
+    private double originLongitude;
+    private double destinationLatitude;
+    private double destinationLongitude;
     private boolean includeReturn;
     private boolean isArchived;
-    private GregorianCalendar createDate;
-    private GregorianCalendar modifiedDate;
-    private ArrayList<TripDay> tripDays;
+
+
+//    private GregorianCalendar departureDate;
+//    private GregorianCalendar returnDate;
+//    private LatLng originLatLng;
+//    private LatLng destinationLatLng;
+//    private GregorianCalendar createDate;
+//    private GregorianCalendar modifiedDate;
+//    private ArrayList<TripDay> tripDays;
+
 
     public Trip() {
         tripId = UUID.randomUUID().toString();
-        tripDays = new ArrayList<>();
+//        tripDays = new ArrayList<>();
     }
 
     public String getTripId() {
@@ -49,39 +56,7 @@ public class Trip {
         this.description = description;
     }
 
-    public GregorianCalendar getDepartureDate() {
-        return departureDate;
-    }
-
-    public void setDepartureDate(GregorianCalendar departureDate) {
-        this.departureDate = departureDate;
-    }
-
-    public GregorianCalendar getReturnDate() {
-        return returnDate;
-    }
-
-    public void setReturnDate(GregorianCalendar returnDate) {
-        this.returnDate = returnDate;
-    }
-
-    public LatLng getOriginLatLng() {
-        return originLatLng;
-    }
-
-    public void setOriginLatLng(LatLng originLatLng) {
-        this.originLatLng = originLatLng;
-    }
-
-    public LatLng getDestinationLatLng() {
-        return destinationLatLng;
-    }
-
-    public void setDestinationLatLng(LatLng destinationLatLng) {
-        this.destinationLatLng = destinationLatLng;
-    }
-
-    public boolean isIncludeReturn() {
+    public boolean getIncludeReturn() {
         return includeReturn;
     }
 
@@ -89,35 +64,100 @@ public class Trip {
         this.includeReturn = includeReturn;
     }
 
-    public boolean isArchived() {
+    public boolean getIsArchived() {
         return isArchived;
     }
 
-    public void setArchived(boolean archived) {
+    public void setIsArchived(boolean archived) {
         isArchived = archived;
     }
 
-    public GregorianCalendar getCreateDate() {
-        return createDate;
+    public double getOriginLatitude() {
+        return originLatitude;
     }
 
-    public void setCreateDate(GregorianCalendar createDate) {
-        this.createDate = createDate;
+    public void setOriginLatitude(double originLatitude) {
+        this.originLatitude = originLatitude;
     }
 
-    public GregorianCalendar getModifiedDate() {
-        return modifiedDate;
+    public double getOriginLongitude() {
+        return originLongitude;
     }
 
-    public void setModifiedDate(GregorianCalendar modifiedDate) {
-        this.modifiedDate = modifiedDate;
+    public void setOriginLongitude(double originLongitude) {
+        this.originLongitude = originLongitude;
     }
 
-    public ArrayList<TripDay> getTripDays() {
-        return tripDays;
+    public double getDestinationLatitude() {
+        return destinationLatitude;
     }
 
-    public void setTripDays(ArrayList<TripDay> tripDays) {
-        this.tripDays = tripDays;
+    public void setDestinationLatitude(double destinationLatitude) {
+        this.destinationLatitude = destinationLatitude;
     }
+
+    public double getDestinationLongitude() {
+        return destinationLongitude;
+    }
+
+    public void setDestinationLongitude(double destinationLongitude) {
+        this.destinationLongitude = destinationLongitude;
+    }
+
+
+//    public GregorianCalendar getDepartureDate() {
+//        return departureDate;
+//    }
+//
+//    public void setDepartureDate(GregorianCalendar departureDate) {
+//        this.departureDate = departureDate;
+//    }
+//
+//    public GregorianCalendar getReturnDate() {
+//        return returnDate;
+//    }
+//
+//    public void setReturnDate(GregorianCalendar returnDate) {
+//        this.returnDate = returnDate;
+//    }
+//
+//    public LatLng getOriginLatLng() {
+//        return originLatLng;
+//    }
+//
+//    public void setOriginLatLng(LatLng originLatLng) {
+//        this.originLatLng = originLatLng;
+//    }
+//
+//    public LatLng getDestinationLatLng() {
+//        return destinationLatLng;
+//    }
+//
+//    public void setDestinationLatLng(LatLng destinationLatLng) {
+//        this.destinationLatLng = destinationLatLng;
+//    }
+//
+//    public GregorianCalendar getCreateDate() {
+//        return createDate;
+//    }
+//
+//    public void setCreateDate(GregorianCalendar createDate) {
+//        this.createDate = createDate;
+//    }
+//
+//    public GregorianCalendar getModifiedDate() {
+//        return modifiedDate;
+//    }
+//
+//    public void setModifiedDate(GregorianCalendar modifiedDate) {
+//        this.modifiedDate = modifiedDate;
+//    }
+//
+//    public ArrayList<TripDay> getTripDays() {
+//        return tripDays;
+//    }
+//
+//    public void setTripDays(ArrayList<TripDay> tripDays) {
+//        this.tripDays = tripDays;
+//    }
 }

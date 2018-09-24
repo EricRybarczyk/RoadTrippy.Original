@@ -36,6 +36,7 @@ import ericrybarczyk.me.roadtrippy.directions.DirectionsResponse;
 import ericrybarczyk.me.roadtrippy.directions.Route;
 import ericrybarczyk.me.roadtrippy.endpoints.GetDirectionsEndpoint;
 import ericrybarczyk.me.roadtrippy.endpoints.SearchService;
+import ericrybarczyk.me.roadtrippy.engine.TripManager;
 import ericrybarczyk.me.roadtrippy.util.FragmentTags;
 import ericrybarczyk.me.roadtrippy.viewmodels.TripViewModel;
 import retrofit2.Call;
@@ -49,6 +50,7 @@ public class TripOverviewMapFragment extends Fragment implements OnMapReadyCallb
     private String googleMapsApiKey;
     private GoogleMap googleMap;
     private FragmentNavigationRequestListener fragmentNavigationRequestListener;
+    private TripManager.TripSaveRequestListener tripSaveRequestListener;
     private static final String TAG = TripOverviewMapFragment.class.getSimpleName();
 
     @BindView(R.id.heading_create_trip) protected TextView headingText;
@@ -167,7 +169,7 @@ public class TripOverviewMapFragment extends Fragment implements OnMapReadyCallb
     }
 
     private void saveTrip() {
-        Toast.makeText(getActivity(), "Save is not implemented yet!", Toast.LENGTH_LONG).show();
+        tripSaveRequestListener.onTripSaveRequest();
     }
 
     @Override
@@ -178,11 +180,17 @@ public class TripOverviewMapFragment extends Fragment implements OnMapReadyCallb
         } else {
             throw new RuntimeException(context.toString() + " must implement FragmentNavigationRequestListener");
         }
+        if (context instanceof TripManager.TripSaveRequestListener) {
+            tripSaveRequestListener = (TripManager.TripSaveRequestListener) context;
+        }else {
+            throw new RuntimeException(context.toString() + " must implement TripManager.TripSaveRequestListener");
+        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         fragmentNavigationRequestListener = null;
+        tripSaveRequestListener = null;
     }
 }

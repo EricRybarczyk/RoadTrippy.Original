@@ -29,18 +29,22 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import ericrybarczyk.me.roadtrippy.engine.TripManager;
+import ericrybarczyk.me.roadtrippy.models.Trip;
 import ericrybarczyk.me.roadtrippy.util.FragmentTags;
 import ericrybarczyk.me.roadtrippy.util.InputUtils;
 import ericrybarczyk.me.roadtrippy.util.RequestCodes;
@@ -51,7 +55,8 @@ public class MainActivity extends AppCompatActivity
         implements  NavigationView.OnNavigationItemSelectedListener,
                     MapDisplayRequestListener,
                     GoogleMapFragment.LocationSelectedListener,
-                    FragmentNavigationRequestListener {
+                    FragmentNavigationRequestListener,
+                    TripManager.TripSaveRequestListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final String KEY_ACTIVE_FRAGMENT_TAG = "active_fragment_tag";
@@ -61,8 +66,10 @@ public class MainActivity extends AppCompatActivity
 
     private String activeFragmentTag;
     private FirebaseDatabase firebaseDatabase;
+    private DatabaseReference tripsDatabaseReference;
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener authStateListener;
+    private FirebaseUser firebaseUser;
     private Location lastKnownLocation;
     private FusedLocationProviderClient fusedLocationProviderClient;
     private TripViewModel tripViewModel;
@@ -102,11 +109,11 @@ public class MainActivity extends AppCompatActivity
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
+                firebaseUser = firebaseAuth.getCurrentUser();
+                if (firebaseUser != null) {
                     // TODO: look at this https://stackoverflow.com/questions/32806735/refresh-header-in-navigation-drawer/35952939#35952939 and consider different spot to set this username textview
                     View header = navigationView.getHeaderView(0);
-                    activeUsername = user.getDisplayName();
+                    activeUsername = firebaseUser.getDisplayName();
                     TextView usernameText = header.findViewById(R.id.username_display_text);
                     usernameText.setText(activeUsername);
                     onSignedInInitialize(activeUsername);
@@ -115,10 +122,12 @@ public class MainActivity extends AppCompatActivity
 
                     onSignedOutCleanup();
 
-                    // configure supported signin providers
-                    List<AuthUI.IdpConfig> providers = Arrays.asList(
-                            new AuthUI.IdpConfig.GoogleBuilder().build(),
-                            new AuthUI.IdpConfig.EmailBuilder().build());
+                    // configure supported sign-in providers
+                    List<AuthUI.IdpConfig> providers = Collections.singletonList(
+                            new AuthUI.IdpConfig.GoogleBuilder().build());
+//                    List<AuthUI.IdpConfig> providers = Arrays.asList(
+//                            new AuthUI.IdpConfig.GoogleBuilder().build(),
+//                            new AuthUI.IdpConfig.EmailBuilder().build()); // if I decide to add Email sign-in option
 
                     // Create and launch sign-in intent
                     startActivityForResult(
@@ -131,6 +140,20 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         };
+    }
+
+    @Override
+    public void onTripSaveRequest() {
+        TripManager tripManager = new TripManager();
+        Trip trip = tripManager.buildTrip(tripViewModel, firebaseUser.getUid());
+        try {
+            tripsDatabaseReference = firebaseDatabase.getReference().child("trips/" + firebaseUser.getUid());
+            tripsDatabaseReference.push().setValue(trip);
+        } catch (Exception e) {
+            Log.e(TAG, "Firebase Exception: " + e.getMessage());
+            // TODO: clean this up for user, maybe snackbar instead of toast?
+            Toast.makeText(this, "Firebase Fail :-(", Toast.LENGTH_LONG).show();
+        }
     }
 
 
@@ -184,11 +207,11 @@ public class MainActivity extends AppCompatActivity
         // TODO: someDataAdapter.clear() and detachDatabaseReadListener();
     }
 
-    @OnClick(R.id.fab)
-    public void onFabClick(View view) {
-        Fragment fragment = getFragmentInstance(FragmentTags.TAG_CREATE_TRIP);
-        loadFragment(fragment, FragmentTags.TAG_CREATE_TRIP);
-    }
+//    @OnClick(R.id.fab)
+//    public void onFabClick(View view) {
+//        Fragment fragment = getFragmentInstance(FragmentTags.TAG_CREATE_TRIP);
+//        loadFragment(fragment, FragmentTags.TAG_CREATE_TRIP);
+//    }
 
     @Override
     public void onBackPressed() {

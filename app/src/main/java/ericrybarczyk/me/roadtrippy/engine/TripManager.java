@@ -12,17 +12,28 @@ public class TripManager {
 
         trip.setUserId(userId);
         trip.setDescription(tripViewModel.getDescription());
-        trip.setDepartureDate(tripViewModel.getDepartureDate());
-        trip.setReturnDate(tripViewModel.getReturnDate());
-        trip.setOriginLatLng(tripViewModel.getOriginLatLng());
-        trip.setDestinationLatLng(tripViewModel.getDestinationLatLng());
+        trip.setOriginLatitude(tripViewModel.getOriginLatLng().latitude);
+        trip.setOriginLongitude(tripViewModel.getOriginLatLng().longitude);
+        trip.setDestinationLatitude(tripViewModel.getDestinationLatLng().latitude);
+        trip.setDestinationLongitude(tripViewModel.getDestinationLatLng().longitude);
         trip.setIncludeReturn(tripViewModel.isIncludeReturn());
+        trip.setIsArchived(false);
+
+//        trip.setDepartureDate(tripViewModel.getDepartureDate());
+//        trip.setReturnDate(tripViewModel.getReturnDate());
+//        trip.setOriginLatLng(tripViewModel.getOriginLatLng());
+//        trip.setDestinationLatLng(tripViewModel.getDestinationLatLng());
 
         // TODO: build the list of trip days based on DepartureDate and ReturnDate (inclusive)
 
-        trip.setCreateDate(new GregorianCalendar());
-        trip.setModifiedDate(new GregorianCalendar());
+//        trip.setCreateDate(new GregorianCalendar());
+//        trip.setModifiedDate(new GregorianCalendar());
 
         return trip;
     }
+
+    public interface TripSaveRequestListener {
+        void onTripSaveRequest();
+    }
+
 }
