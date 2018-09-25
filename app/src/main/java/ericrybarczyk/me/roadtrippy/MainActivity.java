@@ -29,22 +29,20 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 import ericrybarczyk.me.roadtrippy.engine.TripManager;
-import ericrybarczyk.me.roadtrippy.models.Trip;
+import ericrybarczyk.me.roadtrippy.dto.Trip;
+import ericrybarczyk.me.roadtrippy.persistence.TripRepository;
 import ericrybarczyk.me.roadtrippy.util.FragmentTags;
 import ericrybarczyk.me.roadtrippy.util.InputUtils;
 import ericrybarczyk.me.roadtrippy.util.RequestCodes;
@@ -65,8 +63,6 @@ public class MainActivity extends AppCompatActivity
     private String activeUsername = ANONYMOUS;
 
     private String activeFragmentTag;
-    private FirebaseDatabase firebaseDatabase;
-    private DatabaseReference tripsDatabaseReference;
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener authStateListener;
     private FirebaseUser firebaseUser;
@@ -85,8 +81,6 @@ public class MainActivity extends AppCompatActivity
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
 
-        tripViewModel = ViewModelProviders.of(this).get(TripViewModel.class);
-
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -98,14 +92,16 @@ public class MainActivity extends AppCompatActivity
         verifyPermissions();
         updateLastKnownLocation();
 
-        // initialize Firebase components
-        firebaseDatabase = FirebaseDatabase.getInstance();
+        tripViewModel = ViewModelProviders.of(this).get(TripViewModel.class);
+
         firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
 
 
-        // SOURCE: FirebaseAuth code is directly adapted from Udacity & Google materials,
-        // including the Firebase extracurricular module in the Android Developer Nanodegree program,
-        // and https://github.com/firebase/FirebaseUI-Android/blob/master/auth/README.md
+        /* SOURCE: FirebaseAuth code is directly adapted from Udacity & Google materials,
+           including the Firebase extracurricular module in the Android Developer Nanodegree program,
+           and https://github.com/firebase/FirebaseUI-Android/blob/master/auth/README.md
+        */
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -125,9 +121,10 @@ public class MainActivity extends AppCompatActivity
                     // configure supported sign-in providers
                     List<AuthUI.IdpConfig> providers = Collections.singletonList(
                             new AuthUI.IdpConfig.GoogleBuilder().build());
+// if I decide to add Email sign-in option:
 //                    List<AuthUI.IdpConfig> providers = Arrays.asList(
 //                            new AuthUI.IdpConfig.GoogleBuilder().build(),
-//                            new AuthUI.IdpConfig.EmailBuilder().build()); // if I decide to add Email sign-in option
+//                            new AuthUI.IdpConfig.EmailBuilder().build());
 
                     // Create and launch sign-in intent
                     startActivityForResult(
@@ -146,14 +143,8 @@ public class MainActivity extends AppCompatActivity
     public void onTripSaveRequest() {
         TripManager tripManager = new TripManager();
         Trip trip = tripManager.buildTrip(tripViewModel, firebaseUser.getUid());
-        try {
-            tripsDatabaseReference = firebaseDatabase.getReference().child("trips/" + firebaseUser.getUid());
-            tripsDatabaseReference.push().setValue(trip);
-        } catch (Exception e) {
-            Log.e(TAG, "Firebase Exception: " + e.getMessage());
-            // TODO: clean this up for user, maybe snackbar instead of toast?
-            Toast.makeText(this, "Firebase Fail :-(", Toast.LENGTH_LONG).show();
-        }
+        TripRepository repository = new TripRepository();
+        repository.saveTrip(trip);
     }
 
 
@@ -206,12 +197,6 @@ public class MainActivity extends AppCompatActivity
         firebaseAuth.removeAuthStateListener(authStateListener);
         // TODO: someDataAdapter.clear() and detachDatabaseReadListener();
     }
-
-//    @OnClick(R.id.fab)
-//    public void onFabClick(View view) {
-//        Fragment fragment = getFragmentInstance(FragmentTags.TAG_CREATE_TRIP);
-//        loadFragment(fragment, FragmentTags.TAG_CREATE_TRIP);
-//    }
 
     @Override
     public void onBackPressed() {

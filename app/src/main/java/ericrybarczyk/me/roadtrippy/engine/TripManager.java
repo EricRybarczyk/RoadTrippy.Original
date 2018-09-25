@@ -1,8 +1,8 @@
 package ericrybarczyk.me.roadtrippy.engine;
 
-import java.util.GregorianCalendar;
+import java.time.LocalDate;
 
-import ericrybarczyk.me.roadtrippy.models.Trip;
+import ericrybarczyk.me.roadtrippy.dto.Trip;
 import ericrybarczyk.me.roadtrippy.viewmodels.TripViewModel;
 
 public class TripManager {
@@ -12,10 +12,13 @@ public class TripManager {
 
         trip.setUserId(userId);
         trip.setDescription(tripViewModel.getDescription());
+
         trip.setOriginLatitude(tripViewModel.getOriginLatLng().latitude);
         trip.setOriginLongitude(tripViewModel.getOriginLatLng().longitude);
+
         trip.setDestinationLatitude(tripViewModel.getDestinationLatLng().latitude);
         trip.setDestinationLongitude(tripViewModel.getDestinationLatLng().longitude);
+
         trip.setIncludeReturn(tripViewModel.isIncludeReturn());
         trip.setIsArchived(false);
 
@@ -25,6 +28,12 @@ public class TripManager {
 //        trip.setDestinationLatLng(tripViewModel.getDestinationLatLng());
 
         // TODO: build the list of trip days based on DepartureDate and ReturnDate (inclusive)
+
+
+
+
+
+
 
 //        trip.setCreateDate(new GregorianCalendar());
 //        trip.setModifiedDate(new GregorianCalendar());
