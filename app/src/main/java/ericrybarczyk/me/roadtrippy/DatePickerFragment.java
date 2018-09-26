@@ -14,6 +14,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.DatePicker;
 
+import org.threeten.bp.LocalDate;
+
 import java.util.Calendar;
 
 import ericrybarczyk.me.roadtrippy.util.FragmentTags;
@@ -24,7 +26,8 @@ public class DatePickerFragment extends DialogFragment
 
     private TripDateSelectedListener tripDateSelectedListener;
     private static final String TAG = DatePickerFragment.class.getSimpleName();
-    private Calendar calendarForDisplay = null;
+    //private Calendar calendarForDisplay = null;
+    private LocalDate date;
     static final String KEY_CALENDAR_FOR_DISPLAY = "calendar_for_display";
 
 
@@ -37,16 +40,16 @@ public class DatePickerFragment extends DialogFragment
         assert getTag() != null;
         switch (getTag()) {
             case FragmentTags.TAG_DEPARTURE_DATE_DIALOG:
-                calendarForDisplay = tripViewModel.getDepartureDate();
+                date = tripViewModel.getDepartureDate();
                 break;
             case FragmentTags.TAG_RETURN_DATE_DIALOG:
-                calendarForDisplay = tripViewModel.getReturnDate();
+                date = tripViewModel.getReturnDate();
                 break;
         }
 
-        int year = calendarForDisplay.get(Calendar.YEAR);
-        int month = calendarForDisplay.get(Calendar.MONTH);
-        int day = calendarForDisplay.get(Calendar.DAY_OF_MONTH);
+        int year = date.getYear();
+        int month = date.getMonthValue() - 1; // DatePickerDialog uses 0-based Month so decrement from LocalDate which uses 1-based Month
+        int day = date.getDayOfMonth();
 
         // Create a new instance of DatePickerDialog and return it
         return new DatePickerDialog(getActivity(), this, year, month, day);
@@ -60,7 +63,7 @@ public class DatePickerFragment extends DialogFragment
 
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-        calendarForDisplay.set(year, month, dayOfMonth);
+        date = LocalDate.of(year, month, dayOfMonth);
         try {
             if (tripDateSelectedListener == null) {
                 Log.e(TAG, "TripDateSelectedListener is null");

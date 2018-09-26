@@ -38,6 +38,7 @@ ext {
     gsonVersion = "2.8.2"
     picassoVersion = "2.5.2"
     retrofitVersion = "2.4.0"
+    threetenVersion = "1.1.0"
     junitVersion = "4.12"
     supportTestVersion = "1.0.2"
     espressoVersion = "3.0.2"
@@ -71,6 +72,7 @@ dependencies {
     implementation "com.google.code.gson:gson:$gsonVersion"
     implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
     implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
+    implementation "com.jakewharton.threetenabp:threetenabp:$threetenVersion"
 
     implementation "com.squareup.picasso:picasso:$picassoVersion"
 

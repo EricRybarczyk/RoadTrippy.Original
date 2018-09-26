@@ -1,6 +1,8 @@
 package ericrybarczyk.me.roadtrippy.engine;
 
-import java.time.LocalDate;
+
+import org.threeten.bp.Duration;
+import org.threeten.bp.LocalDateTime;
 
 import ericrybarczyk.me.roadtrippy.dto.Trip;
 import ericrybarczyk.me.roadtrippy.viewmodels.TripViewModel;
@@ -30,7 +32,10 @@ public class TripManager {
         // TODO: build the list of trip days based on DepartureDate and ReturnDate (inclusive)
 
 
-
+        LocalDateTime start = LocalDateTime.of(2018, 10, 17, 0, 0, 0);
+        LocalDateTime end = LocalDateTime.of(2018, 10, 21, 23,59,59);
+        Duration duration = Duration.between(start, end);
+        long diff = Math.abs(duration.toDays()) + 1; // plus one to be inclusive of end date
 
 
 

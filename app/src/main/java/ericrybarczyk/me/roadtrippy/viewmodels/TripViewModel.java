@@ -4,13 +4,13 @@ import android.arch.lifecycle.ViewModel;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import java.util.GregorianCalendar;
-import java.util.UUID;
+import org.threeten.bp.LocalDate;
+
 
 public class TripViewModel extends ViewModel {
     private String description;
-    private GregorianCalendar departureDate;
-    private GregorianCalendar returnDate;
+    private LocalDate departureDate;
+    private LocalDate returnDate;
     private LatLng originLatLng;
     private String originDescription;
     private LatLng destinationLatLng;
@@ -19,8 +19,8 @@ public class TripViewModel extends ViewModel {
     private boolean isEdited; // to help UI know if dates are selected by user or if just new instance defaults
 
     public TripViewModel() {
-        departureDate = new GregorianCalendar();
-        returnDate = new GregorianCalendar();
+        departureDate = LocalDate.now();
+        returnDate = LocalDate.now().plusDays(1);
     }
 
     public String getDescription() {
@@ -32,20 +32,20 @@ public class TripViewModel extends ViewModel {
         isEdited = true;
     }
 
-    public GregorianCalendar getDepartureDate() {
+    public LocalDate getDepartureDate() {
         return departureDate;
     }
 
-    public void setDepartureDate(GregorianCalendar departureDate) {
+    public void setDepartureDate(LocalDate departureDate) {
         this.departureDate = departureDate;
         isEdited = true;
     }
 
-    public GregorianCalendar getReturnDate() {
+    public LocalDate getReturnDate() {
         return returnDate;
     }
 
-    public void setReturnDate(GregorianCalendar returnDate) {
+    public void setReturnDate(LocalDate returnDate) {
         this.returnDate = returnDate;
         isEdited = true;
     }

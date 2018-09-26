@@ -14,6 +14,10 @@ import android.widget.EditText;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import org.threeten.bp.LocalDate;
+import org.threeten.bp.format.DateTimeFormatter;
+import org.threeten.bp.format.FormatStyle;
+
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -68,8 +72,8 @@ public class CreateTripFragment extends Fragment
         // TODO: probably need to refine isEdited to be per-value and not just the ViewModel as a whole, so only edited items update the display
         if (tripViewModel.isEdited()) {
             tripNameText.setText(tripViewModel.getDescription());
-            departureDateButton.setText(DateUtils.formatDate(tripViewModel.getDepartureDate()));
-            returnDateButton.setText(DateUtils.formatDate(tripViewModel.getReturnDate()));
+            departureDateButton.setText(tripViewModel.getDepartureDate().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)));
+            returnDateButton.setText(tripViewModel.getReturnDate().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)));
             originButton.setText(tripViewModel.getOriginDescription());
             destinationButton.setText(tripViewModel.getDestinationDescription());
             optionReturnDirections.setChecked(tripViewModel.isIncludeReturn());
@@ -150,18 +154,16 @@ public class CreateTripFragment extends Fragment
     @Override
     public void onTripDateSelected(int year, int month, int dayOfMonth, String tag) {
         if (tag.equals(FragmentTags.TAG_DEPARTURE_DATE_DIALOG)) {
-            tripViewModel.setDepartureDate(new GregorianCalendar(year, month, dayOfMonth));
+            tripViewModel.setDepartureDate(LocalDate.of(year, month, dayOfMonth));
             if (tripViewModel.isEdited()) {
-                departureDateButton.setText(DateUtils.formatDate(tripViewModel.getDepartureDate()));
+                departureDateButton.setText(tripViewModel.getDepartureDate().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)));
             }
-            Log.i(TAG, "onDateSelected: DEPART: " + String.valueOf(tripViewModel.getDepartureDate().get(Calendar.MONTH)+1) + "/" + tripViewModel.getDepartureDate().get(Calendar.DATE));
 
         } else if (tag.equals(FragmentTags.TAG_RETURN_DATE_DIALOG)) {
-            tripViewModel.setReturnDate(new GregorianCalendar(year, month, dayOfMonth));
+            tripViewModel.setReturnDate(LocalDate.of(year, month, dayOfMonth));
             if (tripViewModel.isEdited()) {
-                returnDateButton.setText(DateUtils.formatDate(tripViewModel.getReturnDate()));
+                returnDateButton.setText(tripViewModel.getReturnDate().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)));
             }
-            Log.i(TAG, "onDateSelected: RETURN: " + String.valueOf(tripViewModel.getReturnDate().get(Calendar.MONTH)+1) + "/" + tripViewModel.getReturnDate().get(Calendar.DATE));
         }
     }
 
