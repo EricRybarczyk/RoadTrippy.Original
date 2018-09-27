@@ -34,12 +34,14 @@ import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import ericrybarczyk.me.roadtrippy.dto.TripDay;
 import ericrybarczyk.me.roadtrippy.engine.TripManager;
 import ericrybarczyk.me.roadtrippy.dto.Trip;
 import ericrybarczyk.me.roadtrippy.persistence.TripRepository;
@@ -143,8 +145,9 @@ public class MainActivity extends AppCompatActivity
     public void onTripSaveRequest() {
         TripManager tripManager = new TripManager();
         Trip trip = tripManager.buildTrip(tripViewModel, firebaseUser.getUid());
+        List<TripDay> tripDays = tripManager.buildInitialTripDays(tripViewModel);
         TripRepository repository = new TripRepository();
-        repository.saveTrip(trip);
+        repository.saveTrip(trip, tripDays);
     }
 
 

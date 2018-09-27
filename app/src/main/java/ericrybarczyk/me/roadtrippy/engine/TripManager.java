@@ -2,9 +2,15 @@ package ericrybarczyk.me.roadtrippy.engine;
 
 
 import org.threeten.bp.Duration;
+import org.threeten.bp.LocalDate;
 import org.threeten.bp.LocalDateTime;
+import org.threeten.bp.format.DateTimeFormatter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import ericrybarczyk.me.roadtrippy.dto.Trip;
+import ericrybarczyk.me.roadtrippy.dto.TripDay;
 import ericrybarczyk.me.roadtrippy.viewmodels.TripViewModel;
 
 public class TripManager {
@@ -24,26 +30,45 @@ public class TripManager {
         trip.setIncludeReturn(tripViewModel.isIncludeReturn());
         trip.setIsArchived(false);
 
-//        trip.setDepartureDate(tripViewModel.getDepartureDate());
-//        trip.setReturnDate(tripViewModel.getReturnDate());
-//        trip.setOriginLatLng(tripViewModel.getOriginLatLng());
-//        trip.setDestinationLatLng(tripViewModel.getDestinationLatLng());
+        trip.setDepartureDate(tripViewModel.getDepartureDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
+        trip.setReturnDate(tripViewModel.getReturnDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
 
-        // TODO: build the list of trip days based on DepartureDate and ReturnDate (inclusive)
-
-
-        LocalDateTime start = LocalDateTime.of(2018, 10, 17, 0, 0, 0);
-        LocalDateTime end = LocalDateTime.of(2018, 10, 21, 23,59,59);
-        Duration duration = Duration.between(start, end);
-        long diff = Math.abs(duration.toDays()) + 1; // plus one to be inclusive of end date
-
-
-
-
-//        trip.setCreateDate(new GregorianCalendar());
-//        trip.setModifiedDate(new GregorianCalendar());
+        String rightNow = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE);
+        trip.setCreateDate(rightNow);
+        trip.setModifiedDate(rightNow);
 
         return trip;
+    }
+
+    public List<TripDay> buildInitialTripDays(TripViewModel tripViewModel) {
+        // build the list of trip days based on DepartureDate and ReturnDate (inclusive)
+
+        LocalDateTime start = LocalDateTime.of(
+                tripViewModel.getDepartureDate().getYear(),
+                tripViewModel.getDepartureDate().getMonthValue(),
+                tripViewModel.getDepartureDate().getDayOfMonth(),
+                0, 0, 0);
+
+        LocalDateTime end = LocalDateTime.of(
+                tripViewModel.getReturnDate().getYear(),
+                tripViewModel.getReturnDate().getMonthValue(),
+                tripViewModel.getReturnDate().getDayOfMonth(),
+                23,59,59);
+
+        Duration duration = Duration.between(start, end);
+        long numberOfTripDays = Math.abs(duration.toDays()) + 1; // add one to make it inclusive of last day
+
+        ArrayList<TripDay> tripDays = new ArrayList<>();
+
+        // zero-based loop adjusts for fact that numberOfTripDays is not inclusive of last day
+        for (int day = 0; day < numberOfTripDays; day++) {
+            TripDay td = new TripDay();
+            td.setTripId(tripViewModel.getTripId());
+            td.setTripDayDate(tripViewModel.getDepartureDate().plusDays(day).format(DateTimeFormatter.ISO_LOCAL_DATE));
+            tripDays.add(td);
+        }
+
+        return tripDays;
     }
 
     public interface TripSaveRequestListener {

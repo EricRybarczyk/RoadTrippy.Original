@@ -5,7 +5,10 @@ import android.util.Log;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.List;
+
 import ericrybarczyk.me.roadtrippy.dto.Trip;
+import ericrybarczyk.me.roadtrippy.dto.TripDay;
 
 public class TripRepository {
 
@@ -19,14 +22,11 @@ public class TripRepository {
     }
 
 
-    public void saveTrip(Trip trip) {
+    public void saveTrip(Trip trip, List<TripDay> tripDays) {
         try {
             DatabaseReference tripsDatabaseReference = firebaseDatabase.getReference().child("trips/" + trip.getUserId());
 
-//            tripsDatabaseReference.push().setValue(trip);
-//            String tripPushId = tripsDatabaseReference.getKey();
-
-            // get the pushId to use when storing the child TripDay records
+            // get the pushId to use in path when storing the child TripDay records
             String tripPushId = tripsDatabaseReference.push().getKey();
 
             // save the Trip object under the pushId
@@ -36,8 +36,9 @@ public class TripRepository {
             DatabaseReference daysDatabaseReference = firebaseDatabase.getReference().child("tripdays/" + trip.getUserId() + "/" + tripPushId);
 
             // save all TripDay objects
-            daysDatabaseReference.push().setValue("Day 1");
-            daysDatabaseReference.push().setValue("Day 2");
+            for (TripDay day : tripDays) {
+                daysDatabaseReference.push().setValue(day);
+            }
 
         } catch (Exception e) {
             Log.e(TAG, "Firebase Exception: " + e.getMessage());

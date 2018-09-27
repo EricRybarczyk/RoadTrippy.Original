@@ -18,7 +18,7 @@ public class Trip {
     private String modifiedDate;
 
     public Trip() {
-        tripId = UUID.randomUUID().toString();
+
     }
 
     public String getTripId() {

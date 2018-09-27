@@ -63,13 +63,15 @@ public class DatePickerFragment extends DialogFragment
 
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-        date = LocalDate.of(year, month, dayOfMonth);
+        // DatePicker uses 0-based month so +1 for org.threeten.bp.LocalDate
+        int localDateMonth = month + 1;
+        date = LocalDate.of(year, localDateMonth, dayOfMonth);
         try {
             if (tripDateSelectedListener == null) {
                 Log.e(TAG, "TripDateSelectedListener is null");
                 return;
             }
-            tripDateSelectedListener.onTripDateSelected(year, month, dayOfMonth, this.getTag()); // TODO: see to-do in handler method about param type
+            tripDateSelectedListener.onTripDateSelected(year, localDateMonth, dayOfMonth, this.getTag()); // TODO: see to-do in handler method about param type
         } catch (ClassCastException e) {
             Log.e(TAG, "Containing fragment must implement DatePickerFragment.TripDateSelectedListener");
             throw e;

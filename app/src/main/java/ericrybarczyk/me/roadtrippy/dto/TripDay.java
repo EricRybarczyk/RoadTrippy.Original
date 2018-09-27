@@ -7,8 +7,7 @@ public class TripDay {
 
     private String tripDayId;
     private String tripId; // reference to Trip object that contains this TripDay
-    private String startDate;
-    private String endDate;
+    private String tripDayDate;
     private String primaryDescription;
     private String secondaryDescription;
     private String userNotes;
@@ -37,20 +36,12 @@ public class TripDay {
         this.tripId = tripId;
     }
 
-    public String getStartDate() {
-        return startDate;
+    public String getTripDayDate() {
+        return tripDayDate;
     }
 
-    public void setStartDate(String startDate) {
-        this.startDate = startDate;
-    }
-
-    public String getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(String endDate) {
-        this.endDate = endDate;
+    public void setTripDayDate(String tripDayDate) {
+        this.tripDayDate = tripDayDate;
     }
 
     public String getPrimaryDescription() {

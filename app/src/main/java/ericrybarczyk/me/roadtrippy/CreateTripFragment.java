@@ -18,12 +18,8 @@ import org.threeten.bp.LocalDate;
 import org.threeten.bp.format.DateTimeFormatter;
 import org.threeten.bp.format.FormatStyle;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import ericrybarczyk.me.roadtrippy.util.DateUtils;
 import ericrybarczyk.me.roadtrippy.util.FragmentTags;
 import ericrybarczyk.me.roadtrippy.util.InputUtils;
 import ericrybarczyk.me.roadtrippy.util.RequestCodes;
