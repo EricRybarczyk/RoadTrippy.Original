@@ -6,6 +6,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 import org.threeten.bp.LocalDate;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 
@@ -19,12 +20,14 @@ public class TripViewModel extends ViewModel {
     private LatLng destinationLatLng;
     private String destinationDescription;
     private boolean includeReturn;
+    private ArrayList<TripDayViewModel> tripDays;
     private boolean isEdited; // to help UI know if dates are selected by user or if just new instance defaults
 
     public TripViewModel() {
         tripId = UUID.randomUUID().toString();
         departureDate = LocalDate.now();
         returnDate = LocalDate.now().plusDays(1);
+        tripDays = new ArrayList<>();
     }
 
     public String getTripId() {
@@ -111,6 +114,14 @@ public class TripViewModel extends ViewModel {
     public void setIncludeReturn(boolean includeReturn) {
         this.includeReturn = includeReturn;
         isEdited = true;
+    }
+
+    public ArrayList<TripDayViewModel> getTripDays() {
+        return tripDays;
+    }
+
+    public void setTripDays(ArrayList<TripDayViewModel> tripDays) {
+        this.tripDays = tripDays;
     }
 
     public boolean isEdited() {
