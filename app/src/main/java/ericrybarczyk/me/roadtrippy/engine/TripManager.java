@@ -18,6 +18,7 @@ public class TripManager {
     public Trip buildTrip(TripViewModel tripViewModel, String userId) {
         Trip trip = new Trip();
 
+        trip.setTripId(tripViewModel.getTripId());
         trip.setUserId(userId);
         trip.setDescription(tripViewModel.getDescription());
 
