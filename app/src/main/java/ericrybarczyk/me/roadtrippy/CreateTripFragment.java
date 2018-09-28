@@ -3,6 +3,7 @@ package ericrybarczyk.me.roadtrippy;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -55,12 +56,11 @@ public class CreateTripFragment extends Fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         tripViewModel = ViewModelProviders.of(getActivity()).get(TripViewModel.class);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_create_trip, container, false);
         ButterKnife.bind(this, rootView);
         InputUtils.hideKeyboardFrom(getContext(), rootView);

@@ -1,6 +1,5 @@
 package ericrybarczyk.me.roadtrippy.dto;
 
-import java.util.UUID;
 
 public class Trip {
     private String tripId;
@@ -18,7 +17,6 @@ public class Trip {
     private String modifiedDate;
 
     public Trip() {
-
     }
 
     public String getTripId() {
@@ -125,7 +123,4 @@ public class Trip {
         this.modifiedDate = modifiedDate;
     }
 
-//        public void setTripDays(ArrayList<TripDay> tripDays) {
-//        this.tripDays = tripDays;
-//    }
 }

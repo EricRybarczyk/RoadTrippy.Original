@@ -9,6 +9,8 @@ import org.threeten.bp.LocalDate;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import ericrybarczyk.me.roadtrippy.dto.Trip;
+
 
 public class TripViewModel extends ViewModel {
     private String tripId;
@@ -28,6 +30,22 @@ public class TripViewModel extends ViewModel {
         departureDate = LocalDate.now();
         returnDate = LocalDate.now().plusDays(1);
         tripDays = new ArrayList<>();
+    }
+
+    public static TripViewModel from(Trip trip) {
+        TripViewModel viewModel = new TripViewModel();
+
+        viewModel.setTripId(trip.getTripId());
+        viewModel.setDescription(trip.getDescription());
+        viewModel.setDepartureDate(LocalDate.parse(trip.getDepartureDate()));
+        viewModel.setReturnDate(LocalDate.parse(trip.getReturnDate()));
+        viewModel.setOriginLatLng(new LatLng(trip.getOriginLatitude(), trip.getOriginLongitude()));
+        viewModel.setOriginDescription("not saved"); // TODO: save origin description in Trip object
+        viewModel.setDestinationLatLng(new LatLng(trip.getDestinationLatitude(), trip.getDestinationLongitude()));
+        viewModel.setDestinationDescription("not saved"); // TODO: save destination description in Trip object
+        viewModel.setIncludeReturn(trip.getIncludeReturn());
+
+        return viewModel;
     }
 
     public String getTripId() {

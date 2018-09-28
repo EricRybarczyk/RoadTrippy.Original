@@ -29,7 +29,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.FirebaseDatabase;
+//import com.google.firebase.database.FirebaseDatabase;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity
         tripViewModel = ViewModelProviders.of(this).get(TripViewModel.class);
 
         firebaseAuth = FirebaseAuth.getInstance();
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+//        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
 
 
         /* SOURCE: FirebaseAuth code is directly adapted from Udacity & Google materials,
