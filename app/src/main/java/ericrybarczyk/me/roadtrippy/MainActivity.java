@@ -97,46 +97,40 @@ public class MainActivity extends AppCompatActivity
         tripViewModel = ViewModelProviders.of(this).get(TripViewModel.class);
 
         firebaseAuth = FirebaseAuth.getInstance();
-//        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
-
 
         /* SOURCE: FirebaseAuth code is directly adapted from Udacity & Google materials,
-           including the Firebase extracurricular module in the Android Developer Nanodegree program,
-           and https://github.com/firebase/FirebaseUI-Android/blob/master/auth/README.md
-        */
-        authStateListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                firebaseUser = firebaseAuth.getCurrentUser();
-                if (firebaseUser != null) {
-                    // TODO: look at this https://stackoverflow.com/questions/32806735/refresh-header-in-navigation-drawer/35952939#35952939 and consider different spot to set this username textview
-                    View header = navigationView.getHeaderView(0);
-                    activeUsername = firebaseUser.getDisplayName();
-                    TextView usernameText = header.findViewById(R.id.username_display_text);
-                    usernameText.setText(activeUsername);
-                    onSignedInInitialize(activeUsername);
+           including Udacity's Firebase extracurricular module in the Android Developer Nanodegree program,
+           and https://github.com/firebase/FirebaseUI-Android/blob/master/auth/README.md */
+        authStateListener = firebaseAuth -> {
+            firebaseUser = firebaseAuth.getCurrentUser();
+            if (firebaseUser != null) {
+                // TODO: look at this https://stackoverflow.com/questions/32806735/refresh-header-in-navigation-drawer/35952939#35952939 and consider different spot to set this username textview
+                View header = navigationView.getHeaderView(0);
+                activeUsername = firebaseUser.getDisplayName();
+                TextView usernameText = header.findViewById(R.id.username_display_text);
+                usernameText.setText(activeUsername);
+                onSignedInInitialize(activeUsername);
 
-                } else {
+            } else {
 
-                    onSignedOutCleanup();
+                onSignedOutCleanup();
 
-                    // configure supported sign-in providers
-                    List<AuthUI.IdpConfig> providers = Collections.singletonList(
-                            new AuthUI.IdpConfig.GoogleBuilder().build());
-// if I decide to add Email sign-in option:
-//                    List<AuthUI.IdpConfig> providers = Arrays.asList(
-//                            new AuthUI.IdpConfig.GoogleBuilder().build(),
-//                            new AuthUI.IdpConfig.EmailBuilder().build());
+                // configure supported sign-in providers
+                List<AuthUI.IdpConfig> providers = Collections.singletonList(
+                        new AuthUI.IdpConfig.GoogleBuilder().build());
+                        // if I decide to add Email sign-in option:
+                        //                    List<AuthUI.IdpConfig> providers = Arrays.asList(
+                        //                            new AuthUI.IdpConfig.GoogleBuilder().build(),
+                        //                            new AuthUI.IdpConfig.EmailBuilder().build());
 
-                    // Create and launch sign-in intent
-                    startActivityForResult(
-                            AuthUI.getInstance()
-                                    .createSignInIntentBuilder()
-                                    .setIsSmartLockEnabled(false) // TODO: set true. Udacity tutorial set this to false (default is true: system will basically keep user automatically logged in)
-                                    .setAvailableProviders(providers)
-                                    .build(),
-                            RequestCodes.SIGN_IN_REQUEST_CODE);
-                }
+                // Create and launch sign-in intent
+                startActivityForResult(
+                        AuthUI.getInstance()
+                                .createSignInIntentBuilder()
+                                .setIsSmartLockEnabled(false) // TODO: set true. Udacity tutorial set this to false (default is true: system will basically keep user automatically logged in)
+                                .setAvailableProviders(providers)
+                                .build(),
+                        RequestCodes.SIGN_IN_REQUEST_CODE);
             }
         };
     }
