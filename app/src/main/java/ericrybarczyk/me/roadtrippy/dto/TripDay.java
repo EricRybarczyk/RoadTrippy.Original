@@ -7,6 +7,7 @@ public class TripDay {
 
     private String tripDayId;
     private String tripId; // reference to Trip object that contains this TripDay
+    private int dayNumber;
     private String tripDayDate;
     private String primaryDescription;
     private String secondaryDescription;
@@ -34,6 +35,14 @@ public class TripDay {
 
     public void setTripId(String tripId) {
         this.tripId = tripId;
+    }
+
+    public int getDayNumber() {
+        return dayNumber;
+    }
+
+    public void setDayNumber(int dayNumber) {
+        this.dayNumber = dayNumber;
     }
 
     public String getTripDayDate() {

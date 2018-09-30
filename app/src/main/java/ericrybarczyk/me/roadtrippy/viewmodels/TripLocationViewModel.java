@@ -2,7 +2,7 @@ package ericrybarczyk.me.roadtrippy.viewmodels;
 
 import ericrybarczyk.me.roadtrippy.dto.TripLocation;
 
-class TripLocationViewModel {
+public class TripLocationViewModel {
 
     private double latitude;
     private double longitude;

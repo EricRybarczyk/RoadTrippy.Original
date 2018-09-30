@@ -6,9 +6,10 @@ import java.util.ArrayList;
 
 import ericrybarczyk.me.roadtrippy.dto.TripDay;
 
-class TripDayViewModel {
+public class TripDayViewModel {
 
     private String tripDayId;
+    private int dayNumber;
     private LocalDate tripDayDate;
     private String primaryDescription;
     private String secondaryDescription;
@@ -25,12 +26,14 @@ class TripDayViewModel {
         TripDayViewModel viewModel = new TripDayViewModel();
 
         viewModel.setTripDayId(tripDay.getTripDayId());
+        viewModel.setDayNumber(tripDay.getDayNumber());
         viewModel.setTripDayDate(LocalDate.parse(tripDay.getTripDayDate()));
         viewModel.setPrimaryDescription(tripDay.getPrimaryDescription());
         viewModel.setSecondaryDescription(tripDay.getSecondaryDescription());
         viewModel.setUserNotes(tripDay.getUserNotes());
-        viewModel.setStartLocation(TripLocationViewModel.from(tripDay.getStartLocation()));
-        viewModel.setEndLocation(TripLocationViewModel.from(tripDay.getEndLocation()));
+        // TODO: finish TripDayViewModel.from() with child objects
+//        viewModel.setStartLocation(TripLocationViewModel.from(tripDay.getStartLocation()));
+//        viewModel.setEndLocation(TripLocationViewModel.from(tripDay.getEndLocation()));
 
         return viewModel;
     }
@@ -41,6 +44,14 @@ class TripDayViewModel {
 
     public void setTripDayId(String tripDayId) {
         this.tripDayId = tripDayId;
+    }
+
+    public int getDayNumber() {
+        return dayNumber;
+    }
+
+    public void setDayNumber(int dayNumber) {
+        this.dayNumber = dayNumber;
     }
 
     public LocalDate getTripDayDate() {

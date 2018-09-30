@@ -15,6 +15,9 @@ import ericrybarczyk.me.roadtrippy.viewmodels.TripViewModel;
 
 public class TripManager {
 
+    public TripManager() {
+    }
+
     public Trip buildTrip(TripViewModel tripViewModel, String userId) {
         Trip trip = new Trip();
 
@@ -69,6 +72,7 @@ public class TripManager {
         for (int day = 0; day < numberOfTripDays; day++) {
             TripDay td = new TripDay();
             td.setTripId(tripViewModel.getTripId());
+            td.setDayNumber(day + 1); // 1-based for display purposes
             td.setTripDayDate(tripViewModel.getDepartureDate().plusDays(day).format(DateTimeFormatter.ISO_LOCAL_DATE));
             tripDays.add(td);
         }

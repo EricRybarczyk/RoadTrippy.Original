@@ -40,7 +40,6 @@ public class TripListFragment extends Fragment {
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference tripsDatabaseReference;
     FirebaseRecyclerAdapter firebaseRecyclerAdapter;
-    private String userId;
 
     private static final String TAG = TripListFragment.class.getSimpleName();
 
