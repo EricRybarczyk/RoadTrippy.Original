@@ -135,6 +135,7 @@ public class MainActivity extends AppCompatActivity
         };
     }
 
+
     @Override
     public void onTripSaveRequest() {
         TripManager tripManager = new TripManager();
@@ -142,6 +143,8 @@ public class MainActivity extends AppCompatActivity
         List<TripDay> tripDays = tripManager.buildInitialTripDays(tripViewModel);
         TripRepository repository = new TripRepository();
         repository.saveTrip(trip, tripDays);
+        // reset the state of the ViewModel to default
+        tripViewModel.reset();
     }
 
 

@@ -5,7 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp">
+    android:layout_margin="8dp"
+    android:background="@color/colorBackground">
 
     <android.support.constraint.Guideline
         android:id="@+id/content_inset_guideline"
@@ -54,20 +55,38 @@
         style="@style/TripListItemContent"
         tools:text="October 17 to 21" />
 
-    <!-- need to add some kind of star/bullet icon image before each highlight item -->
     <TextView
-        android:id="@+id/trip_highlight_one_text"
+        android:id="@+id/icon_highlight_one"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="@id/content_inset_guideline"
         app:layout_constraintTop_toBottomOf="@id/trip_date_range_text"
         style="@style/TripListItemContent"
+        android:textColor="@color/colorAccent"
+        android:text="@string/fa_icon_star" />
+    <TextView
+        android:id="@+id/trip_highlight_one_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@id/icon_highlight_one"
+        app:layout_constraintTop_toBottomOf="@id/trip_date_range_text"
+        style="@style/TripListItemContent"
         tools:text="Something cool about this trip" />
+
+    <TextView
+        android:id="@+id/icon_highlight_two"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/content_inset_guideline"
+        app:layout_constraintTop_toBottomOf="@id/trip_highlight_one_text"
+        style="@style/TripListItemContent"
+        android:textColor="@color/colorAccent"
+        android:text="@string/fa_icon_star" />
     <TextView
         android:id="@+id/trip_highlight_two_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="@id/content_inset_guideline"
+        app:layout_constraintStart_toEndOf="@id/icon_highlight_two"
         app:layout_constraintTop_toBottomOf="@id/trip_highlight_one_text"
         style="@style/TripListItemContent"
         tools:text="Another cool about this trip" />

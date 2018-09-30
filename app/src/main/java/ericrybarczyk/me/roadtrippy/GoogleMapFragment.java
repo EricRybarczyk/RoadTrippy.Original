@@ -39,8 +39,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class GoogleMapFragment extends Fragment
-        implements  OnMapReadyCallback,
-                    GoogleMap.OnMapClickListener, View.OnClickListener {
+        implements  OnMapReadyCallback, GoogleMap.OnMapClickListener,
+                    GoogleMap.OnCameraMoveStartedListener, View.OnClickListener {
 
     @BindView(R.id.search_button) protected Button searchButton;
     @BindView(R.id.set_location_button) protected Button setLocationButton;
@@ -169,6 +169,14 @@ public class GoogleMapFragment extends Fragment
         updateMapView();
     }
 
+    @Override
+    public void onCameraMoveStarted(int i) {
+        InputUtils.hideKeyboardFrom(getContext(), getView());
+//        if (i == REASON_GESTURE) {
+//        }
+    }
+
+
     private void updateMapView() {
         googleMap.clear();
         googleMap.addMarker(new MarkerOptions().position(mapLocation));
@@ -234,7 +242,6 @@ public class GoogleMapFragment extends Fragment
         savedInstanceState.putString(KEY_RETURN_FRAGMENT_TAG, returnFragmentTag);
         super.onSaveInstanceState(savedInstanceState);
     }
-
     public interface LocationSelectedListener {
         void onLocationSelected(LatLng location, int requestCode, String locationDescription);
     }

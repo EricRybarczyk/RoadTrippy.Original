@@ -43,7 +43,11 @@ public class DatePickerFragment extends DialogFragment
                 date = tripViewModel.getDepartureDate();
                 break;
             case FragmentTags.TAG_RETURN_DATE_DIALOG:
-                date = tripViewModel.getReturnDate();
+                if (tripViewModel.getReturnDate().compareTo(tripViewModel.getDepartureDate()) < 1) {
+                    date = tripViewModel.getDepartureDate().plusDays(1);
+                } else {
+                    date = tripViewModel.getReturnDate();
+                }
                 break;
         }
 

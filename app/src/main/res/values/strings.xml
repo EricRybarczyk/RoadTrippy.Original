@@ -35,16 +35,23 @@
     <string name="map_select_location_button_search_label">SEARCH</string>
     <string name="map_select_location_button_save_label">DONE</string>
     <string name="map_location_description_hint">Name this location</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
-    <string name="aria_trip_item_image_description">Simple map image for trip</string>
-    <string name="aria_nav_header_desc">Application Logo</string>
     <string name="map_search_no_results_message">No results found. Please try again.</string>
     <string name="map_search_too_many_results_message">Too many results, please narrow your search.</string>
     <string name="map_search_call_error_message">Error: unable to perform search</string>
     <string name="map_directions_call_error_message">Error: unable to get directions</string>
     <string name="map_directions_failure">Unable to find Directions. Please adjust your Trip.</string>
+    <string name="maps_api_avoids_default">ferries</string>
+
+    <string name="fa_icon_star">&#xf005;</string>
+
+    <string name="aria_trip_item_image_description">Simple map image for trip</string>
+    <string name="aria_nav_header_desc">Application Logo</string>
+    <string name="word_for_TO">to</string>
+    <string name="word_for_HOURS">Hours</string>
+    <string name="abbreviation_for_HOURS">h</string>
+    <string name="word_for_MINUTES">Minutes</string>
+    <string name="abbreviation_for_MINUTES">m</string>
+    <string name="word_for_UNKNOWN">Unknown</string>
+    <string name="label_for_DRIVING_TIME">Driving Time:</string>
 
 </resources>

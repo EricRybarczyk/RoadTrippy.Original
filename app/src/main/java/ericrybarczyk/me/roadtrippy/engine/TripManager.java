@@ -24,15 +24,19 @@ public class TripManager {
 
         trip.setOriginLatitude(tripViewModel.getOriginLatLng().latitude);
         trip.setOriginLongitude(tripViewModel.getOriginLatLng().longitude);
+        trip.setOriginDescription(tripViewModel.getOriginDescription());
 
         trip.setDestinationLatitude(tripViewModel.getDestinationLatLng().latitude);
         trip.setDestinationLongitude(tripViewModel.getDestinationLatLng().longitude);
+        trip.setDestinationDescription(tripViewModel.getDestinationDescription());
 
         trip.setIncludeReturn(tripViewModel.isIncludeReturn());
         trip.setIsArchived(false);
 
         trip.setDepartureDate(tripViewModel.getDepartureDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
         trip.setReturnDate(tripViewModel.getReturnDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
+
+        trip.setDurationMinutes(tripViewModel.getDurationMinutes());
 
         String rightNow = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE);
         trip.setCreateDate(rightNow);

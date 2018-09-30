@@ -9,6 +9,6 @@ import retrofit2.http.Query;
 public interface GetDirectionsEndpoint {
 
     @GET("directions/json") // ?key={apikey}&origin={origin}&destination={destination}
-    Call<DirectionsResponse> getDirections(@Query("key") String apikey, @Query("origin") String origin, @Query("destination") String destination);
+    Call<DirectionsResponse> getDirections(@Query("key") String apikey, @Query("origin") String origin, @Query("destination") String destination, @Query("avoid") String avoid);
 }
 

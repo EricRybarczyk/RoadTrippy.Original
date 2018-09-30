@@ -73,6 +73,8 @@ public class CreateTripFragment extends Fragment
             originButton.setText(tripViewModel.getOriginDescription());
             destinationButton.setText(tripViewModel.getDestinationDescription());
             optionReturnDirections.setChecked(tripViewModel.isIncludeReturn());
+        } else {
+            tripNameText.getText().clear();
         }
 
         departureDateButton.setOnClickListener(v -> {
@@ -123,6 +125,9 @@ public class CreateTripFragment extends Fragment
     @Override
     public void onResume() {
         super.onResume();
+        if (!tripViewModel.isEdited()) {
+            tripNameText.getText().clear(); // prevent prior trip editing from showing up when view model has been reset
+        }
     }
 
     @Override

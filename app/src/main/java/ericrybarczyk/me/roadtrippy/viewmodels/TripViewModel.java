@@ -5,8 +5,10 @@ import android.arch.lifecycle.ViewModel;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.threeten.bp.LocalDate;
+import org.threeten.bp.format.TextStyle;
 
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.UUID;
 
 import ericrybarczyk.me.roadtrippy.dto.Trip;
@@ -21,15 +23,30 @@ public class TripViewModel extends ViewModel {
     private String originDescription;
     private LatLng destinationLatLng;
     private String destinationDescription;
+    private int durationMinutes;
     private boolean includeReturn;
     private ArrayList<TripDayViewModel> tripDays;
-    private boolean isEdited; // to help UI know if dates are selected by user or if just new instance defaults
+    private boolean isEdited; // to help UI know if values are selected by user or just new instance defaults
 
     public TripViewModel() {
+        init();
+    }
+
+    private void init() {
         tripId = UUID.randomUUID().toString();
         departureDate = LocalDate.now();
         returnDate = LocalDate.now().plusDays(1);
+        includeReturn = true;
         tripDays = new ArrayList<>();
+        durationMinutes = 0;
+        if (isEdited) {
+            description = "";
+            originLatLng = null;
+            originDescription = "";
+            destinationLatLng = null;
+            destinationDescription = "";
+            isEdited = false;
+        }
     }
 
     public static TripViewModel from(Trip trip) {
@@ -40,12 +57,55 @@ public class TripViewModel extends ViewModel {
         viewModel.setDepartureDate(LocalDate.parse(trip.getDepartureDate()));
         viewModel.setReturnDate(LocalDate.parse(trip.getReturnDate()));
         viewModel.setOriginLatLng(new LatLng(trip.getOriginLatitude(), trip.getOriginLongitude()));
-        viewModel.setOriginDescription("not saved"); // TODO: save origin description in Trip object
+        viewModel.setOriginDescription(trip.getOriginDescription());
         viewModel.setDestinationLatLng(new LatLng(trip.getDestinationLatitude(), trip.getDestinationLongitude()));
-        viewModel.setDestinationDescription("not saved"); // TODO: save destination description in Trip object
+        viewModel.setDestinationDescription(trip.getDestinationDescription());
         viewModel.setIncludeReturn(trip.getIncludeReturn());
+        viewModel.setDurationMinutes(trip.getDurationMinutes());
 
         return viewModel;
+    }
+
+    public void reset() {
+        init();
+    }
+
+    public String getOriginDestinationSummaryText(String joinWord) {
+
+        return originDescription + " "
+                + joinWord + " "
+                + destinationDescription;
+    }
+
+    public String getDateRangeSummaryText(String joinWord) {
+        if (departureDate.getMonthValue() == returnDate.getMonthValue()) {
+            return departureDate.getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault()) + " "
+                    + String.valueOf(departureDate.getDayOfMonth()) + " "
+                    + joinWord + " "
+                    + String.valueOf(returnDate.getDayOfMonth());
+        } else {
+            return departureDate.getMonth().getDisplayName(TextStyle.SHORT, Locale.getDefault()) + " "
+                    + String.valueOf(departureDate.getDayOfMonth()) + " "
+                    + joinWord + " "
+                    + returnDate.getMonth().getDisplayName(TextStyle.SHORT, Locale.getDefault()) + " "
+                    + String.valueOf(returnDate.getDayOfMonth());
+        }
+    }
+
+    public String getDurationDescription(String hours, String minutes, String h, String m, String unknown) {
+        if (durationMinutes == 0) {
+            return unknown;
+        } else if (durationMinutes < 60) {
+            return String.valueOf(durationMinutes) + " " + minutes;
+        } else if (durationMinutes % 60 == 0) {
+            int numHours = durationMinutes / 60;
+            return String.valueOf(numHours) + " " + hours;
+        } else {
+            int numHours = durationMinutes / 60;
+            int numMinutes = durationMinutes - (numHours * 60);
+            return String.valueOf(numHours) + h + " " + String.valueOf(numMinutes) + m;
+        }
+
     }
 
     public String getTripId() {
@@ -123,6 +183,14 @@ public class TripViewModel extends ViewModel {
     public void setDestinationDescription(String destinationDescription) {
         this.destinationDescription = destinationDescription;
         isEdited = true;
+    }
+
+    public int getDurationMinutes() {
+        return durationMinutes;
+    }
+
+    public void setDurationMinutes(int durationMinutes) {
+        this.durationMinutes = durationMinutes;
     }
 
     public boolean isIncludeReturn() {

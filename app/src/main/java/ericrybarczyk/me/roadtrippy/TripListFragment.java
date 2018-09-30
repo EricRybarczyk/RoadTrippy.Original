@@ -27,6 +27,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import ericrybarczyk.me.roadtrippy.dto.Trip;
+import ericrybarczyk.me.roadtrippy.persistence.DatabasePaths;
+import ericrybarczyk.me.roadtrippy.util.FontManager;
 import ericrybarczyk.me.roadtrippy.util.FragmentTags;
 import ericrybarczyk.me.roadtrippy.viewmodels.TripViewModel;
 
@@ -66,7 +68,7 @@ public class TripListFragment extends Fragment {
 
         firebaseDatabase = FirebaseDatabase.getInstance();
         tripsDatabaseReference = firebaseDatabase.getReference();
-        Query query = tripsDatabaseReference.child("trips/" + userId + "/");
+        Query query = tripsDatabaseReference.child(DatabasePaths.BASE_PATH_TRIPS + userId + "/");
 
         FirebaseRecyclerOptions<Trip> options = new FirebaseRecyclerOptions.Builder<Trip>()
                 .setQuery(query, Trip.class)
@@ -84,19 +86,29 @@ public class TripListFragment extends Fragment {
             @Override
             protected void onBindViewHolder(@NonNull TripViewHolder holder, int position, @NonNull Trip model) {
                 TripViewModel viewModel = TripViewModel.from(this.getItem(position));
-
-                String dateRangeText = viewModel.getDepartureDate().getMonth()
-                        .getDisplayName(TextStyle.SHORT, Locale.getDefault())
-                        + " " + String.valueOf(viewModel.getDepartureDate().getDayOfMonth()); // TODO: finish building the display string, or add to view model itself!! And use string builder.
+                String joinWord = getString(R.string.word_for_TO);
+                String hours = getString(R.string.word_for_HOURS);
+                String h = getString(R.string.abbreviation_for_HOURS);
+                String minutes = getString(R.string.word_for_MINUTES);
+                String m = getString(R.string.abbreviation_for_MINUTES);
+                String unknown = getString(R.string.word_for_UNKNOWN);
 
                 holder.tripName.setText(viewModel.getDescription());
-                holder.tripDateRange.setText(dateRangeText);
-            }
+                holder.tripDirectionsOverview.setText(viewModel.getOriginDestinationSummaryText(joinWord));
+                holder.tripDateRange.setText(viewModel.getDateRangeSummaryText(joinWord));
+                // TODO: these next three need to be real values
+                holder.highlightOne.setText(viewModel.getOriginDescription());
+                holder.highlightTwo.setText(viewModel.getDestinationDescription());
 
-//            @Override
-//            public int getItemCount() {
-//                return super.getItemCount();
-//            }
+                String sb = getString(R.string.label_for_DRIVING_TIME) +
+                        " " +
+                        viewModel.getDurationDescription(hours, minutes, h, m, unknown);
+
+                holder.drivingDuration.setText(sb);
+
+                holder.iconHighlightOne.setTypeface(FontManager.getTypeface(getContext(), FontManager.FONTAWESOME_SOLID));
+                holder.iconHighlightTwo.setTypeface(FontManager.getTypeface(getContext(), FontManager.FONTAWESOME_SOLID));
+            }
         };
 
     }
@@ -108,7 +120,7 @@ public class TripListFragment extends Fragment {
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false); // getContext(), LinearLayoutManager.VERTICAL, false
         tripListRecyclerView.setLayoutManager(layoutManager);
-        //tripListRecyclerView.setHasFixedSize(false);
+        tripListRecyclerView.setHasFixedSize(true);
 
         tripListRecyclerView.setAdapter(firebaseRecyclerAdapter);
 

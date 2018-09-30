@@ -5,14 +5,17 @@ public class Trip {
     private String tripId;
     private String userId;
     private String description;
-    private double originLatitude;
-    private double originLongitude;
-    private double destinationLatitude;
-    private double destinationLongitude;
-    private boolean includeReturn;
-    private boolean isArchived;
     private String departureDate;
     private String returnDate;
+    private double originLatitude;
+    private double originLongitude;
+    private String originDescription;
+    private double destinationLatitude;
+    private double destinationLongitude;
+    private String destinationDescription;
+    private int durationMinutes;
+    private boolean includeReturn;
+    private boolean isArchived;
     private String createDate;
     private String modifiedDate;
 
@@ -75,6 +78,14 @@ public class Trip {
         this.originLongitude = originLongitude;
     }
 
+    public String getOriginDescription() {
+        return originDescription;
+    }
+
+    public void setOriginDescription(String originDescription) {
+        this.originDescription = originDescription;
+    }
+
     public double getDestinationLatitude() {
         return destinationLatitude;
     }
@@ -91,6 +102,14 @@ public class Trip {
         this.destinationLongitude = destinationLongitude;
     }
 
+    public String getDestinationDescription() {
+        return destinationDescription;
+    }
+
+    public void setDestinationDescription(String destinationDescription) {
+        this.destinationDescription = destinationDescription;
+    }
+
     public String getDepartureDate() {
         return departureDate;
     }
@@ -105,6 +124,14 @@ public class Trip {
 
     public void setReturnDate(String returnDate) {
         this.returnDate = returnDate;
+    }
+
+    public int getDurationMinutes() {
+        return durationMinutes;
+    }
+
+    public void setDurationMinutes(int durationMinutes) {
+        this.durationMinutes = durationMinutes;
     }
 
     public String getCreateDate() {

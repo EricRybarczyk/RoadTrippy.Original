@@ -24,7 +24,7 @@ public class TripRepository {
 
     public void saveTrip(Trip trip, List<TripDay> tripDays) {
         try {
-            DatabaseReference tripsDatabaseReference = firebaseDatabase.getReference().child("trips/" + trip.getUserId());
+            DatabaseReference tripsDatabaseReference = firebaseDatabase.getReference().child(DatabasePaths.BASE_PATH_TRIPS + trip.getUserId());
 
             // get the pushId to use in path when storing the child TripDay records
             String tripPushId = tripsDatabaseReference.push().getKey();
@@ -33,7 +33,7 @@ public class TripRepository {
             tripsDatabaseReference.child(tripPushId).setValue(trip);
 
             // build a path for the TripDay child objects so they can be associated with the saved Trip object
-            DatabaseReference daysDatabaseReference = firebaseDatabase.getReference().child("tripdays/" + trip.getUserId() + "/" + tripPushId);
+            DatabaseReference daysDatabaseReference = firebaseDatabase.getReference().child(DatabasePaths.BASE_PATH_TRIPDAYS + trip.getUserId() + "/" + tripPushId);
 
             // save all TripDay objects
             for (TripDay day : tripDays) {

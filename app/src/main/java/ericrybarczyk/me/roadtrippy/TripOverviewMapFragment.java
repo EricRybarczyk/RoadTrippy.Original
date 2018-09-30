@@ -33,6 +33,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import ericrybarczyk.me.roadtrippy.directions.DirectionsResponse;
+import ericrybarczyk.me.roadtrippy.directions.Leg;
 import ericrybarczyk.me.roadtrippy.directions.Route;
 import ericrybarczyk.me.roadtrippy.endpoints.GetDirectionsEndpoint;
 import ericrybarczyk.me.roadtrippy.endpoints.SearchService;
@@ -101,9 +102,10 @@ public class TripOverviewMapFragment extends Fragment implements OnMapReadyCallb
         // get Directions for the trip origin to destination to show user the route overview
         String origin = tripViewModel.getOriginLatLng().latitude + "," + tripViewModel.getOriginLatLng().longitude;
         String destination = tripViewModel.getDestinationLatLng().latitude + "," + tripViewModel.getDestinationLatLng().longitude;
+        String avoids = getString(R.string.maps_api_avoids_default);
 
         GetDirectionsEndpoint endpoint = SearchService.getClient().create(GetDirectionsEndpoint.class);
-        Call<DirectionsResponse> directionsCall = endpoint.getDirections(googleMapsApiKey, origin, destination);
+        Call<DirectionsResponse> directionsCall = endpoint.getDirections(googleMapsApiKey, origin, destination, avoids);
         directionsCall.enqueue(new Callback<DirectionsResponse>() {
             @Override
             public void onResponse(Call<DirectionsResponse> call, Response<DirectionsResponse> response) {
@@ -114,6 +116,11 @@ public class TripOverviewMapFragment extends Fragment implements OnMapReadyCallb
 
                     // use the first route for simple overview. Actual navigation will be in Google Maps and user can make changes
                     Route route = directionsResponse.getRoutes().get(0);
+                    int durationMinutes = 0;
+                    for (Leg leg: route.getLegs()) {
+                        durationMinutes += (leg.getDuration().getValue()) / 60; // value is in seconds, so divide by 60 for minutes
+                    }
+                    tripViewModel.setDurationMinutes(durationMinutes);
 
                     // add a marker at the starting & ending points
                     LatLng start = new LatLng(route.getLegs().get(0).getStartLocation().getLat(), route.getLegs().get(0).getStartLocation().getLng());
