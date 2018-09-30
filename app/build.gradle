@@ -28,6 +28,7 @@ ext {
     supportLibVersion = "27.1.1"
     googlePlayVersion = "15.0.1"
     mapUtilsVersion = "0.5"
+    preferencesVersion = "27.1.1"
     firebaseCoreVersion = "16.0.3"
     firebaseDatabaseVersion = "16.0.2"
     firebaseAuthVersion = "16.0.3"
@@ -54,6 +55,7 @@ dependencies {
     implementation "com.android.support:design:$supportLibVersion"
     implementation "com.android.support:recyclerview-v7:$supportLibVersion"
     implementation "android.arch.lifecycle:viewmodel:$lifecycleVersion"
+    implementation "com.android.support:preference-v7:$preferencesVersion"
 
     implementation "com.android.support.constraint:constraint-layout:$constraintLayoutVersion"
 

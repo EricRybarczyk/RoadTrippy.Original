@@ -9,6 +9,7 @@
         <item name="colorControlNormal">@color/colorControlNormal</item><!-- normal state of unchecked controls -->
         <item name="colorControlActivated">@color/colorControlActivated</item><!-- overrides colorAccent on activated/checked UI controls -->
         <item name="colorControlHighlight">@color/colorControlHighlight</item><!-- ripple coloring -->
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item><!-- required for Preference Fragment-->
     </style>
 
     <style name="AppTheme.NoActionBar">

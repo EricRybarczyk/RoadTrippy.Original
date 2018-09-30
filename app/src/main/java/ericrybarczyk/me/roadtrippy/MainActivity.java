@@ -221,11 +221,12 @@ public class MainActivity extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
+            case R.id.action_settings:
+                Fragment preferenceFragment = getFragmentInstance(FragmentTags.TAG_SETTINGS_PREFERENCES);
+                loadFragment(preferenceFragment, FragmentTags.TAG_SETTINGS_PREFERENCES);
+                return true;
             case R.id.action_sign_out:
                 AuthUI.getInstance().signOut(this);
-                return true;
-            case R.id.action_settings:
-                Toast.makeText(this, "Not implemented yet!", Toast.LENGTH_SHORT).show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -290,6 +291,9 @@ public class MainActivity extends AppCompatActivity
                 break;
             case FragmentTags.TAG_TRIP_DETAIL:
                 fragmentClass = TripDetailFragment.class;
+                break;
+            case FragmentTags.TAG_SETTINGS_PREFERENCES:
+                fragmentClass = SettingsFragment.class;
                 break;
             // TODO: support all fragments here
 
