@@ -288,7 +288,9 @@ public class MainActivity extends AppCompatActivity
             case FragmentTags.TAG_TRIP_OVERVIEW_MAP:
                 fragmentClass = TripOverviewMapFragment.class;
                 break;
-
+            case FragmentTags.TAG_TRIP_DETAIL:
+                fragmentClass = TripDetailFragment.class;
+                break;
             // TODO: support all fragments here
 
             default:
@@ -386,6 +388,15 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onFragmentNavigationRequest(String fragmentTag) {
         Fragment fragment = getFragmentInstance(fragmentTag);
+        loadFragment(fragment, fragmentTag);
+    }
+
+    @Override
+    public void onFragmentNavigationRequest(String fragmentTag, String tripId) {
+        Fragment fragment = getFragmentInstance(fragmentTag);
+        Bundle args = new Bundle();
+        args.putString(TripDetailFragment.KEY_TRIP_ID, tripId);
+        fragment.setArguments(args);
         loadFragment(fragment, fragmentTag);
     }
 }

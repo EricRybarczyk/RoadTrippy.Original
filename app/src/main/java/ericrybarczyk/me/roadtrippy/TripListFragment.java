@@ -19,9 +19,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 
-import org.threeten.bp.format.TextStyle;
-
-import java.util.Locale;
+import java.util.stream.Stream;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -93,6 +91,8 @@ public class TripListFragment extends Fragment {
                 String m = getString(R.string.abbreviation_for_MINUTES);
                 String unknown = getString(R.string.word_for_UNKNOWN);
 
+                holder.setTripId(viewModel.getTripId());
+                holder.setTripListClickListener(tripId -> fragmentNavigationRequestListener.onFragmentNavigationRequest(FragmentTags.TAG_TRIP_DETAIL, tripId));
                 holder.tripName.setText(viewModel.getDescription());
                 holder.tripDirectionsOverview.setText(viewModel.getOriginDestinationSummaryText(joinWord));
                 holder.tripDateRange.setText(viewModel.getDateRangeSummaryText(joinWord));
@@ -162,8 +162,4 @@ public class TripListFragment extends Fragment {
         fragmentNavigationRequestListener = null;
     }
 
-//    @Override
-//    public void onClick(String tripId) {
-//
-//    }
 }
