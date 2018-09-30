@@ -48,6 +48,7 @@
     <string name="aria_trip_item_image_description">Simple map image for trip</string>
     <string name="aria_nav_header_desc">Application Logo</string>
     <string name="aria_trip_overview_theme_image">Trip Overview Theme Image</string>
+    <string name="aria_icon_get_directions">Get Directions Icon</string>
 
     <!-- words and abbreviations injected into generated strings -->
     <string name="word_for_TO">to</string>

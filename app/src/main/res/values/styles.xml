@@ -131,4 +131,29 @@
         <item name="android:layout_margin">6dp</item>
     </style>
 
+    <style name="TripDayNumber" parent="AppTheme">
+        <item name="android:textSize">28sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/colorTextLight</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:padding">4dp</item>
+        <item name="android:layout_margin">8dp</item>
+    </style>
+
+    <style name="TripDayListItemContent" parent="AppTheme">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/colorTextPrimary</item>
+        <item name="android:layout_marginStart">@dimen/trip_list_item_margin_start</item>
+        <item name="android:layout_marginTop">@dimen/trip_list_item_margin_top</item>
+    </style>
+
+    <style name="TripDayListItemSecondary" parent="AppTheme">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/colorTextSubdued</item>
+        <item name="android:layout_marginStart">@dimen/trip_list_item_margin_start</item>
+        <item name="android:layout_marginTop">@dimen/trip_list_item_margin_top</item>
+    </style>
+
 </resources>
