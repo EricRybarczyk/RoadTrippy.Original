@@ -133,6 +133,9 @@ public class MainActivity extends AppCompatActivity
                         RequestCodes.SIGN_IN_REQUEST_CODE);
             }
         };
+
+        // load initial fragment
+        loadFragment(getFragmentInstance(FragmentTags.TAG_TRIP_LIST), FragmentTags.TAG_TRIP_LIST);
     }
 
 

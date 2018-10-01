@@ -27,12 +27,6 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <fragment
-                android:id="@+id/dynamic_fragment"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:name="ericrybarczyk.me.roadtrippy.TripListFragment" />
-
     </FrameLayout>
 
 </android.support.design.widget.CoordinatorLayout>
