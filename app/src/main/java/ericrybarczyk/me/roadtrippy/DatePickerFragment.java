@@ -6,7 +6,6 @@ package ericrybarczyk.me.roadtrippy;
 
 import android.app.Dialog;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.app.DatePickerDialog;
@@ -16,8 +15,6 @@ import android.widget.DatePicker;
 
 import org.threeten.bp.LocalDate;
 
-import java.util.Calendar;
-
 import ericrybarczyk.me.roadtrippy.util.FragmentTags;
 import ericrybarczyk.me.roadtrippy.viewmodels.TripViewModel;
 
@@ -26,7 +23,6 @@ public class DatePickerFragment extends DialogFragment
 
     private TripDateSelectedListener tripDateSelectedListener;
     private static final String TAG = DatePickerFragment.class.getSimpleName();
-    //private Calendar calendarForDisplay = null;
     private LocalDate date;
     static final String KEY_CALENDAR_FOR_DISPLAY = "calendar_for_display";
 

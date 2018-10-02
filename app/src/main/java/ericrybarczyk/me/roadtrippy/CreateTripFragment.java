@@ -117,7 +117,7 @@ public class CreateTripFragment extends Fragment
             fragmentNavigationRequestListener.onFragmentNavigationRequest(FragmentTags.TAG_TRIP_OVERVIEW_MAP);
         });
 
-        rootView.clearFocus(); // TODO: test if this helps prevent showing keyboard when app is opened from background
+        rootView.clearFocus();
         return rootView;
     }
 

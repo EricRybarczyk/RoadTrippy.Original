@@ -29,12 +29,10 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-//import com.google.firebase.database.FirebaseDatabase;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -166,12 +164,10 @@ public class MainActivity extends AppCompatActivity
 
     private void onSignedInInitialize(String username) {
         this.activeUsername = username;
-        // TODO: attachDatabaseReadListener();
     }
 
     private void onSignedOutCleanup() {
         this.activeUsername = ANONYMOUS;
-        // TODO: someDataAdapter.clear() and detachDatabaseReadListener();
     }
 
     @Override
@@ -198,7 +194,6 @@ public class MainActivity extends AppCompatActivity
     protected void onPause() {
         super.onPause();
         firebaseAuth.removeAuthStateListener(authStateListener);
-        // TODO: someDataAdapter.clear() and detachDatabaseReadListener();
     }
 
     @Override

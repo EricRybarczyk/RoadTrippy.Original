@@ -7,7 +7,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,8 +18,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
-
-import java.util.stream.Stream;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -59,7 +56,7 @@ public class TripListFragment extends Fragment {
         firebaseUser = firebaseAuth.getCurrentUser();
         String userId;
         if (firebaseUser == null) {
-            userId = "anonymous-user"; // TODO: gonna have to rework something to avoid this order-of-events problem - user is null on first load
+            userId = "anonymous-user"; // TODO: gonna have to rework something to avoid this order-of-events problem - user is null on first load (sometimes?)
         } else {
             userId = firebaseUser.getUid();
         }

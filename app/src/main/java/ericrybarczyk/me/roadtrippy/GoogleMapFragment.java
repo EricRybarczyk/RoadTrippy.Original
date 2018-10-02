@@ -119,7 +119,7 @@ public class GoogleMapFragment extends Fragment
             }
         });
 
-        rootView.clearFocus(); // TODO: test if this helps prevent showing keyboard when app is opened from background
+        rootView.clearFocus();
 
         mapFragment.getMapAsync(this);
 
