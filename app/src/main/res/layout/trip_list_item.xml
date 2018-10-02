@@ -1,103 +1,112 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    android:background="@color/colorBackground">
+    android:layout_marginTop="8dp"
+    android:layout_marginStart="8dp"
+    android:layout_marginEnd="8dp"
+    android:layout_marginBottom="0dp"
+    app:cardCornerRadius="8dp">
 
-    <android.support.constraint.Guideline
-        android:id="@+id/content_inset_guideline"
-        android:layout_width="wrap_content"
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintGuide_percent=".20"
-        android:orientation="vertical"/>
+        android:background="@color/colorBackground">
 
-    <!-- TODO: change placeholder image to generated trip map image -->
-    <ImageView
-        android:id="@+id/trip_item_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/content_inset_guideline"
-        android:scaleType="centerInside"
-        android:adjustViewBounds="true"
-        app:srcCompat="@drawable/map_placeholder"
-        android:contentDescription="@string/aria_trip_item_image_description"/>
+        <android.support.constraint.Guideline
+            android:id="@+id/content_inset_guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintGuide_percent=".20"
+            android:orientation="vertical"/>
 
-    <TextView
-        android:id="@+id/trip_name_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="@id/content_inset_guideline"
-        app:layout_constraintTop_toTopOf="parent"
-        style="@style/TripListItemName"
-        tools:text="Trip Name Here" />
+        <!-- TODO: change placeholder image to generated trip map image -->
+        <ImageView
+            android:id="@+id/trip_item_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/content_inset_guideline"
+            android:scaleType="centerInside"
+            android:adjustViewBounds="true"
+            app:srcCompat="@drawable/map_placeholder"
+            android:contentDescription="@string/aria_trip_item_image_description"/>
 
-    <TextView
-        android:id="@+id/trip_directions_overview_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="@id/content_inset_guideline"
-        app:layout_constraintTop_toBottomOf="@id/trip_name_text"
-        style="@style/TripListItemContent"
-        tools:text="Origin City to Destination City" />
+        <TextView
+            android:id="@+id/trip_name_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@id/content_inset_guideline"
+            app:layout_constraintTop_toTopOf="parent"
+            style="@style/TripListItemName"
+            tools:text="Trip Name Here" />
 
-    <TextView
-        android:id="@+id/trip_date_range_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="@id/content_inset_guideline"
-        app:layout_constraintTop_toBottomOf="@id/trip_directions_overview_text"
-        style="@style/TripListItemContent"
-        tools:text="October 17 to 21" />
+        <TextView
+            android:id="@+id/trip_directions_overview_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@id/content_inset_guideline"
+            app:layout_constraintTop_toBottomOf="@id/trip_name_text"
+            style="@style/TripListItemContent"
+            tools:text="Origin City to Destination City" />
 
-    <TextView
-        android:id="@+id/icon_highlight_one"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="@id/content_inset_guideline"
-        app:layout_constraintTop_toBottomOf="@id/trip_date_range_text"
-        style="@style/TripListItemContent"
-        android:textColor="@color/colorAccent"
-        android:text="@string/fa_icon_star" />
-    <TextView
-        android:id="@+id/trip_highlight_one_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toEndOf="@id/icon_highlight_one"
-        app:layout_constraintTop_toBottomOf="@id/trip_date_range_text"
-        style="@style/TripListItemContent"
-        tools:text="Something cool about this trip" />
+        <TextView
+            android:id="@+id/trip_date_range_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@id/content_inset_guideline"
+            app:layout_constraintTop_toBottomOf="@id/trip_directions_overview_text"
+            style="@style/TripListItemContent"
+            tools:text="October 17 to 21" />
 
-    <TextView
-        android:id="@+id/icon_highlight_two"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="@id/content_inset_guideline"
-        app:layout_constraintTop_toBottomOf="@id/trip_highlight_one_text"
-        style="@style/TripListItemContent"
-        android:textColor="@color/colorAccent"
-        android:text="@string/fa_icon_star" />
-    <TextView
-        android:id="@+id/trip_highlight_two_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toEndOf="@id/icon_highlight_two"
-        app:layout_constraintTop_toBottomOf="@id/trip_highlight_one_text"
-        style="@style/TripListItemContent"
-        tools:text="Another cool about this trip" />
+        <TextView
+            android:id="@+id/icon_highlight_one"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@id/content_inset_guideline"
+            app:layout_constraintTop_toBottomOf="@id/trip_date_range_text"
+            style="@style/TripListItemContent"
+            android:textColor="@color/colorAccent"
+            android:text="@string/fa_icon_star" />
+        <TextView
+            android:id="@+id/trip_highlight_one_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/icon_highlight_one"
+            app:layout_constraintTop_toBottomOf="@id/trip_date_range_text"
+            style="@style/TripListItemContent"
+            tools:text="Something cool about this trip" />
 
-    <TextView
-        android:id="@+id/driving_duration_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="@id/content_inset_guideline"
-        app:layout_constraintTop_toBottomOf="@id/trip_highlight_two_text"
-        style="@style/TripListItemContent"
-        tools:text="Driving Time: 11h 37m"/>
+        <TextView
+            android:id="@+id/icon_highlight_two"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@id/content_inset_guideline"
+            app:layout_constraintTop_toBottomOf="@id/trip_highlight_one_text"
+            style="@style/TripListItemContent"
+            android:textColor="@color/colorAccent"
+            android:text="@string/fa_icon_star" />
+        <TextView
+            android:id="@+id/trip_highlight_two_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/icon_highlight_two"
+            app:layout_constraintTop_toBottomOf="@id/trip_highlight_one_text"
+            style="@style/TripListItemContent"
+            tools:text="Another cool about this trip" />
 
-</android.support.constraint.ConstraintLayout>
+        <TextView
+            android:id="@+id/driving_duration_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@id/content_inset_guideline"
+            app:layout_constraintTop_toBottomOf="@id/trip_highlight_two_text"
+            style="@style/TripListItemContent"
+            tools:text="Driving Time: 11h 37m"/>
+
+    </android.support.constraint.ConstraintLayout>
+</android.support.v7.widget.CardView>

@@ -54,6 +54,7 @@ dependencies {
     implementation "com.android.support:support-v4:$supportLibVersion"
     implementation "com.android.support:design:$supportLibVersion"
     implementation "com.android.support:recyclerview-v7:$supportLibVersion"
+    implementation "com.android.support:cardview-v7:$supportLibVersion"
     implementation "android.arch.lifecycle:viewmodel:$lifecycleVersion"
     implementation "com.android.support:preference-v7:$preferencesVersion"
 
