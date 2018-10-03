@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:padding="0dp"
     android:layout_marginTop="@dimen/trip_list_card_margin_vertical"
     android:layout_marginStart="@dimen/trip_list_card_margin_horizontal"
     android:layout_marginEnd="@dimen/trip_list_card_margin_horizontal"
@@ -16,29 +17,21 @@
         android:layout_height="wrap_content"
         android:background="@color/colorBackground">
 
-        <android.support.constraint.Guideline
-            android:id="@+id/content_inset_guideline"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintGuide_percent=".20"
-            android:orientation="vertical"/>
-
-        <!-- TODO: change placeholder image to generated trip map image -->
         <ImageView
             android:id="@+id/trip_item_image"
-            android:layout_width="wrap_content"
+            android:layout_width="90dp"
             android:layout_height="wrap_content"
+            android:padding="0dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toStartOf="@id/content_inset_guideline"
-            android:adjustViewBounds="true"
             android:contentDescription="@string/aria_trip_item_image_description"/>
 
         <TextView
             android:id="@+id/trip_name_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="@id/content_inset_guideline"
+            app:layout_constraintStart_toEndOf="@id/trip_item_image"
             app:layout_constraintTop_toTopOf="parent"
             style="@style/TripListItemName"
             tools:text="Trip Name Here" />
@@ -47,7 +40,7 @@
             android:id="@+id/trip_directions_overview_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="@id/content_inset_guideline"
+            app:layout_constraintStart_toEndOf="@id/trip_item_image"
             app:layout_constraintTop_toBottomOf="@id/trip_name_text"
             style="@style/TripListItemContent"
             tools:text="Origin City to Destination City" />
@@ -56,7 +49,7 @@
             android:id="@+id/trip_date_range_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="@id/content_inset_guideline"
+            app:layout_constraintStart_toEndOf="@id/trip_item_image"
             app:layout_constraintTop_toBottomOf="@id/trip_directions_overview_text"
             style="@style/TripListItemContent"
             tools:text="October 17 to 21" />
@@ -65,7 +58,7 @@
             android:id="@+id/icon_highlight_one"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="@id/content_inset_guideline"
+            app:layout_constraintStart_toEndOf="@id/trip_item_image"
             app:layout_constraintTop_toBottomOf="@id/trip_date_range_text"
             style="@style/TripListItemContent"
             android:textColor="@color/colorAccent"
@@ -83,7 +76,7 @@
             android:id="@+id/icon_highlight_two"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="@id/content_inset_guideline"
+            app:layout_constraintStart_toEndOf="@id/trip_item_image"
             app:layout_constraintTop_toBottomOf="@id/trip_highlight_one_text"
             style="@style/TripListItemContent"
             android:textColor="@color/colorAccent"
@@ -101,7 +94,7 @@
             android:id="@+id/driving_duration_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="@id/content_inset_guideline"
+            app:layout_constraintStart_toEndOf="@id/trip_item_image"
             app:layout_constraintTop_toBottomOf="@id/trip_highlight_two_text"
             style="@style/TripListItemContent"
             tools:text="Driving Time: 11h 37m"/>

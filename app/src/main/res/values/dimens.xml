@@ -13,7 +13,7 @@
     <dimen name="trip_list_item_margin_top">4dp</dimen>
 
     <dimen name="trip_list_card_margin_horizontal">8dp</dimen>
-    <dimen name="trip_list_card_margin_vertical">4dp</dimen>
+    <dimen name="trip_list_card_margin_vertical">6dp</dimen>
     <dimen name="trip_list_card_corner_radius">8dp</dimen>
 
     <dimen name="map_vertical_margin">8dp</dimen>

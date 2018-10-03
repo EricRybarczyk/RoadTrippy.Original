@@ -154,9 +154,9 @@ public class GoogleMapFragment extends Fragment
         // slice a part of the image for use in trip list view
         int currentWidth = bitmap.getWidth();
         int currentHeight = bitmap.getHeight();
-        // goal is to remove 40% horizontal and 20% vertical, keep centered remainder
-        int startX = Math.round(currentWidth * 0.2f);
-        int startY = Math.round(currentHeight * 0.1f);
+        // original is more portrait. Remove 20% horizontal 60% vertical, keep centered remainder. Looks good in List View, Picasso centers to fit.
+        int startX = Math.round(currentWidth * 0.1f);
+        int startY = Math.round(currentHeight * 0.3f);
         int resizedWidth = currentWidth - (startX * 2);
         int resizedHeight = currentHeight - (startY * 2);
 
