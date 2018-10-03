@@ -31,9 +31,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toStartOf="@id/content_inset_guideline"
-            android:scaleType="centerInside"
             android:adjustViewBounds="true"
-            app:srcCompat="@drawable/map_placeholder"
             android:contentDescription="@string/aria_trip_item_image_description"/>
 
         <TextView

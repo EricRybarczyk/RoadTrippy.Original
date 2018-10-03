@@ -1,5 +1,6 @@
 package ericrybarczyk.me.roadtrippy;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,11 +21,15 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.squareup.picasso.Picasso;
+
+import java.io.File;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import ericrybarczyk.me.roadtrippy.dto.TripDay;
 import ericrybarczyk.me.roadtrippy.persistence.DatabasePaths;
+import ericrybarczyk.me.roadtrippy.util.MapSettings;
 import ericrybarczyk.me.roadtrippy.viewmodels.TripDayViewModel;
 
 public class TripDetailFragment extends Fragment {
@@ -95,6 +100,7 @@ public class TripDetailFragment extends Fragment {
                 // TODO: bind icon click listener for maps directions intent
             }
         };
+
     }
 
     @Nullable
@@ -104,6 +110,15 @@ public class TripDetailFragment extends Fragment {
         ButterKnife.bind(this, rootView);
 
         tripDescription.setText(tripId);
+
+        File imageDir = getContext().getDir(MapSettings.DESTINATION_MAP_IMAGE_DIRECTORY, Context.MODE_PRIVATE);
+        String tripImageFilename = MapSettings.DESTINATION_MAP_MAIN_PREFIX + tripId + MapSettings.DESTINATION_MAP_IMAGE_EXTENSION;
+        File mapImage = new File(imageDir, tripImageFilename);
+        Picasso.with(getContext())
+                .load(mapImage)
+                .placeholder(R.drawable.map_placeholder)
+                .error(R.drawable.map_placeholder)
+                .into(tripImage);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         tripDaysListRecyclerView.setLayoutManager(layoutManager);

@@ -3,6 +3,7 @@ package ericrybarczyk.me.roadtrippy;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import butterknife.BindView;
@@ -14,6 +15,7 @@ public class TripViewHolder extends RecyclerView.ViewHolder implements View.OnCl
     OnTripListClickListener onTripListClickListener;
     private String tripId;
 
+    @BindView(R.id.trip_item_image) protected ImageView tripImage;
     @BindView(R.id.trip_name_text) protected TextView tripName;
     @BindView(R.id.trip_directions_overview_text) protected TextView tripDirectionsOverview;
     @BindView(R.id.trip_date_range_text) protected TextView tripDateRange;

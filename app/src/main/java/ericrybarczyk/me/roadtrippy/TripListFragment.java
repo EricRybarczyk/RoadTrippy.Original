@@ -18,6 +18,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.squareup.picasso.Picasso;
+
+import java.io.File;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -26,6 +29,7 @@ import ericrybarczyk.me.roadtrippy.dto.Trip;
 import ericrybarczyk.me.roadtrippy.persistence.DatabasePaths;
 import ericrybarczyk.me.roadtrippy.util.FontManager;
 import ericrybarczyk.me.roadtrippy.util.FragmentTags;
+import ericrybarczyk.me.roadtrippy.util.MapSettings;
 import ericrybarczyk.me.roadtrippy.viewmodels.TripViewModel;
 
 
@@ -90,6 +94,18 @@ public class TripListFragment extends Fragment {
 
                 holder.setTripId(viewModel.getTripId());
                 holder.setTripListClickListener(tripId -> fragmentNavigationRequestListener.onFragmentNavigationRequest(FragmentTags.TAG_TRIP_DETAIL, tripId));
+
+                File imageDir = getContext().getDir(MapSettings.DESTINATION_MAP_IMAGE_DIRECTORY, Context.MODE_PRIVATE);
+                String tripImageFilename = MapSettings.DESTINATION_MAP_ZOOM_PREFIX + viewModel.getTripId() + MapSettings.DESTINATION_MAP_IMAGE_EXTENSION;
+                File mapImage = new File(imageDir, tripImageFilename);
+                Picasso.with(getContext())
+                        .load(mapImage)
+                        .fit()
+                        .centerCrop()
+                        .placeholder(R.drawable.map_placeholder)
+                        .error(R.drawable.map_placeholder)
+                        .into(holder.tripImage);
+
                 holder.tripName.setText(viewModel.getDescription());
                 holder.tripDirectionsOverview.setText(viewModel.getOriginDestinationSummaryText(joinWord));
                 holder.tripDateRange.setText(viewModel.getDateRangeSummaryText(joinWord));
