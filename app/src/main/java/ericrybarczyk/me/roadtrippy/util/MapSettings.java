@@ -10,5 +10,5 @@ public class MapSettings {
     public static final String DESTINATION_MAP_IMAGE_DIRECTORY = "destMaps";
     public static final String DESTINATION_MAP_IMAGE_EXTENSION = ".png";
     public static final String DESTINATION_MAP_MAIN_PREFIX = "t_";
-    public static final String DESTINATION_MAP_ZOOM_PREFIX = "t_"; // TODO: make this difference after I get the alternate zoomed image working
+    public static final String DESTINATION_MAP_SLICED_PREFIX = "s_"; // TODO: make this difference after I get the alternate zoomed image working
 }

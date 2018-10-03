@@ -96,7 +96,7 @@ public class TripListFragment extends Fragment {
                 holder.setTripListClickListener(tripId -> fragmentNavigationRequestListener.onFragmentNavigationRequest(FragmentTags.TAG_TRIP_DETAIL, tripId));
 
                 File imageDir = getContext().getDir(MapSettings.DESTINATION_MAP_IMAGE_DIRECTORY, Context.MODE_PRIVATE);
-                String tripImageFilename = MapSettings.DESTINATION_MAP_ZOOM_PREFIX + viewModel.getTripId() + MapSettings.DESTINATION_MAP_IMAGE_EXTENSION;
+                String tripImageFilename = MapSettings.DESTINATION_MAP_SLICED_PREFIX + viewModel.getTripId() + MapSettings.DESTINATION_MAP_IMAGE_EXTENSION;
                 File mapImage = new File(imageDir, tripImageFilename);
                 Picasso.with(getContext())
                         .load(mapImage)

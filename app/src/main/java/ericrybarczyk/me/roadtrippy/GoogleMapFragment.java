@@ -131,7 +131,7 @@ public class GoogleMapFragment extends Fragment
                     googleMap.snapshot(new GoogleMap.SnapshotReadyCallback() {
                         @Override
                         public void onSnapshotReady(Bitmap bitmap) {
-                            saveMapSnapshotImage(bitmap, MapSettings.DESTINATION_MAP_MAIN_PREFIX);
+                            saveMapSnapshotImage(bitmap);
                         }
                     });
                 }
@@ -148,13 +148,30 @@ public class GoogleMapFragment extends Fragment
         return rootView;
     }
 
-    private void saveMapSnapshotImage(Bitmap bitmap, String filePrefix) {
+    private void saveMapSnapshotImage(Bitmap bitmap) {
         File imageDir = getContext().getDir(MapSettings.DESTINATION_MAP_IMAGE_DIRECTORY, Context.MODE_PRIVATE);
-        File mapImage = new File(imageDir, filePrefix + tripViewModel.getTripId() + MapSettings.DESTINATION_MAP_IMAGE_EXTENSION);
+
+        // slice a part of the image for use in trip list view
+        int currentWidth = bitmap.getWidth();
+        int currentHeight = bitmap.getHeight();
+        // goal is to remove 40% horizontal and 20% vertical, keep centered remainder
+        int startX = Math.round(currentWidth * 0.2f);
+        int startY = Math.round(currentHeight * 0.1f);
+        int resizedWidth = currentWidth - (startX * 2);
+        int resizedHeight = currentHeight - (startY * 2);
+
+        Bitmap resizedBitmap = Bitmap.createBitmap(bitmap, startX, startY, resizedWidth, resizedHeight);
+
+        // save the main image now
+        File mainFile = new File(imageDir, MapSettings.DESTINATION_MAP_MAIN_PREFIX + tripViewModel.getTripId() + MapSettings.DESTINATION_MAP_IMAGE_EXTENSION);
+        File resizedFile = new File(imageDir, MapSettings.DESTINATION_MAP_SLICED_PREFIX + tripViewModel.getTripId() + MapSettings.DESTINATION_MAP_IMAGE_EXTENSION);
+
         FileOutputStream fos = null;
         try {
-            fos = new FileOutputStream(mapImage);
+            fos = new FileOutputStream(mainFile);
             bitmap.compress(Bitmap.CompressFormat.PNG, MapSettings.MAP_IMAGE_SAVE_QUALITY, fos);
+            fos = new FileOutputStream(resizedFile);
+            resizedBitmap.compress(Bitmap.CompressFormat.PNG, MapSettings.MAP_IMAGE_SAVE_QUALITY, fos);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } finally {
