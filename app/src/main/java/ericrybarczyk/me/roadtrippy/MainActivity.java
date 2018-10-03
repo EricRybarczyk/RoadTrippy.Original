@@ -322,6 +322,10 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onMapDisplayRequested(int requestCode, String returnToFragmentTag) {
+        if (lastKnownLocation == null) {
+            Toast.makeText(this, R.string.error_device_location_null, Toast.LENGTH_LONG).show();
+            return;
+        }
         Fragment fragment = GoogleMapFragment.newInstance(lastKnownLocation, requestCode, returnToFragmentTag);
         loadFragment(fragment, FragmentTags.TAG_MAP_SELECT_LOCATION);
     }
@@ -376,6 +380,7 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void onSuccess(Location location) {
                         lastKnownLocation = location;
+                        Log.i(TAG, "lastKnownLocation updated");
                     }
 
                 })

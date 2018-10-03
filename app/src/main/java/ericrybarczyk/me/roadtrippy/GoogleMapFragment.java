@@ -3,6 +3,7 @@ package ericrybarczyk.me.roadtrippy;
 import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -26,6 +27,11 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import ericrybarczyk.me.roadtrippy.endpoints.FindPlacesEndpoint;
@@ -33,6 +39,7 @@ import ericrybarczyk.me.roadtrippy.endpoints.SearchService;
 import ericrybarczyk.me.roadtrippy.places.Candidate;
 import ericrybarczyk.me.roadtrippy.places.PlacesResponse;
 import ericrybarczyk.me.roadtrippy.util.InputUtils;
+import ericrybarczyk.me.roadtrippy.util.RequestCodes;
 import ericrybarczyk.me.roadtrippy.viewmodels.TripViewModel;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -53,17 +60,22 @@ public class GoogleMapFragment extends Fragment
     private GoogleMap googleMap;
 
     private static final float MAP_DEFAULT_ZOOM = 12.0f;
+    private static final float MAP_SEARCH_RESULT_ZOOM = 13.0f;
+    private static final float MAP_CLICK_ZOOM = 14.0f;
     private static final float MAP_DEFAULT_BEARING = 360.0f;
     private static final float MAP_DEFAULT_TILT = 0.0f;
+    private static final int MAP_IMAGE_SAVE_QUALITY = 100;
 
     public static final String KEY_START_LAT = "start_location_latitude";
     public static final String KEY_START_LNG = "start_location_longitude";
     public static final String KEY_REQUEST_CODE = "request_code_from_caller";
     public static final String KEY_RETURN_FRAGMENT_TAG = "return_fragment_tag";
+    public static final String KEY_LAST_MAP_ZOOM_LEVEL = "last_map_zoom_level";
     private static final String TAG = GoogleMapFragment.class.getSimpleName();
 
     private LatLng mapLocation;
     private CameraPosition cameraPosition;
+    private float lastMapZoomLevel;
     private LocationSelectedListener locationSelectedListener;
     private int requestCode; // passed in from caller to be returned with map location
     private FragmentNavigationRequestListener fragmentNavigationRequestListener;
@@ -88,12 +100,14 @@ public class GoogleMapFragment extends Fragment
         super.onCreate(savedInstanceState);
 
         googleMapsApiKey = getString(R.string.google_maps_key);
+        lastMapZoomLevel = MAP_DEFAULT_ZOOM;
 
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(KEY_START_LAT)) {
                 mapLocation = new LatLng(savedInstanceState.getDouble(KEY_START_LAT), savedInstanceState.getDouble(KEY_START_LNG));
                 requestCode = savedInstanceState.getInt(KEY_REQUEST_CODE);
                 returnFragmentTag = savedInstanceState.getString(KEY_RETURN_FRAGMENT_TAG);
+                lastMapZoomLevel = savedInstanceState.getFloat(KEY_LAST_MAP_ZOOM_LEVEL);
             }
         } else if (getArguments() != null) {
             mapLocation = new LatLng(getArguments().getDouble(KEY_START_LAT), getArguments().getDouble(KEY_START_LNG));
@@ -114,6 +128,29 @@ public class GoogleMapFragment extends Fragment
 
         setLocationButton.setOnClickListener(v -> {
             if (v.getId() == setLocationButton.getId()) {
+                if (requestCode == RequestCodes.TRIP_DESTINATION_REQUEST_CODE) {
+                    updateMapView(MAP_SEARCH_RESULT_ZOOM); // make sure the map is displayed in a way that works well for the snapshot
+                    // save a bitmap of the Google Map
+                    // code based on https://stackoverflow.com/a/26946907/798642 and https://stackoverflow.com/a/17674787/798642
+                    googleMap.snapshot(bitmap -> {
+                        File imageDir = getContext().getDir("savedMaps",Context.MODE_PRIVATE);
+                        File mapImage = new File(imageDir, tripViewModel.getTripId() + ".png");
+                        FileOutputStream fos = null;
+                        try {
+                            fos = new FileOutputStream(mapImage);
+                            bitmap.compress(Bitmap.CompressFormat.PNG, MAP_IMAGE_SAVE_QUALITY, fos);
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        } finally {
+                            try {
+                                fos.close();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                }
+
                 locationSelectedListener.onLocationSelected(mapLocation, requestCode, locationDescription.getText().toString());
                 fragmentNavigationRequestListener.onFragmentNavigationRequest(returnFragmentTag);
             }
@@ -166,7 +203,7 @@ public class GoogleMapFragment extends Fragment
     @Override
     public void onMapClick(LatLng latLng) {
         mapLocation = latLng;
-        updateMapView();
+        updateMapView(MAP_CLICK_ZOOM);
     }
 
     @Override
@@ -178,15 +215,20 @@ public class GoogleMapFragment extends Fragment
 
 
     private void updateMapView() {
+        updateMapView(lastMapZoomLevel);
+    }
+
+    private void updateMapView(float zoomLevel) {
         googleMap.clear();
         googleMap.addMarker(new MarkerOptions().position(mapLocation));
         cameraPosition = new CameraPosition.Builder().target(mapLocation)
-                .zoom(MAP_DEFAULT_ZOOM)
+                .zoom(zoomLevel)
                 .bearing(MAP_DEFAULT_BEARING)
                 .tilt(MAP_DEFAULT_TILT)
                 .build();
         CameraUpdate cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition);
         googleMap.animateCamera(cameraUpdate);
+        lastMapZoomLevel = zoomLevel;
     }
 
     @Override
@@ -211,7 +253,7 @@ public class GoogleMapFragment extends Fragment
                             Candidate place = placesResponse.getCandidates().get(0);
                             mapLocation = new LatLng(place.getGeometry().getLocation().getLat(), place.getGeometry().getLocation().getLng());
                             locationDescription.setText(place.getName());
-                            updateMapView();
+                            updateMapView(MAP_SEARCH_RESULT_ZOOM);
                         } else {
                             Log.d(TAG, "Too many Places Search results. Result count = " + String.valueOf(placesResponse.getCandidates().size()));
                             Toast.makeText(getContext(), R.string.map_search_too_many_results_message, Toast.LENGTH_LONG).show();
