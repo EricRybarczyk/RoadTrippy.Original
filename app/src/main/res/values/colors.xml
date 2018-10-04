@@ -30,5 +30,5 @@
     <color name="ic_launcher_background">#FFD54F</color><!--300-->
 
     <color name="colorMapPolyline">#03A9F4</color>
-    <color name="colorDividerLineMedium">#757575</color><!--600-->
+    <color name="colorDividerLineMedium">#BDBDBD</color><!--600-->
 </resources>
