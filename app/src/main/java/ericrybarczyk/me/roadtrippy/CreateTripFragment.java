@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -112,13 +113,25 @@ public class CreateTripFragment extends Fragment
         });
 
         nextStepButton.setOnClickListener(v -> {
-            // TODO: input validation
             tripViewModel.setDescription(tripNameText.getText().toString());
-            fragmentNavigationRequestListener.onFragmentNavigationRequest(FragmentTags.TAG_TRIP_OVERVIEW_MAP);
+            if (isValidForSave()) {
+                fragmentNavigationRequestListener.onFragmentNavigationRequest(FragmentTags.TAG_TRIP_OVERVIEW_MAP);
+            } else {
+                Toast.makeText(getContext(), R.string.error_create_trip_data_validation, Toast.LENGTH_LONG).show();
+            }
         });
 
         rootView.clearFocus();
         return rootView;
+    }
+
+    private boolean isValidForSave() {
+        return (!tripViewModel.getDescription().isEmpty())
+                && (!tripViewModel.getOriginDescription().isEmpty())
+                && (!tripViewModel.getDestinationDescription().isEmpty())
+                && (tripViewModel.getDepartureDate().compareTo(tripViewModel.getReturnDate()) <= 0)
+                && (tripViewModel.getOriginLatLng() != null)
+                && (tripViewModel.getDestinationLatLng() != null);
     }
 
 

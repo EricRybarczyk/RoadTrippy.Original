@@ -41,7 +41,6 @@
     <string name="map_directions_call_error_message">Error: unable to get directions</string>
     <string name="map_directions_failure">Unable to find Directions. Please adjust your Trip.</string>
     <string name="maps_api_avoids_default">ferries</string>
-    <string name="error_device_location_null">Device location not found, please check your Location Settings.</string>
 
     <string name="fa_icon_star">&#xf005;</string>
 
@@ -60,5 +59,7 @@
     <string name="word_for_UNKNOWN">Unknown</string>
     <string name="label_for_DRIVING_TIME">Driving Time:</string>
 
+    <string name="error_device_location_null">Device location not found, please check your Location Settings.</string>
+    <string name="error_create_trip_data_validation">Please provide all trip information</string>
 
 </resources>

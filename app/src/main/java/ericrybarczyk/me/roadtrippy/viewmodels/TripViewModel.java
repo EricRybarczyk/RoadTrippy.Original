@@ -34,17 +34,17 @@ public class TripViewModel extends ViewModel {
 
     private void init() {
         tripId = UUID.randomUUID().toString();
+        description = "";
+        originDescription = "";
+        destinationDescription = "";
         departureDate = LocalDate.now();
         returnDate = LocalDate.now().plusDays(1);
         includeReturn = true;
         tripDays = new ArrayList<>();
         durationMinutes = 0;
         if (isEdited) {
-            description = "";
             originLatLng = null;
-            originDescription = "";
             destinationLatLng = null;
-            destinationDescription = "";
             isEdited = false;
         }
     }
