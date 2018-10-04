@@ -93,6 +93,7 @@ public class TripOverviewMapFragment extends Fragment implements OnMapReadyCallb
     @Override
     public void onMapReady(GoogleMap map) {
         googleMap = map;
+        googleMap.clear();
         googleMap.setMyLocationEnabled(true);
         UiSettings uiSettings = googleMap.getUiSettings();
         uiSettings.setZoomControlsEnabled(true);
