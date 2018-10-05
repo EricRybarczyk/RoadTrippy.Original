@@ -2,9 +2,17 @@
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <EditTextPreference
-        android:key="home_location_preference"
+    <Preference
         android:title="Home Location"
-        android:dialogTitle="Home Location" />
+        android:summary="Set your Home as a trip starting point">
+        <intent android:action="ericrybarczyk.me.roadtrippy.HomeLocationPreference" />
+    </Preference>
+
+    <EditTextPreference
+        android:key="daily_driving_duration_preference"
+        android:title="Daily Driving Duration"
+        android:defaultValue="12"
+        android:summary="Drives over this limit will be split to separate days"
+        android:dialogTitle="Maximum Driving Hours per Day" />
 
 </PreferenceScreen>

@@ -13,4 +13,5 @@ public class FragmentTags {
     public static final String TAG_TRIP_DETAIL = "trip_detail_fragment";
 
     public static final String TAG_SETTINGS_PREFERENCES = "settings_preferences_fragment";
+    public static final String TAG_HOME_LOCATION_PREFERENCE = "home_location_preferences_fragment";
 }

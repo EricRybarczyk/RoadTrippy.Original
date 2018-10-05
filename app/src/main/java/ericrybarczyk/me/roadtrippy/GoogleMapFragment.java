@@ -1,5 +1,6 @@
 package ericrybarczyk.me.roadtrippy;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -8,7 +9,9 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +20,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -26,6 +30,7 @@ import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -46,6 +51,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static android.support.v4.content.PermissionChecker.PERMISSION_GRANTED;
+
 public class GoogleMapFragment extends Fragment
         implements  OnMapReadyCallback, GoogleMap.OnMapClickListener,
                     GoogleMap.OnCameraMoveStartedListener, View.OnClickListener {
@@ -59,8 +66,6 @@ public class GoogleMapFragment extends Fragment
     private SupportMapFragment mapFragment;
     private String googleMapsApiKey;
     private GoogleMap googleMap;
-
-
 
     public static final String KEY_START_LAT = "start_location_latitude";
     public static final String KEY_START_LNG = "start_location_longitude";
@@ -80,11 +85,22 @@ public class GoogleMapFragment extends Fragment
     public GoogleMapFragment() {
     }
 
-    public static GoogleMapFragment newInstance(Location initialLocation, int requestCode, String returnToFragmentTag) {
+//    public static GoogleMapFragment newInstance(Location initialLocation, int requestCode, String returnToFragmentTag) {
+//        GoogleMapFragment mapFragment = new GoogleMapFragment();
+//        Bundle args = new Bundle();
+//        args.putDouble(KEY_START_LAT, initialLocation.getLatitude());
+//        args.putDouble(KEY_START_LNG, initialLocation.getLongitude());
+//        args.putInt(KEY_REQUEST_CODE, requestCode);
+//        args.putString(KEY_RETURN_FRAGMENT_TAG, returnToFragmentTag);
+//        mapFragment.setArguments(args);
+//        return mapFragment;
+//    }
+
+    public static GoogleMapFragment newInstance(int requestCode, String returnToFragmentTag) {
         GoogleMapFragment mapFragment = new GoogleMapFragment();
         Bundle args = new Bundle();
-        args.putDouble(KEY_START_LAT, initialLocation.getLatitude());
-        args.putDouble(KEY_START_LNG, initialLocation.getLongitude());
+//        args.putDouble(KEY_START_LAT, 0);
+//        args.putDouble(KEY_START_LNG, 0);
         args.putInt(KEY_REQUEST_CODE, requestCode);
         args.putString(KEY_RETURN_FRAGMENT_TAG, returnToFragmentTag);
         mapFragment.setArguments(args);
@@ -100,13 +116,13 @@ public class GoogleMapFragment extends Fragment
 
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(KEY_START_LAT)) {
-                mapLocation = new LatLng(savedInstanceState.getDouble(KEY_START_LAT), savedInstanceState.getDouble(KEY_START_LNG));
+                //mapLocation = new LatLng(savedInstanceState.getDouble(KEY_START_LAT), savedInstanceState.getDouble(KEY_START_LNG));
                 requestCode = savedInstanceState.getInt(KEY_REQUEST_CODE);
                 returnFragmentTag = savedInstanceState.getString(KEY_RETURN_FRAGMENT_TAG);
                 lastMapZoomLevel = savedInstanceState.getFloat(KEY_LAST_MAP_ZOOM_LEVEL);
             }
         } else if (getArguments() != null) {
-            mapLocation = new LatLng(getArguments().getDouble(KEY_START_LAT), getArguments().getDouble(KEY_START_LNG));
+            //mapLocation = new LatLng(getArguments().getDouble(KEY_START_LAT), getArguments().getDouble(KEY_START_LNG));
             requestCode = getArguments().getInt(KEY_REQUEST_CODE);
             returnFragmentTag = getArguments().getString(KEY_RETURN_FRAGMENT_TAG);
         }
@@ -123,6 +139,7 @@ public class GoogleMapFragment extends Fragment
         searchButton.setOnClickListener(this);
 
         setLocationButton.setOnClickListener(v -> {
+
             if (v.getId() == setLocationButton.getId()) {
                 if (requestCode == RequestCodes.TRIP_DESTINATION_REQUEST_CODE) {
                     updateMapView(MapSettings.MAP_SEARCH_RESULT_ZOOM); // make sure the map is displayed in a way that works well for the snapshot
@@ -135,17 +152,39 @@ public class GoogleMapFragment extends Fragment
                         }
                     });
                 }
-
+                InputUtils.hideKeyboardFrom(getContext(), searchText);
                 locationSelectedListener.onLocationSelected(mapLocation, requestCode, locationDescription.getText().toString());
                 fragmentNavigationRequestListener.onFragmentNavigationRequest(returnFragmentTag);
             }
         });
 
+        int permission = ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION);
+        if (permission == PERMISSION_GRANTED) {
+            updateLocation();
+        } else {
+            // Permission is not granted - request the permission
+            requestPermissions(new String[] { Manifest.permission.ACCESS_FINE_LOCATION },
+                                RequestCodes.LOCATION_PERMISSIONS_REQUEST_CODE);
+        }
+
         rootView.clearFocus();
-
-        mapFragment.getMapAsync(this);
-
         return rootView;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//        updateLocation();
+        switch (requestCode) {
+            case RequestCodes.LOCATION_PERMISSIONS_REQUEST_CODE: {
+                updateLocation();
+                break;
+            }
+            default: {
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+                break;
+            }
+        }
     }
 
     private void saveMapSnapshotImage(Bitmap bitmap) {
@@ -203,6 +242,19 @@ public class GoogleMapFragment extends Fragment
         super.onDetach();
         fragmentNavigationRequestListener = null;
         locationSelectedListener = null;
+    }
+
+    @SuppressLint("MissingPermission")
+    private void updateLocation() {
+        LocationServices.getFusedLocationProviderClient(getContext())
+                .getLastLocation()
+                .addOnSuccessListener(new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        mapLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                        mapFragment.getMapAsync(GoogleMapFragment.this);
+                    }
+                });
     }
 
     @SuppressLint("MissingPermission")
@@ -298,8 +350,8 @@ public class GoogleMapFragment extends Fragment
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
-        savedInstanceState.putDouble(KEY_START_LAT, mapLocation.latitude);
-        savedInstanceState.putDouble(KEY_START_LNG, mapLocation.longitude);
+//        savedInstanceState.putDouble(KEY_START_LAT, mapLocation.latitude);
+//        savedInstanceState.putDouble(KEY_START_LNG, mapLocation.longitude);
         savedInstanceState.putInt(KEY_REQUEST_CODE, requestCode);
         savedInstanceState.putString(KEY_RETURN_FRAGMENT_TAG, returnFragmentTag);
         super.onSaveInstanceState(savedInstanceState);

@@ -10,7 +10,8 @@ android {
         applicationId "ericrybarczyk.me.roadtrippy"
         minSdkVersion 19
         targetSdkVersion 27
-        resConfigs "en" // recommended by https://github.com/firebase/FirebaseUI-Android/blob/master/auth/README.md
+        resConfigs "en"
+        // recommended by https://github.com/firebase/FirebaseUI-Android/blob/master/auth/README.md
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -72,6 +73,7 @@ dependencies {
 
     implementation "com.jakewharton:butterknife:$butterknifeVersion"
     implementation 'com.android.support:support-v4:27.1.1'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     annotationProcessor "com.jakewharton:butterknife-compiler:$butterknifeVersion"
 
     implementation "com.google.code.gson:gson:$gsonVersion"

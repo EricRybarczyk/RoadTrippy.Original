@@ -326,7 +326,7 @@ public class MainActivity extends AppCompatActivity
             Toast.makeText(this, R.string.error_device_location_null, Toast.LENGTH_LONG).show();
             return;
         }
-        Fragment fragment = GoogleMapFragment.newInstance(lastKnownLocation, requestCode, returnToFragmentTag);
+        Fragment fragment = GoogleMapFragment.newInstance(requestCode, returnToFragmentTag);
         loadFragment(fragment, FragmentTags.TAG_MAP_SELECT_LOCATION);
     }
 
@@ -348,7 +348,6 @@ public class MainActivity extends AppCompatActivity
 
 
     private void verifyPermissions() {
-        // Here, thisActivity is the current activity
         if (ContextCompat.checkSelfPermission(this,
                 android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
