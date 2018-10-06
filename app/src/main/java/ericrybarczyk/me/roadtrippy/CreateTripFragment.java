@@ -2,9 +2,11 @@ package ericrybarczyk.me.roadtrippy;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,8 +49,6 @@ public class CreateTripFragment extends Fragment
     private static final String TAG = CreateTripFragment.class.getSimpleName();
     private static final String TAG_PICK_ORIGIN_DIALOG= "pick_origin_dialog";
 
-    // TODO: implement preference for user's home location
-    private static final LatLng HOME_LOCATION = new LatLng(36.375148,-94.207480);
 
     public CreateTripFragment() {
     }
@@ -185,7 +185,21 @@ public class CreateTripFragment extends Fragment
     public void onTripOriginSelected(String key) {
         Log.i(TAG, "onTripOriginSelected: key = " + key);
         if (key.equals(TripOriginPickerFragment.KEY_HOME_ORIGIN)) {
-            tripViewModel.setOriginLatLng(HOME_LOCATION);
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+            if (preferences.contains(getString(R.string.pref_key_home_latitude)) && preferences.contains(getString(R.string.pref_key_home_longitude))) {
+                tripViewModel.setOriginLatLng(
+                        new LatLng(
+                                (double) preferences.getFloat(getString(R.string.pref_key_home_latitude), 0.0f),
+                                (double) preferences.getFloat(getString(R.string.pref_key_home_longitude), 0.0f)
+                        )
+                );
+                String home = getString(R.string.word_for_HOME);
+                tripViewModel.setOriginDescription(home);
+                originButton.setText(home);
+            } else {
+                Toast.makeText(getContext(), R.string.error_home_location_preference_not_found, Toast.LENGTH_LONG).show();
+            }
+
         } else {
             mapDisplayRequestListener.onMapDisplayRequested(RequestCodes.TRIP_ORIGIN_REQUEST_CODE, FragmentTags.TAG_CREATE_TRIP);
         }

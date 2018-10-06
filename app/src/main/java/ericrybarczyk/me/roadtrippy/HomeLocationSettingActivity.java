@@ -1,8 +1,10 @@
 package ericrybarczyk.me.roadtrippy;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -61,6 +63,10 @@ public class HomeLocationSettingActivity extends AppCompatActivity
 
     @Override
     public void onLocationSelected(LatLng location, int requestCode, String locationDescription) {
-        // TODO: save Home location preference
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putFloat(getString(R.string.pref_key_home_latitude), (float)location.latitude);
+        editor.putFloat(getString(R.string.pref_key_home_longitude), (float)location.longitude);
+        editor.apply();
     }
 }

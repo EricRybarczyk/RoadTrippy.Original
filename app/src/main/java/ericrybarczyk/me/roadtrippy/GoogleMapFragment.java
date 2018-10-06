@@ -138,6 +138,11 @@ public class GoogleMapFragment extends Fragment
         mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         searchButton.setOnClickListener(this);
 
+        if (requestCode == RequestCodes.PREFERENCE_HOME_LOCATION_REQUEST_CODE) {
+            locationDescription.setText(getString(R.string.word_for_HOME));
+            setLocationButton.setText(getString(R.string.map_home_location_button_save_label));
+        }
+
         setLocationButton.setOnClickListener(v -> {
 
             if (v.getId() == setLocationButton.getId()) {
