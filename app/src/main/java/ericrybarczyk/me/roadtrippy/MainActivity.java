@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -54,7 +56,8 @@ public class MainActivity extends AppCompatActivity
                     MapDisplayRequestListener,
                     GoogleMapFragment.LocationSelectedListener,
                     FragmentNavigationRequestListener,
-                    TripManager.TripSaveRequestListener {
+                    TripManager.TripSaveRequestListener,
+                    SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final String KEY_ACTIVE_FRAGMENT_TAG = "active_fragment_tag";
@@ -69,6 +72,7 @@ public class MainActivity extends AppCompatActivity
     private Location lastKnownLocation;
     private FusedLocationProviderClient fusedLocationProviderClient;
     private TripViewModel tripViewModel;
+    private int preferenceDrivingHours;
 
     @BindView(R.id.toolbar) protected Toolbar toolbar;
     @BindView(R.id.drawer_layout) protected DrawerLayout drawer;
@@ -87,10 +91,12 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
 
         navigationView.setNavigationItemSelectedListener(this);
+        PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).registerOnSharedPreferenceChangeListener(this);
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
         verifyPermissions();
         updateLastKnownLocation();
+        loadPreferences();
 
         tripViewModel = ViewModelProviders.of(this).get(TripViewModel.class);
 
@@ -136,12 +142,22 @@ public class MainActivity extends AppCompatActivity
         loadFragment(getFragmentInstance(FragmentTags.TAG_TRIP_LIST), FragmentTags.TAG_TRIP_LIST);
     }
 
+    private void loadPreferences() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        int defaultHours = Integer.parseInt(getString(R.string.pref_daily_driving_hours_default));
+        try {
+            preferenceDrivingHours = Integer.parseInt(preferences.getString(getString(R.string.pref_key_daily_driving_hours), getString(R.string.pref_daily_driving_hours_default)));
+        } catch (NumberFormatException nfe) {
+            preferenceDrivingHours = defaultHours;
+        }
+    }
+
 
     @Override
     public void onTripSaveRequest() {
         TripManager tripManager = new TripManager();
         Trip trip = tripManager.buildTrip(tripViewModel, firebaseUser.getUid());
-        List<TripDay> tripDays = tripManager.buildInitialTripDays(tripViewModel);
+        List<TripDay> tripDays = tripManager.buildInitialTripDays(tripViewModel, preferenceDrivingHours);
         TripRepository repository = new TripRepository();
         repository.saveTrip(trip, tripDays);
         // reset the state of the ViewModel to default
@@ -397,11 +413,20 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onFragmentNavigationRequest(String fragmentTag, String tripId) {
+    public void onFragmentNavigationRequest(String fragmentTag, String tripId, String tripDescription) {
         Fragment fragment = getFragmentInstance(fragmentTag);
         Bundle args = new Bundle();
         args.putString(TripDetailFragment.KEY_TRIP_ID, tripId);
+        args.putString(TripDetailFragment.KEY_TRIP_DESCRIPTION, tripDescription);
         fragment.setArguments(args);
         loadFragment(fragment, fragmentTag);
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        // currently only the driving hours preference needs to be handled when changed
+        if (key.equals(getString(R.string.pref_key_daily_driving_hours))) {
+            loadPreferences();
+        }
     }
 }

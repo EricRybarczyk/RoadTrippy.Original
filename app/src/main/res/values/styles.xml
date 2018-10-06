@@ -152,9 +152,9 @@
     <style name="TripDayListItemSecondary" parent="AppTheme">
         <item name="android:textSize">14sp</item>
         <item name="android:textStyle">normal</item>
-        <item name="android:textColor">@color/colorTextSubdued</item>
+        <item name="android:textColor">@color/colorTextSecondary</item>
         <item name="android:layout_marginStart">@dimen/trip_list_item_margin_start</item>
-        <item name="android:layout_marginTop">@dimen/trip_list_item_margin_top</item>
+        <item name="android:layout_marginTop">@dimen/trip_list_item_secondary_margin_top</item>
     </style>
 
 </resources>

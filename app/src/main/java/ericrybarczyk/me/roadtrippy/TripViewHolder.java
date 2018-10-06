@@ -14,6 +14,7 @@ public class TripViewHolder extends RecyclerView.ViewHolder implements View.OnCl
 
     OnTripListClickListener onTripListClickListener;
     private String tripId;
+    private String tripDescription;
 
     @BindView(R.id.trip_item_image) protected ImageView tripImage;
     @BindView(R.id.trip_name_text) protected TextView tripName;
@@ -37,6 +38,10 @@ public class TripViewHolder extends RecyclerView.ViewHolder implements View.OnCl
         this.tripId = tripId;
     }
 
+    public void setTripDescription(String tripDescription) {
+        this.tripDescription = tripDescription;
+    }
+
     void setTripListClickListener(OnTripListClickListener listener) {
         onTripListClickListener = listener;
     }
@@ -52,11 +57,11 @@ public class TripViewHolder extends RecyclerView.ViewHolder implements View.OnCl
             Log.e(TAG, "String tripId is null");
             return;
         }
-        onTripListClickListener.onTripListItemClick(tripId);
+        onTripListClickListener.onTripListItemClick(tripId, tripDescription);
     }
 
     interface OnTripListClickListener {
-        void onTripListItemClick(String tripId);
+        void onTripListItemClick(String tripId, String tripDescription);
     }
 
 }

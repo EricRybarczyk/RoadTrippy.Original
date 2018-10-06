@@ -93,7 +93,13 @@ public class TripListFragment extends Fragment {
                 String unknown = getString(R.string.word_for_UNKNOWN);
 
                 holder.setTripId(viewModel.getTripId());
-                holder.setTripListClickListener(tripId -> fragmentNavigationRequestListener.onFragmentNavigationRequest(FragmentTags.TAG_TRIP_DETAIL, tripId));
+                holder.setTripDescription(viewModel.getDescription());
+                holder.setTripListClickListener(new TripViewHolder.OnTripListClickListener() {
+                    @Override
+                    public void onTripListItemClick(String tripId, String tripDescription) {
+                        fragmentNavigationRequestListener.onFragmentNavigationRequest(FragmentTags.TAG_TRIP_DETAIL, tripId, tripDescription);
+                    }
+                });
 
                 File imageDir = getContext().getDir(MapSettings.DESTINATION_MAP_IMAGE_DIRECTORY, Context.MODE_PRIVATE);
                 String tripImageFilename = MapSettings.DESTINATION_MAP_SLICED_PREFIX + viewModel.getTripId() + MapSettings.DESTINATION_MAP_IMAGE_EXTENSION;

@@ -10,7 +10,8 @@
     <dimen name="sub_hint_vertical_margin">6dp</dimen>
 
     <dimen name="trip_list_item_margin_start">8dp</dimen>
-    <dimen name="trip_list_item_margin_top">4dp</dimen>
+    <dimen name="trip_list_item_margin_top">6dp</dimen>
+    <dimen name="trip_list_item_secondary_margin_top">4dp</dimen>
 
     <dimen name="trip_list_card_margin_horizontal">8dp</dimen>
     <dimen name="trip_list_card_margin_vertical">6dp</dimen>
@@ -20,6 +21,6 @@
     <item name="map_polyline_width" format="float" type="dimen">20.0</item>
     <item name="map_bounds_expand_amount" format="float" type="dimen">1.0</item>
 
-    <dimen name="trip_detail_tip_image_height">224dp</dimen>
+    <dimen name="trip_detail_tip_image_height">200dp</dimen>
     <dimen name="trip_detail_divider_vertical_margin">8dp</dimen>
 </resources>

@@ -35,8 +35,10 @@ import ericrybarczyk.me.roadtrippy.viewmodels.TripDayViewModel;
 public class TripDetailFragment extends Fragment {
 
     public static final String KEY_TRIP_ID = "trip_id_key";
+    public static final String KEY_TRIP_DESCRIPTION = "trip_description_key";
 
     private String tripId;
+    private String tripDescriptionForDisplay;
     private FirebaseAuth firebaseAuth;
     private FirebaseUser firebaseUser;
     private FirebaseDatabase firebaseDatabase;
@@ -61,9 +63,15 @@ public class TripDetailFragment extends Fragment {
         firebaseUser = firebaseAuth.getCurrentUser();
         String userId = firebaseUser.getUid();
 
-        if (getArguments() != null) {
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(KEY_TRIP_ID)) {
+                tripId = savedInstanceState.getString(KEY_TRIP_ID);
+                tripDescriptionForDisplay = savedInstanceState.getString(KEY_TRIP_DESCRIPTION);
+            }
+        } else if (getArguments() != null) {
             if (getArguments().containsKey(KEY_TRIP_ID)) {
                 tripId = getArguments().getString(KEY_TRIP_ID);
+                tripDescriptionForDisplay = getArguments().getString(KEY_TRIP_DESCRIPTION);
             }
         }
         if (tripId == null) {
@@ -94,7 +102,8 @@ public class TripDetailFragment extends Fragment {
                 TripDayViewModel viewModel = TripDayViewModel.from(this.getItem(position));
 
                 holder.dayNumber.setText(String.valueOf(viewModel.getDayNumber()));
-
+                holder.dayPrimaryDescription.setText(viewModel.getPrimaryDescription());
+                holder.daySecondaryDescription.setText(viewModel.getSecondaryDescription());
 
                 // TODO: set general click listener for the view overall
                 // TODO: bind icon click listener for maps directions intent
@@ -109,7 +118,7 @@ public class TripDetailFragment extends Fragment {
         final View rootView = inflater.inflate(R.layout.fragment_trip_detail, container, false);
         ButterKnife.bind(this, rootView);
 
-        tripDescription.setText(tripId);
+        tripDescription.setText(tripDescriptionForDisplay);
 
         File imageDir = getContext().getDir(MapSettings.DESTINATION_MAP_IMAGE_DIRECTORY, Context.MODE_PRIVATE);
         String tripImageFilename = MapSettings.DESTINATION_MAP_MAIN_PREFIX + tripId + MapSettings.DESTINATION_MAP_IMAGE_EXTENSION;
@@ -140,5 +149,12 @@ public class TripDetailFragment extends Fragment {
         if (firebaseRecyclerAdapter != null) {
             firebaseRecyclerAdapter.stopListening();
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putString(KEY_TRIP_ID, tripId);
+        outState.putString(KEY_TRIP_DESCRIPTION, tripDescriptionForDisplay);
+        super.onSaveInstanceState(outState);
     }
 }

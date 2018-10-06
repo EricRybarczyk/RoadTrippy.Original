@@ -48,7 +48,7 @@ public class TripManager {
         return trip;
     }
 
-    public List<TripDay> buildInitialTripDays(TripViewModel tripViewModel) {
+    public List<TripDay> buildInitialTripDays(TripViewModel tripViewModel, int prefDrivingDuration) {
         // build the list of trip days based on DepartureDate and ReturnDate (inclusive)
 
         LocalDateTime start = LocalDateTime.of(
@@ -64,20 +64,58 @@ public class TripManager {
                 23,59,59);
 
         Duration duration = Duration.between(start, end);
-        long numberOfTripDays = Math.abs(duration.toDays()) + 1; // add one to make it inclusive of last day
+        int numberOfTripDays = Math.abs((int)duration.toDays()) + 1; // add one to make it inclusive of last day
 
         ArrayList<TripDay> tripDays = new ArrayList<>();
+
+        int daysOfDriving = getDaysOfDriving(tripViewModel.getDurationMinutes(), prefDrivingDuration);
 
         // zero-based loop adjusts for fact that numberOfTripDays is not inclusive of last day
         for (int day = 0; day < numberOfTripDays; day++) {
             TripDay td = new TripDay();
             td.setTripId(tripViewModel.getTripId());
-            td.setDayNumber(day + 1); // 1-based for display purposes
+            int tripDayNumber = day + 1; // 1-based for display purposes
+            td.setDayNumber(tripDayNumber);
+
+            td.setPrimaryDescription(getInitialDayPrimaryDescription(tripDayNumber, daysOfDriving, numberOfTripDays, tripViewModel.isIncludeReturn()));
+            td.setSecondaryDescription("enjoy your day");
+
             td.setTripDayDate(tripViewModel.getDepartureDate().plusDays(day).format(DateTimeFormatter.ISO_LOCAL_DATE));
             tripDays.add(td);
         }
 
         return tripDays;
+    }
+
+    private String getInitialDayPrimaryDescription(int dayNumber, int daysOfDriving, int totalDays, boolean includeReturnDrivingDays) {
+        String description;
+        if (dayNumber <= daysOfDriving) { // covers N days to begin trip
+            description = "Driving Day " + String.valueOf(dayNumber);
+        } else {
+            if (includeReturnDrivingDays) {
+                if (totalDays - dayNumber < daysOfDriving) {
+                    description = "Return Drive";
+                } else {
+                    description = "Plan Your Day";
+                }
+            } else {
+                description = "Plan Your Day";
+            }
+        }
+        return description;
+    }
+
+    // determine how many days to allocate for driving
+    // goal: consider the max driving hours preference as approximate...
+    // this is only for initial setup, user can always edit a day and drive more/less
+    private int getDaysOfDriving(int tripDurationMinutes, int prefDrivingDuration) {
+        int drivingHours = tripDurationMinutes / 60;
+        int drivingDays = drivingHours / prefDrivingDuration;
+        int remainder = drivingHours % prefDrivingDuration;
+        if (remainder > 2) {
+            drivingDays++;
+        }
+        return drivingDays > 0 ? drivingDays : 1;
     }
 
     public interface TripSaveRequestListener {

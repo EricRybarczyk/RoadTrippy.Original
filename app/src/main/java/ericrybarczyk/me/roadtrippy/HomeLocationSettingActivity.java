@@ -56,7 +56,7 @@ public class HomeLocationSettingActivity extends AppCompatActivity
     }
 
     @Override
-    public void onFragmentNavigationRequest(String fragmentTag, String tripId) {
+    public void onFragmentNavigationRequest(String fragmentTag, String tripId, String tripDescription) {
         // this overload is not called from GoogleMapFragment so it is not implemented
         throw new IllegalArgumentException(TAG + ": unable to process argument: tripId");
     }
