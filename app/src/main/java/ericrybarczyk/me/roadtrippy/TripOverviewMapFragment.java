@@ -34,6 +34,7 @@ import butterknife.ButterKnife;
 import ericrybarczyk.me.roadtrippy.directions.DirectionsResponse;
 import ericrybarczyk.me.roadtrippy.directions.Leg;
 import ericrybarczyk.me.roadtrippy.directions.Route;
+import ericrybarczyk.me.roadtrippy.directions.Step;
 import ericrybarczyk.me.roadtrippy.endpoints.GetDirectionsEndpoint;
 import ericrybarczyk.me.roadtrippy.endpoints.SearchService;
 import ericrybarczyk.me.roadtrippy.engine.TripManager;
@@ -102,10 +103,11 @@ public class TripOverviewMapFragment extends Fragment implements OnMapReadyCallb
         // get Directions for the trip origin to destination to show user the route overview
         String origin = tripViewModel.getOriginLatLng().latitude + "," + tripViewModel.getOriginLatLng().longitude;
         String destination = tripViewModel.getDestinationLatLng().latitude + "," + tripViewModel.getDestinationLatLng().longitude;
+        String alternatives = "true";
         String avoids = getString(R.string.maps_api_avoids_default);
 
         GetDirectionsEndpoint endpoint = SearchService.getClient().create(GetDirectionsEndpoint.class);
-        Call<DirectionsResponse> directionsCall = endpoint.getDirections(googleMapsApiKey, origin, destination, avoids);
+        Call<DirectionsResponse> directionsCall = endpoint.getDirections(googleMapsApiKey, origin, destination, alternatives); // avoids
         directionsCall.enqueue(new Callback<DirectionsResponse>() {
             @Override
             public void onResponse(Call<DirectionsResponse> call, Response<DirectionsResponse> response) {
@@ -115,21 +117,53 @@ public class TripOverviewMapFragment extends Fragment implements OnMapReadyCallb
                 if ((directionsResponse != null && directionsResponse.getRoutes() != null ? directionsResponse.getRoutes().size() : 0) > 0) {
 
                     // use the first route for simple overview. Actual navigation will be in Google Maps and user can make changes
-                    Route route = directionsResponse.getRoutes().get(0);
+                    Route selectedRoute = null;
+                    if (directionsResponse.getRoutes().size() == 1) {
+                        selectedRoute = directionsResponse.getRoutes().get(0);
+                    } else {
+                        // evaluate routes, take the first one with no ferries
+                        // Route->Legs->Steps->maneuver
+                        boolean hasFerry;
+                        String ferryIndicatorWord = getString(R.string.maps_api_indicator_ferry);
+                        for (Route route: directionsResponse.getRoutes()) {
+                            hasFerry = false;
+                            evaluateRoute:
+                            for (Leg leg : route.getLegs()) {
+                                for (Step step : leg.getSteps()) {
+                                    if (step.getManeuver() != null) {
+                                        if (step.getManeuver().toLowerCase().contains(ferryIndicatorWord)) {
+                                            hasFerry = true;
+                                            break evaluateRoute;
+                                        }
+                                    }
+                                }
+                            }
+                            if (!hasFerry) {
+                                selectedRoute = route;
+                                break; // done with outer-most loop
+                            }
+                        }
+                    }
+                    // if still no route then all routes have ferries so we take the first option
+                    if (selectedRoute == null) {
+                        selectedRoute = directionsResponse.getRoutes().get(0);
+                    }
+
+
                     int durationMinutes = 0;
-                    for (Leg leg: route.getLegs()) {
+                    for (Leg leg: selectedRoute.getLegs()) {
                         durationMinutes += (leg.getDuration().getValue()) / 60; // value is in seconds, so divide by 60 for minutes
                     }
                     tripViewModel.setDurationMinutes(durationMinutes);
 
                     // add a marker at the starting & ending points
-                    LatLng start = new LatLng(route.getLegs().get(0).getStartLocation().getLat(), route.getLegs().get(0).getStartLocation().getLng());
-                    LatLng end = new LatLng(route.getLegs().get(0).getEndLocation().getLat(), route.getLegs().get(0).getEndLocation().getLng());
+                    LatLng start = new LatLng(selectedRoute.getLegs().get(0).getStartLocation().getLat(), selectedRoute.getLegs().get(0).getStartLocation().getLng());
+                    LatLng end = new LatLng(selectedRoute.getLegs().get(0).getEndLocation().getLat(), selectedRoute.getLegs().get(0).getEndLocation().getLng());
                     googleMap.addMarker(new MarkerOptions().position(start));
                     googleMap.addMarker(new MarkerOptions().position(end));
 
                     // get the polyline to show
-                    String encodedPolyline = route.getOverviewPolyline().getPoints();
+                    String encodedPolyline = selectedRoute.getOverviewPolyline().getPoints();
                     List<LatLng> overviewPoints = PolyUtil.decode(encodedPolyline);
 
                     // source for TypedValue technique: https://stackoverflow.com/a/8780360/798642
@@ -150,8 +184,8 @@ public class TripOverviewMapFragment extends Fragment implements OnMapReadyCallb
 
                     // get the bounds for the map view, expand by offset to make it all fit in view
                     LatLngBounds overviewBounds = new LatLngBounds(
-                            new LatLng(route.getBounds().getSouthwest().getLat() - offset, route.getBounds().getSouthwest().getLng() - offset),
-                            new LatLng(route.getBounds().getNortheast().getLat() + offset, route.getBounds().getNortheast().getLng() + offset)
+                            new LatLng(selectedRoute.getBounds().getSouthwest().getLat() - offset, selectedRoute.getBounds().getSouthwest().getLng() - offset),
+                            new LatLng(selectedRoute.getBounds().getNortheast().getLat() + offset, selectedRoute.getBounds().getNortheast().getLng() + offset)
                     );
                     // Set the camera to the greatest possible zoom level that includes the bounds
                     googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(overviewBounds, 0));

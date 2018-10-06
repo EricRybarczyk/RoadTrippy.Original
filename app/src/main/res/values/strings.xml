@@ -45,6 +45,7 @@
     <string name="map_directions_call_error_message">Error: unable to get directions</string>
     <string name="map_directions_failure">Unable to find Directions. Please adjust your Trip.</string>
     <string name="maps_api_avoids_default">ferries</string>
+    <string name="maps_api_indicator_ferry">ferry</string>
 
     <string name="fa_icon_star">&#xf005;</string>
 
