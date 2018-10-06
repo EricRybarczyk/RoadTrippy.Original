@@ -214,15 +214,14 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // TODO: determine if I will use the options menu and adjust accordingly. Maybe just for log-out?
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
-            case R.id.action_settings:
-                Fragment preferenceFragment = getFragmentInstance(FragmentTags.TAG_SETTINGS_PREFERENCES);
-                loadFragment(preferenceFragment, FragmentTags.TAG_SETTINGS_PREFERENCES);
-                return true;
+//            case R.id.action_settings:
+//                Fragment preferenceFragment = getFragmentInstance(FragmentTags.TAG_SETTINGS_PREFERENCES);
+//                loadFragment(preferenceFragment, FragmentTags.TAG_SETTINGS_PREFERENCES);
+//                return true;
             case R.id.action_sign_out:
                 AuthUI.getInstance().signOut(this);
                 return true;
@@ -253,7 +252,7 @@ public class MainActivity extends AppCompatActivity
 
                 break;
             case R.id.nav_settings:
-
+                fragmentTag = FragmentTags.TAG_SETTINGS_PREFERENCES;
                 break;
             default:
                 fragmentTag = FragmentTags.TAG_TRIP_LIST;
