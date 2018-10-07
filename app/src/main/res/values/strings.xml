@@ -49,6 +49,11 @@
     <string name="maps_api_avoids_default">ferries</string>
     <string name="maps_api_indicator_ferry">ferry</string>
 
+    <string name="input_trip_day_primary_description">Primary activity or event today</string>
+    <string name="input_trip_day_secondary_notes">Enter additional notes here if you wish</string>
+    <string name="trip_day_save_button_label">DONE</string>
+    <string name="trip_day_additional_destination_button_label">ADD ANOTHER</string>
+
     <string name="fa_icon_star">&#xf005;</string>
 
     <!-- ContentDescription items-->
@@ -56,6 +61,7 @@
     <string name="aria_nav_header_desc">Application Logo</string>
     <string name="aria_trip_overview_theme_image">Trip Overview Theme Image</string>
     <string name="aria_icon_get_directions">Get Directions Icon</string>
+    <string name="aria_day_destination_button_map_search">Map Search Icon</string>
 
     <!-- words and abbreviations injected into generated strings -->
     <string name="word_for_TO">to</string>
@@ -66,9 +72,11 @@
     <string name="word_for_UNKNOWN">Unknown</string>
     <string name="label_for_DRIVING_TIME">Driving Time:</string>
     <string name="word_for_HOME">Home</string>
+    <string name="word_for_Day">Day</string>
 
     <string name="error_device_location_null">Device location not found, please check your Location Settings.</string>
     <string name="error_create_trip_data_validation">Please provide all trip information</string>
     <string name="error_home_location_preference_not_found">Please use the Settings menu to set your Home location</string>
+    <string name="input_trip_day_destination">Add a destination for today</string>
 
 </resources>

@@ -9,7 +9,9 @@ import ericrybarczyk.me.roadtrippy.dto.TripDay;
 public class TripDayViewModel {
 
     private String tripDayId;
+    private String tripId; // reference to Trip object that contains this TripDay
     private int dayNumber;
+    private boolean isDrivingDay;
     private LocalDate tripDayDate;
     private String primaryDescription;
     private String secondaryDescription;
@@ -26,7 +28,9 @@ public class TripDayViewModel {
         TripDayViewModel viewModel = new TripDayViewModel();
 
         viewModel.setTripDayId(tripDay.getTripDayId());
+        viewModel.setTripId(tripDay.getTripId());
         viewModel.setDayNumber(tripDay.getDayNumber());
+        viewModel.setIsDrivingDay(tripDay.getIsDrivingDay());
         viewModel.setTripDayDate(LocalDate.parse(tripDay.getTripDayDate()));
         viewModel.setPrimaryDescription(tripDay.getPrimaryDescription());
         viewModel.setSecondaryDescription(tripDay.getSecondaryDescription());
@@ -46,12 +50,28 @@ public class TripDayViewModel {
         this.tripDayId = tripDayId;
     }
 
+    public String getTripId() {
+        return tripId;
+    }
+
+    public void setTripId(String tripId) {
+        this.tripId = tripId;
+    }
+
     public int getDayNumber() {
         return dayNumber;
     }
 
     public void setDayNumber(int dayNumber) {
         this.dayNumber = dayNumber;
+    }
+
+    public boolean isDrivingDay() {
+        return isDrivingDay;
+    }
+
+    public void setIsDrivingDay(boolean drivingDay) {
+        isDrivingDay = drivingDay;
     }
 
     public LocalDate getTripDayDate() {

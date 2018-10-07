@@ -71,7 +71,7 @@ public class DatePickerFragment extends DialogFragment
                 Log.e(TAG, "TripDateSelectedListener is null");
                 return;
             }
-            tripDateSelectedListener.onTripDateSelected(year, localDateMonth, dayOfMonth, this.getTag()); // TODO: see to-do in handler method about param type
+            tripDateSelectedListener.onTripDateSelected(year, localDateMonth, dayOfMonth, this.getTag());
         } catch (ClassCastException e) {
             Log.e(TAG, "Containing fragment must implement DatePickerFragment.TripDateSelectedListener");
             throw e;

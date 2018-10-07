@@ -78,7 +78,7 @@ public class TripManager {
             td.setDayNumber(tripDayNumber);
 
             td.setPrimaryDescription(getInitialDayPrimaryDescription(tripDayNumber, daysOfDriving, numberOfTripDays, tripViewModel.isIncludeReturn()));
-            td.setSecondaryDescription("enjoy your day");
+            td.setSecondaryDescription(getInitialSecondaryDescription(tripDayNumber, daysOfDriving, numberOfTripDays, tripViewModel.isIncludeReturn()));
 
             td.setTripDayDate(tripViewModel.getDepartureDate().plusDays(day).format(DateTimeFormatter.ISO_LOCAL_DATE));
             tripDays.add(td);
@@ -88,21 +88,29 @@ public class TripManager {
     }
 
     private String getInitialDayPrimaryDescription(int dayNumber, int daysOfDriving, int totalDays, boolean includeReturnDrivingDays) {
-        String description;
-        if (dayNumber <= daysOfDriving) { // covers N days to begin trip
-            description = "Driving Day " + String.valueOf(dayNumber);
-        } else {
-            if (includeReturnDrivingDays) {
-                if (totalDays - dayNumber < daysOfDriving) {
-                    description = "Return Drive";
-                } else {
-                    description = "Plan Your Day";
-                }
-            } else {
-                description = "Plan Your Day";
-            }
+
+        if (isBeginDrivingDay(dayNumber, daysOfDriving)) {
+            return "Driving Day " + String.valueOf(dayNumber);
         }
-        return description;
+        if (isReturnDrivingDay(dayNumber, daysOfDriving, totalDays, includeReturnDrivingDays)) {
+            return "Return Drive";
+        }
+        return "Plan Your Day";
+    }
+
+    private String getInitialSecondaryDescription(int dayNumber, int daysOfDriving, int totalDays, boolean includeReturnDrivingDays) {
+        if (isBeginDrivingDay(dayNumber, daysOfDriving) || isReturnDrivingDay(dayNumber, daysOfDriving, totalDays, includeReturnDrivingDays)) {
+            return "enjoy your drive";
+        }
+        return "enjoy your day";
+    }
+
+    private boolean isBeginDrivingDay(int dayNumber, int daysOfDriving) {
+        return dayNumber <= daysOfDriving; // covers N days to begin trip
+    }
+
+    private boolean isReturnDrivingDay(int dayNumber, int daysOfDriving, int totalDays, boolean includeReturnDrivingDays) {
+        return includeReturnDrivingDays && totalDays - dayNumber < daysOfDriving;
     }
 
     // determine how many days to allocate for driving

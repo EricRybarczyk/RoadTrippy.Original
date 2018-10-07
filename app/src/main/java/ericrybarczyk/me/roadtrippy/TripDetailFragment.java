@@ -29,6 +29,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import ericrybarczyk.me.roadtrippy.dto.TripDay;
 import ericrybarczyk.me.roadtrippy.persistence.DatabasePaths;
+import ericrybarczyk.me.roadtrippy.util.FragmentTags;
 import ericrybarczyk.me.roadtrippy.util.MapSettings;
 import ericrybarczyk.me.roadtrippy.viewmodels.TripDayViewModel;
 
@@ -36,6 +37,8 @@ public class TripDetailFragment extends Fragment {
 
     public static final String KEY_TRIP_ID = "trip_id_key";
     public static final String KEY_TRIP_DESCRIPTION = "trip_description_key";
+
+    private FragmentNavigationRequestListener fragmentNavigationRequestListener;
 
     private String tripId;
     private String tripDescriptionForDisplay;
@@ -105,7 +108,17 @@ public class TripDetailFragment extends Fragment {
                 holder.dayPrimaryDescription.setText(viewModel.getPrimaryDescription());
                 holder.daySecondaryDescription.setText(viewModel.getSecondaryDescription());
 
-                // TODO: set general click listener for the view overall
+                holder.setTripDayListClickListener(new TripDayViewHolder.OnTripDayListClickListener() {
+                    @Override
+                    public void onTripDayListItemClick() {
+                        fragmentNavigationRequestListener.onTripDayEditFragmentRequest(
+                                FragmentTags.TAG_TRIP_DAY,
+                                viewModel.getTripId(),
+                                viewModel.getDayNumber());
+
+                    }
+                });
+
                 // TODO: bind icon click listener for maps directions intent
             }
         };
@@ -156,5 +169,21 @@ public class TripDetailFragment extends Fragment {
         outState.putString(KEY_TRIP_ID, tripId);
         outState.putString(KEY_TRIP_DESCRIPTION, tripDescriptionForDisplay);
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof FragmentNavigationRequestListener) {
+            fragmentNavigationRequestListener = (FragmentNavigationRequestListener) context;
+        } else {
+            throw new RuntimeException(context.toString() + " must implement FragmentNavigationRequestListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        fragmentNavigationRequestListener = null;
     }
 }

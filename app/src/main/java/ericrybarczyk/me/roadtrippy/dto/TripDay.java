@@ -8,6 +8,7 @@ public class TripDay {
     private String tripDayId;
     private String tripId; // reference to Trip object that contains this TripDay
     private int dayNumber;
+    private boolean isDrivingDay;
     private String tripDayDate;
     private String primaryDescription;
     private String secondaryDescription;
@@ -43,6 +44,14 @@ public class TripDay {
 
     public void setDayNumber(int dayNumber) {
         this.dayNumber = dayNumber;
+    }
+
+    public boolean getIsDrivingDay() {
+        return isDrivingDay;
+    }
+
+    public void setIsDrivingDay(boolean drivingDay) {
+        isDrivingDay = drivingDay;
     }
 
     public String getTripDayDate() {

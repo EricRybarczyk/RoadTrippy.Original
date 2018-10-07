@@ -308,6 +308,10 @@ public class MainActivity extends AppCompatActivity
             case FragmentTags.TAG_SETTINGS_PREFERENCES:
                 fragmentClass = SettingsFragment.class;
                 break;
+            case FragmentTags.TAG_TRIP_DAY:
+                fragmentClass = TripDayFragment.class;
+                break;
+
             // TODO: support all fragments here
 
             default:
@@ -418,6 +422,16 @@ public class MainActivity extends AppCompatActivity
         Bundle args = new Bundle();
         args.putString(TripDetailFragment.KEY_TRIP_ID, tripId);
         args.putString(TripDetailFragment.KEY_TRIP_DESCRIPTION, tripDescription);
+        fragment.setArguments(args);
+        loadFragment(fragment, fragmentTag);
+    }
+
+    @Override
+    public void onTripDayEditFragmentRequest(String fragmentTag, String tripId, int dayNumber) {
+        Fragment fragment = getFragmentInstance(fragmentTag);
+        Bundle args = new Bundle();
+        args.putString(TripDayFragment.KEY_TRIP_ID, tripId);
+        args.putInt(TripDayFragment.KEY_TRIP_DAY_NUMBER, dayNumber);
         fragment.setArguments(args);
         loadFragment(fragment, fragmentTag);
     }
