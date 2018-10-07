@@ -204,7 +204,4 @@ public class CreateTripFragment extends Fragment
             mapDisplayRequestListener.onMapDisplayRequested(RequestCodes.TRIP_ORIGIN_REQUEST_CODE, FragmentTags.TAG_CREATE_TRIP);
         }
     }
-
-
-
 }

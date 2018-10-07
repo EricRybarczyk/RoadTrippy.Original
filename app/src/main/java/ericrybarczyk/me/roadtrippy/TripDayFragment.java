@@ -24,9 +24,12 @@ import com.google.firebase.database.ValueEventListener;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import ericrybarczyk.me.roadtrippy.dto.TripDay;
 import ericrybarczyk.me.roadtrippy.persistence.TripRepository;
 import ericrybarczyk.me.roadtrippy.util.FontManager;
+import ericrybarczyk.me.roadtrippy.util.FragmentTags;
+import ericrybarczyk.me.roadtrippy.util.InputUtils;
 import ericrybarczyk.me.roadtrippy.viewmodels.TripDayViewModel;
 import ericrybarczyk.me.roadtrippy.viewmodels.TripLocationViewModel;
 
@@ -50,6 +53,7 @@ public class TripDayFragment extends Fragment {
     private String nodeKey;
     private int dayNumber;
     TripRepository tripRepository;
+    TripDayViewModel tripDayViewModel;
     private static final String TAG = TripDayFragment.class.getSimpleName();
 
     public TripDayFragment() {
@@ -79,7 +83,7 @@ public class TripDayFragment extends Fragment {
         // Inflate the layout for this fragment
         final View rootView =  inflater.inflate(R.layout.fragment_trip_day, container, false);
         ButterKnife.bind(this, rootView);
-
+        InputUtils.hideKeyboardFrom(getContext(), rootView);
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         String userId = firebaseUser.getUid();
 
@@ -93,14 +97,14 @@ public class TripDayFragment extends Fragment {
                     Log.e(TAG, "onCreateView - onDataChange: TripDay object is null");
                     return;
                 }
-                TripDayViewModel viewModel = TripDayViewModel.from(tripDay);
+                tripDayViewModel = TripDayViewModel.from(tripDay);
 
-                setHighlightIndicator(viewModel.getIsHighlight());
-                dayPrimaryDescription.setText(viewModel.getPrimaryDescription());
-                daySecondaryDescription.setText(viewModel.getSecondaryDescription());
-                if (viewModel.getDestinations().size() > 0) {
+                setHighlightIndicator(tripDayViewModel.getIsHighlight());
+                dayPrimaryDescription.setText(tripDayViewModel.getPrimaryDescription());
+                daySecondaryDescription.setText(tripDayViewModel.getSecondaryDescription());
+                if (tripDayViewModel.getDestinations().size() > 0) {
                     StringBuilder sb = new StringBuilder();
-                    for (TripLocationViewModel destination : viewModel.getDestinations()) {
+                    for (TripLocationViewModel destination : tripDayViewModel.getDestinations()) {
                         sb.append(destination.getDescription());
                         sb.append(System.lineSeparator());
                     }
@@ -120,7 +124,7 @@ public class TripDayFragment extends Fragment {
         String headerText = getString(R.string.word_for_Day) + " " + String.valueOf(dayNumber);
         dayNumberHeader.setText(headerText);
 
-
+        rootView.clearFocus();
         return rootView;
     }
 
@@ -132,6 +136,12 @@ public class TripDayFragment extends Fragment {
             iconHighlight.setTypeface(FontManager.getTypeface(getContext(), FontManager.FONTAWESOME_REGULAR));
             iconHighlight.setTextColor(ContextCompat.getColor(getContext(), R.color.colorControlHighlightOff));
         }
+    }
+
+    @OnClick(R.id.icon_highlight)
+    public void onClick(View view) {
+        tripDayViewModel.setIsHighlight(!tripDayViewModel.getIsHighlight());
+        setHighlightIndicator(tripDayViewModel.getIsHighlight());
     }
 
     @Override

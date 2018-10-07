@@ -3,6 +3,7 @@ package ericrybarczyk.me.roadtrippy;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -61,11 +62,10 @@ public class MainActivity extends AppCompatActivity
                     SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
-    private static final String KEY_ACTIVE_FRAGMENT_TAG = "active_fragment_tag";
 
     public static final String ANONYMOUS = "anonymous";
     private String activeUsername = ANONYMOUS;
-
+    private String activeFragmentTag;
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener authStateListener;
     private FirebaseUser firebaseUser;
@@ -122,10 +122,6 @@ public class MainActivity extends AppCompatActivity
                 // configure supported sign-in providers
                 List<AuthUI.IdpConfig> providers = Collections.singletonList(
                         new AuthUI.IdpConfig.GoogleBuilder().build());
-                        // if I decide to add Email sign-in option:
-                        //                    List<AuthUI.IdpConfig> providers = Arrays.asList(
-                        //                            new AuthUI.IdpConfig.GoogleBuilder().build(),
-                        //                            new AuthUI.IdpConfig.EmailBuilder().build());
 
                 // Create and launch sign-in intent
                 startActivityForResult(
@@ -138,10 +134,20 @@ public class MainActivity extends AppCompatActivity
             }
         };
 
-        // load initial fragment (not on configuration change)
-        if (savedInstanceState == null) {
-            loadFragment(getFragmentInstance(FragmentTags.TAG_TRIP_LIST), FragmentTags.TAG_TRIP_LIST);
+        getSupportFragmentManager().registerFragmentLifecycleCallbacks(new FragmentLifecycleListener(), false);
+
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(FragmentTags.KEY_ACTIVE_FRAGMENT_TAG)) {
+                activeFragmentTag = savedInstanceState.getString(FragmentTags.KEY_ACTIVE_FRAGMENT_TAG, FragmentTags.TAG_TRIP_LIST);
+            }
         }
+        if (activeFragmentTag == null) {
+            activeFragmentTag = FragmentTags.TAG_TRIP_LIST;
+        }
+        // load initial fragment (no force on configuration change, allow existing Fragment to be restored by system)
+        boolean forceLoadFragment = (savedInstanceState == null);
+        loadFragment(getFragmentInstance(activeFragmentTag), activeFragmentTag, forceLoadFragment);
+
     }
 
     private void loadPreferences() {
@@ -186,6 +192,12 @@ public class MainActivity extends AppCompatActivity
 
     private void onSignedOutCleanup() {
         this.activeUsername = ANONYMOUS;
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putString(FragmentTags.KEY_ACTIVE_FRAGMENT_TAG, activeFragmentTag);
+        super.onSaveInstanceState(savedInstanceState);
     }
 
     @Override
@@ -257,7 +269,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         fragment = getFragmentInstance(fragmentTag);
-        loadFragment(fragment, fragmentTag);
+        loadFragment(fragment, fragmentTag, true);
 
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -310,14 +322,19 @@ public class MainActivity extends AppCompatActivity
         return result;
     }
 
-    private void loadFragment(Fragment fragment, String fragmentTag) {
+    // forceNavigation param of TRUE is intended to force a load even if Fragment exists, for basic navigation events.
+    // Basic navigation was the original purpose of this method. In cases of device configuration change (rotation in particular)
+    // we pass forceNavigation false and expect findFragmentByTag() will NOT be null and therefore
+    // Fragment will not be explicitly loaded, allowing the system to restore it with view hierarchy.
+    private void loadFragment(Fragment fragment, String fragmentTag, boolean forceNavigation) {
         InputUtils.hideKeyboard(this);
-        if (getSupportFragmentManager().findFragmentByTag(fragmentTag) == null) {
+        if (forceNavigation || getSupportFragmentManager().findFragmentByTag(fragmentTag) == null) {
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.content_container, fragment, fragmentTag)
                     .addToBackStack(null)
                     .commit();
+            activeFragmentTag = fragmentTag;
         }
     }
 
@@ -328,7 +345,7 @@ public class MainActivity extends AppCompatActivity
             return;
         }
         Fragment fragment = GoogleMapFragment.newInstance(requestCode, returnToFragmentTag);
-        loadFragment(fragment, FragmentTags.TAG_MAP_SELECT_LOCATION);
+        loadFragment(fragment, FragmentTags.TAG_MAP_SELECT_LOCATION, true);
     }
 
     @Override
@@ -395,7 +412,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onFragmentNavigationRequest(String fragmentTag) {
         Fragment fragment = getFragmentInstance(fragmentTag);
-        loadFragment(fragment, fragmentTag);
+        loadFragment(fragment, fragmentTag, true);
     }
 
     @Override
@@ -405,7 +422,7 @@ public class MainActivity extends AppCompatActivity
         args.putString(TripDetailFragment.KEY_TRIP_ID, tripId);
         args.putString(TripDetailFragment.KEY_TRIP_DESCRIPTION, tripDescription);
         fragment.setArguments(args);
-        loadFragment(fragment, fragmentTag);
+        loadFragment(fragment, fragmentTag, true);
     }
 
     @Override
@@ -416,7 +433,7 @@ public class MainActivity extends AppCompatActivity
         args.putInt(TripDayFragment.KEY_TRIP_DAY_NUMBER, dayNumber);
         args.putString(TripDayFragment.KEY_NODE_KEY, nodeKey);
         fragment.setArguments(args);
-        loadFragment(fragment, fragmentTag);
+        loadFragment(fragment, fragmentTag, true);
     }
 
     @Override
@@ -426,4 +443,19 @@ public class MainActivity extends AppCompatActivity
             loadPreferences();
         }
     }
+
+    private class FragmentLifecycleListener extends FragmentManager.FragmentLifecycleCallbacks {
+
+        // required to maintain activeFragmentTag when device back key is pressed
+        // without this, pressing device back key, followed by device rotation which triggered lifecycle events, would load incorrect fragment
+        @Override
+        public void onFragmentViewCreated(FragmentManager fm, Fragment f, View v, Bundle savedInstanceState) {
+            String tag = f.getTag();
+            if (tag != null) {
+                activeFragmentTag = tag;
+            }
+            super.onFragmentViewCreated(fm, f, v, savedInstanceState);
+        }
+    }
+
 }

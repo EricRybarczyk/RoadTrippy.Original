@@ -178,5 +178,4 @@ public class TripListFragment extends Fragment {
         super.onDetach();
         fragmentNavigationRequestListener = null;
     }
-
 }
