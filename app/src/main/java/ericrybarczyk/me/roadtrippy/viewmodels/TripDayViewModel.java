@@ -12,6 +12,7 @@ public class TripDayViewModel {
     private String tripId; // reference to Trip object that contains this TripDay
     private int dayNumber;
     private boolean isDrivingDay;
+    private boolean isHighlight;
     private LocalDate tripDayDate;
     private String primaryDescription;
     private String secondaryDescription;
@@ -72,6 +73,14 @@ public class TripDayViewModel {
 
     public void setIsDrivingDay(boolean drivingDay) {
         isDrivingDay = drivingDay;
+    }
+
+    public boolean getIsHighlight() {
+        return isHighlight;
+    }
+
+    public void setIsHighlight(boolean highlight) {
+        isHighlight = highlight;
     }
 
     public LocalDate getTripDayDate() {

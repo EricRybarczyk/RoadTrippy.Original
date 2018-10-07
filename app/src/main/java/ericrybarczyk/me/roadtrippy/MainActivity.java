@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -65,7 +66,6 @@ public class MainActivity extends AppCompatActivity
     public static final String ANONYMOUS = "anonymous";
     private String activeUsername = ANONYMOUS;
 
-    private String activeFragmentTag;
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener authStateListener;
     private FirebaseUser firebaseUser;
@@ -138,8 +138,10 @@ public class MainActivity extends AppCompatActivity
             }
         };
 
-        // load initial fragment
-        loadFragment(getFragmentInstance(FragmentTags.TAG_TRIP_LIST), FragmentTags.TAG_TRIP_LIST);
+        // load initial fragment (not on configuration change)
+        if (savedInstanceState == null) {
+            loadFragment(getFragmentInstance(FragmentTags.TAG_TRIP_LIST), FragmentTags.TAG_TRIP_LIST);
+        }
     }
 
     private void loadPreferences() {
@@ -187,20 +189,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle savedInstanceState) {
-        savedInstanceState.putString(KEY_ACTIVE_FRAGMENT_TAG, activeFragmentTag);
-        super.onSaveInstanceState(savedInstanceState);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState); // call super first to restore view hierarchy
-        activeFragmentTag = savedInstanceState.getString(KEY_ACTIVE_FRAGMENT_TAG, FragmentTags.TAG_TRIP_LIST);
-        Fragment fragment = getFragmentInstance(activeFragmentTag);
-        loadFragment(fragment, activeFragmentTag);
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
         firebaseAuth.addAuthStateListener(authStateListener);
@@ -230,14 +218,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
-//            case R.id.action_settings:
-//                Fragment preferenceFragment = getFragmentInstance(FragmentTags.TAG_SETTINGS_PREFERENCES);
-//                loadFragment(preferenceFragment, FragmentTags.TAG_SETTINGS_PREFERENCES);
-//                return true;
             case R.id.action_sign_out:
                 AuthUI.getInstance().signOut(this);
                 return true;
@@ -331,12 +312,13 @@ public class MainActivity extends AppCompatActivity
 
     private void loadFragment(Fragment fragment, String fragmentTag) {
         InputUtils.hideKeyboard(this);
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.content_container, fragment, fragmentTag)
-                .addToBackStack(null)
-                .commit();
-        activeFragmentTag = fragmentTag;
+        if (getSupportFragmentManager().findFragmentByTag(fragmentTag) == null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.content_container, fragment, fragmentTag)
+                    .addToBackStack(null)
+                    .commit();
+        }
     }
 
     @Override
@@ -427,11 +409,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onTripDayEditFragmentRequest(String fragmentTag, String tripId, int dayNumber) {
+    public void onTripDayEditFragmentRequest(String fragmentTag, String tripId, int dayNumber, String nodeKey) {
         Fragment fragment = getFragmentInstance(fragmentTag);
         Bundle args = new Bundle();
         args.putString(TripDayFragment.KEY_TRIP_ID, tripId);
         args.putInt(TripDayFragment.KEY_TRIP_DAY_NUMBER, dayNumber);
+        args.putString(TripDayFragment.KEY_NODE_KEY, nodeKey);
         fragment.setArguments(args);
         loadFragment(fragment, fragmentTag);
     }

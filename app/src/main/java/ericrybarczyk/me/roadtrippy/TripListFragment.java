@@ -27,6 +27,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import ericrybarczyk.me.roadtrippy.dto.Trip;
 import ericrybarczyk.me.roadtrippy.persistence.DatabasePaths;
+import ericrybarczyk.me.roadtrippy.persistence.TripRepository;
 import ericrybarczyk.me.roadtrippy.util.FontManager;
 import ericrybarczyk.me.roadtrippy.util.FragmentTags;
 import ericrybarczyk.me.roadtrippy.util.MapSettings;
@@ -37,10 +38,7 @@ public class TripListFragment extends Fragment {
 
     private FragmentNavigationRequestListener fragmentNavigationRequestListener;
 
-    private FirebaseAuth firebaseAuth;
-    private FirebaseUser firebaseUser;
-    private FirebaseDatabase firebaseDatabase;
-    private DatabaseReference tripsDatabaseReference;
+    TripRepository tripRepository;
     FirebaseRecyclerAdapter firebaseRecyclerAdapter;
 
     private static final String TAG = TripListFragment.class.getSimpleName();
@@ -56,8 +54,8 @@ public class TripListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        firebaseAuth = FirebaseAuth.getInstance();
-        firebaseUser = firebaseAuth.getCurrentUser();
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
         String userId;
         if (firebaseUser == null) {
             userId = "anonymous-user"; // TODO: gonna have to rework something to avoid this order-of-events problem - user is null on first load (sometimes?)
@@ -65,12 +63,12 @@ public class TripListFragment extends Fragment {
             userId = firebaseUser.getUid();
         }
 
-        firebaseDatabase = FirebaseDatabase.getInstance();
-        tripsDatabaseReference = firebaseDatabase.getReference();
-        Query query = tripsDatabaseReference.child(DatabasePaths.BASE_PATH_TRIPS + userId + "/");
+        tripRepository = new TripRepository();
+
+        DatabaseReference reference = tripRepository.getTripList(userId);
 
         FirebaseRecyclerOptions<Trip> options = new FirebaseRecyclerOptions.Builder<Trip>()
-                .setQuery(query, Trip.class)
+                .setQuery(reference, Trip.class)
                 .build();
 
         firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Trip, TripViewHolder>(options) {

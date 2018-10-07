@@ -35,7 +35,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         style="@style/ScreenHeading"
-        android:textColor="@color/colorAccent"
+        android:textColor="@color/colorControlHighlightOff"
         android:text="@string/fa_icon_star" />
 
     <EditText
@@ -102,10 +102,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/day_destination_list"
-        app:layout_constraintBottom_toTopOf="@id/save_trip_day_button"
         android:inputType="textMultiLine|textCapSentences"
         style="@style/TextInput"
         android:hint="@string/input_trip_day_secondary_notes" />
+    <!-- TODO: try a Guideline to pull this item down but not pull the save button up
+        app:layout_constraintVertical_bias="0.85"
+        app:layout_constraintBottom_toTopOf="@id/save_trip_day_button" -->
 
     <Button
         android:id="@+id/save_trip_day_button"

@@ -18,6 +18,7 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
@@ -29,6 +30,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import ericrybarczyk.me.roadtrippy.dto.TripDay;
 import ericrybarczyk.me.roadtrippy.persistence.DatabasePaths;
+import ericrybarczyk.me.roadtrippy.persistence.TripRepository;
 import ericrybarczyk.me.roadtrippy.util.FragmentTags;
 import ericrybarczyk.me.roadtrippy.util.MapSettings;
 import ericrybarczyk.me.roadtrippy.viewmodels.TripDayViewModel;
@@ -42,10 +44,7 @@ public class TripDetailFragment extends Fragment {
 
     private String tripId;
     private String tripDescriptionForDisplay;
-    private FirebaseAuth firebaseAuth;
-    private FirebaseUser firebaseUser;
-    private FirebaseDatabase firebaseDatabase;
-    private DatabaseReference tripsDatabaseReference;
+    TripRepository tripRepository;
     FirebaseRecyclerAdapter firebaseRecyclerAdapter;
 
     @BindView(R.id.trip_detail_image) protected ImageView tripImage;
@@ -62,8 +61,7 @@ public class TripDetailFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        firebaseAuth = FirebaseAuth.getInstance();
-        firebaseUser = firebaseAuth.getCurrentUser();
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         String userId = firebaseUser.getUid();
 
         if (savedInstanceState != null) {
@@ -82,12 +80,12 @@ public class TripDetailFragment extends Fragment {
             return;
         }
 
-        firebaseDatabase = FirebaseDatabase.getInstance();
-        tripsDatabaseReference = firebaseDatabase.getReference();
-        Query query = tripsDatabaseReference.child(DatabasePaths.BASE_PATH_TRIPDAYS + userId + "/" + tripId);
+        tripRepository = new TripRepository();
+
+        DatabaseReference reference = tripRepository.getTripDaysList(userId, tripId);
 
         FirebaseRecyclerOptions<TripDay> options = new FirebaseRecyclerOptions.Builder<TripDay>()
-                .setQuery(query, TripDay.class)
+                .setQuery(reference, TripDay.class)
                 .build();
 
         firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<TripDay, TripDayViewHolder>(options) {
@@ -102,7 +100,9 @@ public class TripDetailFragment extends Fragment {
             @Override
             protected void onBindViewHolder(@NonNull TripDayViewHolder holder, int position, @NonNull TripDay model) {
 
-                TripDayViewModel viewModel = TripDayViewModel.from(this.getItem(position));
+                TripDayViewModel viewModel = TripDayViewModel.from(model); // this.getItem(position)
+
+                String nodeKey = this.getRef(position).getKey();
 
                 holder.dayNumber.setText(String.valueOf(viewModel.getDayNumber()));
                 holder.dayPrimaryDescription.setText(viewModel.getPrimaryDescription());
@@ -114,7 +114,8 @@ public class TripDetailFragment extends Fragment {
                         fragmentNavigationRequestListener.onTripDayEditFragmentRequest(
                                 FragmentTags.TAG_TRIP_DAY,
                                 viewModel.getTripId(),
-                                viewModel.getDayNumber());
+                                viewModel.getDayNumber(),
+                                nodeKey);
 
                     }
                 });

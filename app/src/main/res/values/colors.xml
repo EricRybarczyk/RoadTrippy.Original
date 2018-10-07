@@ -20,6 +20,7 @@
     <color name="colorControlNormal">#212121</color><!--900-->
     <color name="colorControlActivated">#03A9F4</color><!--500-->
     <color name="colorControlHighlight">#03A9F4</color><!--500-->
+    <color name="colorControlHighlightOff">#757575</color><!--600-->
 
     <color name="colorIconPrimary">#000000</color>
     <color name="colorIconSubdued">#181818</color>
