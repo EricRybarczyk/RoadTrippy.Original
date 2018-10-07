@@ -4,7 +4,7 @@ import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-// This class was generated from Google Maps Places API JSON using http://www.jsonschema2pojo.org/
+// This class was generated from Google Maps Directions API JSON using http://www.jsonschema2pojo.org/
 
 public class Route {
 
