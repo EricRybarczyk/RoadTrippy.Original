@@ -16,7 +16,7 @@ class TripDayViewHolder extends RecyclerView.ViewHolder implements View.OnClickL
 
     @BindView(R.id.day_number) protected TextView dayNumber;
     @BindView(R.id.day_primary_description) protected TextView dayPrimaryDescription;
-    @BindView(R.id.day_secondary_description) protected TextView daySecondaryDescription;
+    @BindView(R.id.day_user_notes) protected TextView dayUserNotes;
     @BindView(R.id.icon_directions) protected ImageView iconDirections;
 
 

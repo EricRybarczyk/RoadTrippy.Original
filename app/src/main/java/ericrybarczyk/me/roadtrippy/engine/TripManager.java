@@ -77,8 +77,13 @@ public class TripManager {
             int tripDayNumber = day + 1; // 1-based for display purposes
             td.setDayNumber(tripDayNumber);
 
+            if (isBeginDrivingDay(tripDayNumber, daysOfDriving) || isReturnDrivingDay(tripDayNumber, daysOfDriving, numberOfTripDays, tripViewModel.isIncludeReturn())) {
+                td.setIsDrivingDay(true);
+            }
+
             td.setPrimaryDescription(getInitialDayPrimaryDescription(tripDayNumber, daysOfDriving, numberOfTripDays, tripViewModel.isIncludeReturn()));
-            td.setSecondaryDescription(getInitialSecondaryDescription(tripDayNumber, daysOfDriving, numberOfTripDays, tripViewModel.isIncludeReturn()));
+            td.setUserNotes(getInitialUserNotes(tripDayNumber, daysOfDriving, numberOfTripDays, tripViewModel.isIncludeReturn()));
+            td.setIsDefaultText(true);
 
             td.setTripDayDate(tripViewModel.getDepartureDate().plusDays(day).format(DateTimeFormatter.ISO_LOCAL_DATE));
             tripDays.add(td);
@@ -98,7 +103,7 @@ public class TripManager {
         return "Plan Your Day";
     }
 
-    private String getInitialSecondaryDescription(int dayNumber, int daysOfDriving, int totalDays, boolean includeReturnDrivingDays) {
+    private String getInitialUserNotes(int dayNumber, int daysOfDriving, int totalDays, boolean includeReturnDrivingDays) {
         if (isBeginDrivingDay(dayNumber, daysOfDriving) || isReturnDrivingDay(dayNumber, daysOfDriving, totalDays, includeReturnDrivingDays)) {
             return "enjoy your drive";
         }

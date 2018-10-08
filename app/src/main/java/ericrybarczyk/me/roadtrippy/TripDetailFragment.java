@@ -106,7 +106,7 @@ public class TripDetailFragment extends Fragment {
 
                 holder.dayNumber.setText(String.valueOf(viewModel.getDayNumber()));
                 holder.dayPrimaryDescription.setText(viewModel.getPrimaryDescription());
-                holder.daySecondaryDescription.setText(viewModel.getSecondaryDescription());
+                holder.dayUserNotes.setText(viewModel.getUserNotes());
 
                 holder.setTripDayListClickListener(new TripDayViewHolder.OnTripDayListClickListener() {
                     @Override
@@ -116,7 +116,6 @@ public class TripDetailFragment extends Fragment {
                                 viewModel.getTripId(),
                                 viewModel.getDayNumber(),
                                 nodeKey);
-
                     }
                 });
 

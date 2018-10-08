@@ -12,11 +12,11 @@ public class TripDay {
     private boolean isHighlight;
     private String tripDayDate;
     private String primaryDescription;
-    private String secondaryDescription;
     private String userNotes;
     private ArrayList<TripLocation> destinations;
     private TripLocation startLocation;
     private TripLocation endLocation;
+    private boolean isDefaultText;
 
     public TripDay() {
         tripDayId = UUID.randomUUID().toString();
@@ -79,14 +79,6 @@ public class TripDay {
         this.primaryDescription = primaryDescription;
     }
 
-    public String getSecondaryDescription() {
-        return secondaryDescription;
-    }
-
-    public void setSecondaryDescription(String secondaryDescription) {
-        this.secondaryDescription = secondaryDescription;
-    }
-
     public String getUserNotes() {
         return userNotes;
     }
@@ -117,5 +109,13 @@ public class TripDay {
 
     public void setEndLocation(TripLocation endLocation) {
         this.endLocation = endLocation;
+    }
+
+    public boolean getIsDefaultText() {
+        return isDefaultText;
+    }
+
+    public void setIsDefaultText(boolean defaultText) {
+        isDefaultText = defaultText;
     }
 }

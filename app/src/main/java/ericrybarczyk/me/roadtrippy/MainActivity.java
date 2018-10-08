@@ -146,7 +146,7 @@ public class MainActivity extends AppCompatActivity
         }
         // load initial fragment (no force on configuration change, allow existing Fragment to be restored by system)
         boolean forceLoadFragment = (savedInstanceState == null);
-        loadFragment(getFragmentInstance(activeFragmentTag), activeFragmentTag, forceLoadFragment);
+        loadFragment(getFragmentInstance(activeFragmentTag, forceLoadFragment), activeFragmentTag, forceLoadFragment);
 
     }
 
@@ -268,21 +268,23 @@ public class MainActivity extends AppCompatActivity
                 break;
         }
 
-        fragment = getFragmentInstance(fragmentTag);
+        fragment = getFragmentInstance(fragmentTag, true);
         loadFragment(fragment, fragmentTag, true);
 
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
-    private Fragment getFragmentInstance(String fragmentTag) {
+    private Fragment getFragmentInstance(String fragmentTag, boolean forceNavigation) {
         Class fragmentClass;
         Fragment result = null;
 
-        // first check if Fragment has already been initialized, such as following configuration change
-        result = getSupportFragmentManager().findFragmentByTag(fragmentTag);
-        if (result != null) {
-            return result;
+        // if not forcing a navigation event, check if Fragment has already been initialized, such as following configuration change
+        if (!forceNavigation) {
+            result = getSupportFragmentManager().findFragmentByTag(fragmentTag);
+            if (result != null) {
+                return result;
+            }
         }
 
         switch (fragmentTag) {
@@ -411,13 +413,13 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onFragmentNavigationRequest(String fragmentTag) {
-        Fragment fragment = getFragmentInstance(fragmentTag);
+        Fragment fragment = getFragmentInstance(fragmentTag, true);
         loadFragment(fragment, fragmentTag, true);
     }
 
     @Override
     public void onFragmentNavigationRequest(String fragmentTag, String tripId, String tripDescription) {
-        Fragment fragment = getFragmentInstance(fragmentTag);
+        Fragment fragment = getFragmentInstance(fragmentTag, true);
         Bundle args = new Bundle();
         args.putString(TripDetailFragment.KEY_TRIP_ID, tripId);
         args.putString(TripDetailFragment.KEY_TRIP_DESCRIPTION, tripDescription);
@@ -427,7 +429,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onTripDayEditFragmentRequest(String fragmentTag, String tripId, int dayNumber, String nodeKey) {
-        Fragment fragment = getFragmentInstance(fragmentTag);
+        Fragment fragment = getFragmentInstance(fragmentTag, true);
         Bundle args = new Bundle();
         args.putString(TripDayFragment.KEY_TRIP_ID, tripId);
         args.putInt(TripDayFragment.KEY_TRIP_DAY_NUMBER, dayNumber);

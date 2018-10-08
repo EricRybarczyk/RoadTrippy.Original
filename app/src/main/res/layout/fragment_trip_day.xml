@@ -93,10 +93,10 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/save_destination_button"
-        app:layout_constraintBottom_toTopOf="@id/day_secondary_description"/>
+        app:layout_constraintBottom_toTopOf="@id/day_user_notes"/>
 
     <EditText
-        android:id="@+id/day_secondary_description"
+        android:id="@+id/day_user_notes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
@@ -115,7 +115,7 @@
         android:layout_height="wrap_content"
         style="@style/AccentButton"
         android:text="@string/trip_day_save_button_label"
-        app:layout_constraintTop_toBottomOf="@id/day_secondary_description"
+        app:layout_constraintTop_toBottomOf="@id/day_user_notes"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintVertical_bias="1"/>

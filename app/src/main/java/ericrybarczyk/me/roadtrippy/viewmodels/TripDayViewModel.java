@@ -1,6 +1,7 @@
 package ericrybarczyk.me.roadtrippy.viewmodels;
 
 import org.threeten.bp.LocalDate;
+import org.threeten.bp.format.DateTimeFormatter;
 
 import java.util.ArrayList;
 
@@ -15,11 +16,11 @@ public class TripDayViewModel {
     private boolean isHighlight;
     private LocalDate tripDayDate;
     private String primaryDescription;
-    private String secondaryDescription;
     private String userNotes;
     private ArrayList<TripLocationViewModel> destinations;
     private TripLocationViewModel startLocation;
     private TripLocationViewModel endLocation;
+    private boolean isDefaultText;
 
     public TripDayViewModel() {
         destinations = new ArrayList<>();
@@ -32,15 +33,31 @@ public class TripDayViewModel {
         viewModel.setTripId(tripDay.getTripId());
         viewModel.setDayNumber(tripDay.getDayNumber());
         viewModel.setIsDrivingDay(tripDay.getIsDrivingDay());
+        viewModel.setIsHighlight(tripDay.getIsHighlight());
         viewModel.setTripDayDate(LocalDate.parse(tripDay.getTripDayDate()));
         viewModel.setPrimaryDescription(tripDay.getPrimaryDescription());
-        viewModel.setSecondaryDescription(tripDay.getSecondaryDescription());
         viewModel.setUserNotes(tripDay.getUserNotes());
+        viewModel.setIsDefaultText(tripDay.getIsDefaultText());
         // TODO: finish TripDayViewModel.from() with child objects
 //        viewModel.setStartLocation(TripLocationViewModel.from(tripDay.getStartLocation()));
 //        viewModel.setEndLocation(TripLocationViewModel.from(tripDay.getEndLocation()));
 
         return viewModel;
+    }
+
+    public TripDay asTripDay() {
+        TripDay tripDay = new TripDay();
+        tripDay.setTripDayId(this.getTripDayId());
+        tripDay.setTripId(this.getTripId());
+        tripDay.setDayNumber(this.getDayNumber());
+        tripDay.setIsDrivingDay(this.getIsDrivingDay());
+        tripDay.setIsHighlight(this.getIsHighlight());
+        tripDay.setTripDayDate(this.getTripDayDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
+        tripDay.setPrimaryDescription(this.getPrimaryDescription());
+        tripDay.setUserNotes(this.getUserNotes());
+        tripDay.setIsDefaultText(this.getIsDefaultText());
+        // TODO: finish asTripDay() with child objects
+        return tripDay;
     }
 
     public String getTripDayId() {
@@ -67,7 +84,7 @@ public class TripDayViewModel {
         this.dayNumber = dayNumber;
     }
 
-    public boolean isDrivingDay() {
+    public boolean getIsDrivingDay() {
         return isDrivingDay;
     }
 
@@ -97,14 +114,6 @@ public class TripDayViewModel {
 
     public void setPrimaryDescription(String primaryDescription) {
         this.primaryDescription = primaryDescription;
-    }
-
-    public String getSecondaryDescription() {
-        return secondaryDescription;
-    }
-
-    public void setSecondaryDescription(String secondaryDescription) {
-        this.secondaryDescription = secondaryDescription;
     }
 
     public String getUserNotes() {
@@ -137,5 +146,13 @@ public class TripDayViewModel {
 
     public void setEndLocation(TripLocationViewModel endLocation) {
         this.endLocation = endLocation;
+    }
+
+    public boolean getIsDefaultText() {
+        return isDefaultText;
+    }
+
+    public void setIsDefaultText(boolean defaultText) {
+        isDefaultText = defaultText;
     }
 }

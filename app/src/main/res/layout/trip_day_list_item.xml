@@ -33,7 +33,7 @@
         tools:text="Day Description" />
 
     <TextView
-        android:id="@+id/day_secondary_description"
+        android:id="@+id/day_user_notes"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="@id/content_inset_guideline"
