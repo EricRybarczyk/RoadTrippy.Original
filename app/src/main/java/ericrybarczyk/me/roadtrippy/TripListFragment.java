@@ -90,12 +90,14 @@ public class TripListFragment extends Fragment {
                 String m = getString(R.string.abbreviation_for_MINUTES);
                 String unknown = getString(R.string.word_for_UNKNOWN);
 
+                String tripNodeKey = this.getRef(position).getKey();
+
                 holder.setTripId(viewModel.getTripId());
-                holder.setTripDescription(viewModel.getDescription());
+                holder.setTripNodeKey(tripNodeKey);
                 holder.setTripListClickListener(new TripViewHolder.OnTripListClickListener() {
                     @Override
-                    public void onTripListItemClick(String tripId, String tripDescription) {
-                        fragmentNavigationRequestListener.onFragmentNavigationRequest(FragmentTags.TAG_TRIP_DETAIL, tripId, tripDescription);
+                    public void onTripListItemClick(String tripId, String tripNodeKey) {
+                        fragmentNavigationRequestListener.onFragmentNavigationRequest(FragmentTags.TAG_TRIP_DETAIL, tripId, tripNodeKey);
                     }
                 });
 

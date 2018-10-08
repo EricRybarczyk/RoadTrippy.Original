@@ -73,6 +73,7 @@
     <string name="label_for_DRIVING_TIME">Driving Time:</string>
     <string name="word_for_HOME">Home</string>
     <string name="word_for_Day">Day</string>
+    <string name="phrase_for_YourTrip">Your Trip</string>
 
     <string name="error_device_location_null">Device location not found, please check your Location Settings.</string>
     <string name="error_create_trip_data_validation">Please provide all trip information</string>

@@ -6,11 +6,13 @@ import org.threeten.bp.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import ericrybarczyk.me.roadtrippy.dto.TripDay;
+import ericrybarczyk.me.roadtrippy.persistence.PersistenceFormats;
 
 public class TripDayViewModel {
 
     private String tripDayId;
-    private String tripId; // reference to Trip object that contains this TripDay
+    private String tripId; // key to Trip object that contains this TripDay
+    private String tripNodeKey; // key to Trip object in Firebase (the pushKey for the Trip) that contains this TripDay
     private int dayNumber;
     private boolean isDrivingDay;
     private boolean isHighlight;
@@ -31,6 +33,7 @@ public class TripDayViewModel {
 
         viewModel.setTripDayId(tripDay.getTripDayId());
         viewModel.setTripId(tripDay.getTripId());
+        viewModel.setTripNodeKey(tripDay.getTripNodeKey());
         viewModel.setDayNumber(tripDay.getDayNumber());
         viewModel.setIsDrivingDay(tripDay.getIsDrivingDay());
         viewModel.setIsHighlight(tripDay.getIsHighlight());
@@ -48,11 +51,12 @@ public class TripDayViewModel {
     public TripDay asTripDay() {
         TripDay tripDay = new TripDay();
         tripDay.setTripDayId(this.getTripDayId());
+        tripDay.setTripNodeKey(this.getTripNodeKey());
         tripDay.setTripId(this.getTripId());
         tripDay.setDayNumber(this.getDayNumber());
         tripDay.setIsDrivingDay(this.getIsDrivingDay());
         tripDay.setIsHighlight(this.getIsHighlight());
-        tripDay.setTripDayDate(this.getTripDayDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
+        tripDay.setTripDayDate(PersistenceFormats.toDateString(this.getTripDayDate()));
         tripDay.setPrimaryDescription(this.getPrimaryDescription());
         tripDay.setUserNotes(this.getUserNotes());
         tripDay.setIsDefaultText(this.getIsDefaultText());
@@ -74,6 +78,14 @@ public class TripDayViewModel {
 
     public void setTripId(String tripId) {
         this.tripId = tripId;
+    }
+
+    public String getTripNodeKey() {
+        return tripNodeKey;
+    }
+
+    public void setTripNodeKey(String tripNodeKey) {
+        this.tripNodeKey = tripNodeKey;
     }
 
     public int getDayNumber() {

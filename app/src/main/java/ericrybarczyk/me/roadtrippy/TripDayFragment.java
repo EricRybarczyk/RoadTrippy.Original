@@ -51,6 +51,7 @@ public class TripDayFragment extends Fragment {
     @BindView(R.id.save_trip_day_button) protected Button saveTripDayButton;
 
     private String tripId;
+    private String tripNodeKey;
     private String dayNodeKey;
     private int dayNumber;
     String userId;
@@ -70,11 +71,13 @@ public class TripDayFragment extends Fragment {
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(KEY_TRIP_ID)) {
                 tripId = savedInstanceState.getString(KEY_TRIP_ID);
+                tripNodeKey = savedInstanceState.getString(TripDetailFragment.KEY_TRIP_NODE_KEY);
                 dayNodeKey = savedInstanceState.getString(KEY_NODE_KEY);
                 dayNumber = savedInstanceState.getInt(KEY_TRIP_DAY_NUMBER);
             }
         } else if (getArguments() != null) {
             tripId = getArguments().getString(KEY_TRIP_ID);
+            tripNodeKey = getArguments().getString(TripDetailFragment.KEY_TRIP_NODE_KEY);
             dayNodeKey = getArguments().getString(KEY_NODE_KEY);
             dayNumber = getArguments().getInt(KEY_TRIP_DAY_NUMBER);
         }
@@ -97,7 +100,7 @@ public class TripDayFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 TripDay tripDay = dataSnapshot.getValue(TripDay.class);
                 if (tripDay == null) {
-                    Log.e(TAG, "onCreateView - onDataChange: TripDay object is null");
+                    Log.e(TAG, "onCreateView - onDataChange: TripDay object is null from Firebase");
                     return;
                 }
                 tripDayViewModel = TripDayViewModel.from(tripDay);
@@ -154,17 +157,17 @@ public class TripDayFragment extends Fragment {
 
     @OnClick(R.id.save_trip_day_button)
     public void onSaveClick() {
-        Toast.makeText(getContext(), "You clicked Save!", Toast.LENGTH_LONG).show();
         tripDayViewModel.setPrimaryDescription(dayPrimaryDescription.getText().toString().trim());
         tripDayViewModel.setUserNotes(dayUserNotes.getText().toString().trim());
         tripDayViewModel.setIsDefaultText(false);
         tripRepository.updateTripDay(userId, tripId, dayNodeKey, tripDayViewModel.asTripDay());
-        fragmentNavigationRequestListener.onFragmentNavigationRequest(FragmentTags.TAG_TRIP_DETAIL, tripId, "rework here");
+        fragmentNavigationRequestListener.onFragmentNavigationRequest(FragmentTags.TAG_TRIP_DETAIL, tripId, tripNodeKey);
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putString(KEY_TRIP_ID, tripId);
+        outState.putString(TripDetailFragment.KEY_TRIP_NODE_KEY, tripNodeKey);
         outState.putString(KEY_NODE_KEY, dayNodeKey);
         outState.putInt(KEY_TRIP_DAY_NUMBER, dayNumber);
         super.onSaveInstanceState(outState);

@@ -19,15 +19,18 @@ import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import ericrybarczyk.me.roadtrippy.dto.Trip;
 import ericrybarczyk.me.roadtrippy.dto.TripDay;
 import ericrybarczyk.me.roadtrippy.persistence.DatabasePaths;
 import ericrybarczyk.me.roadtrippy.persistence.TripRepository;
@@ -38,12 +41,14 @@ import ericrybarczyk.me.roadtrippy.viewmodels.TripDayViewModel;
 public class TripDetailFragment extends Fragment {
 
     public static final String KEY_TRIP_ID = "trip_id_key";
-    public static final String KEY_TRIP_DESCRIPTION = "trip_description_key";
+    public static final String KEY_TRIP_NODE_KEY = "trip_node_key";
 
     private FragmentNavigationRequestListener fragmentNavigationRequestListener;
 
     private String tripId;
+    private String tripNodeKey;
     private String tripDescriptionForDisplay;
+    String userId;
     TripRepository tripRepository;
     FirebaseRecyclerAdapter firebaseRecyclerAdapter;
 
@@ -62,20 +67,20 @@ public class TripDetailFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        String userId = firebaseUser.getUid();
+        userId = firebaseUser.getUid();
 
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(KEY_TRIP_ID)) {
                 tripId = savedInstanceState.getString(KEY_TRIP_ID);
-                tripDescriptionForDisplay = savedInstanceState.getString(KEY_TRIP_DESCRIPTION);
+                tripNodeKey = savedInstanceState.getString(KEY_TRIP_NODE_KEY);
             }
         } else if (getArguments() != null) {
             if (getArguments().containsKey(KEY_TRIP_ID)) {
                 tripId = getArguments().getString(KEY_TRIP_ID);
-                tripDescriptionForDisplay = getArguments().getString(KEY_TRIP_DESCRIPTION);
+                tripNodeKey = getArguments().getString(KEY_TRIP_NODE_KEY);
             }
         }
-        if (tripId == null) {
+        if (tripId == null || tripNodeKey == null) {
             Log.e(TAG, "tripId is null, must be in getArguments() for this fragment");
             return;
         }
@@ -102,7 +107,7 @@ public class TripDetailFragment extends Fragment {
 
                 TripDayViewModel viewModel = TripDayViewModel.from(model); // this.getItem(position)
 
-                String nodeKey = this.getRef(position).getKey();
+                String dayNodeKey = this.getRef(position).getKey();
 
                 holder.dayNumber.setText(String.valueOf(viewModel.getDayNumber()));
                 holder.dayPrimaryDescription.setText(viewModel.getPrimaryDescription());
@@ -114,8 +119,9 @@ public class TripDetailFragment extends Fragment {
                         fragmentNavigationRequestListener.onTripDayEditFragmentRequest(
                                 FragmentTags.TAG_TRIP_DAY,
                                 viewModel.getTripId(),
+                                tripNodeKey,
                                 viewModel.getDayNumber(),
-                                nodeKey);
+                                dayNodeKey);
                     }
                 });
 
@@ -131,7 +137,26 @@ public class TripDetailFragment extends Fragment {
         final View rootView = inflater.inflate(R.layout.fragment_trip_detail, container, false);
         ButterKnife.bind(this, rootView);
 
-        tripDescription.setText(tripDescriptionForDisplay);
+        DatabaseReference tripReference = tripRepository.getTrip(userId, tripNodeKey);
+        tripReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Trip trip = dataSnapshot.getValue(Trip.class);
+                if (trip == null) {
+                    Log.e(TAG, "onCreate - onDataChange: Trip object is null from Firebase");
+                    tripDescriptionForDisplay = getString(R.string.phrase_for_YourTrip);
+                    return;
+                }
+                tripDescriptionForDisplay = trip.getDescription();
+                tripDescription.setText(tripDescriptionForDisplay);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e(TAG, "Error loading tripId: " + tripId + ", tripNodeKey: " + tripNodeKey);
+                fragmentNavigationRequestListener.onFragmentNavigationRequest(FragmentTags.TAG_TRIP_LIST);
+            }
+        });
 
         File imageDir = getContext().getDir(MapSettings.DESTINATION_MAP_IMAGE_DIRECTORY, Context.MODE_PRIVATE);
         String tripImageFilename = MapSettings.DESTINATION_MAP_MAIN_PREFIX + tripId + MapSettings.DESTINATION_MAP_IMAGE_EXTENSION;
@@ -167,7 +192,7 @@ public class TripDetailFragment extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putString(KEY_TRIP_ID, tripId);
-        outState.putString(KEY_TRIP_DESCRIPTION, tripDescriptionForDisplay);
+        outState.putString(KEY_TRIP_NODE_KEY, tripNodeKey);
         super.onSaveInstanceState(outState);
     }
 

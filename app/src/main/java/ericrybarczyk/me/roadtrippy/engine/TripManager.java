@@ -11,6 +11,7 @@ import java.util.List;
 
 import ericrybarczyk.me.roadtrippy.dto.Trip;
 import ericrybarczyk.me.roadtrippy.dto.TripDay;
+import ericrybarczyk.me.roadtrippy.persistence.PersistenceFormats;
 import ericrybarczyk.me.roadtrippy.viewmodels.TripViewModel;
 
 public class TripManager {
@@ -36,12 +37,12 @@ public class TripManager {
         trip.setIncludeReturn(tripViewModel.isIncludeReturn());
         trip.setIsArchived(false);
 
-        trip.setDepartureDate(tripViewModel.getDepartureDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
-        trip.setReturnDate(tripViewModel.getReturnDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
+        trip.setDepartureDate(PersistenceFormats.toDateString(tripViewModel.getDepartureDate()));
+        trip.setReturnDate(PersistenceFormats.toDateString(tripViewModel.getReturnDate()));
 
         trip.setDurationMinutes(tripViewModel.getDurationMinutes());
 
-        String rightNow = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE);
+        String rightNow = PersistenceFormats.toDateString(LocalDate.now());
         trip.setCreateDate(rightNow);
         trip.setModifiedDate(rightNow);
 
@@ -85,7 +86,7 @@ public class TripManager {
             td.setUserNotes(getInitialUserNotes(tripDayNumber, daysOfDriving, numberOfTripDays, tripViewModel.isIncludeReturn()));
             td.setIsDefaultText(true);
 
-            td.setTripDayDate(tripViewModel.getDepartureDate().plusDays(day).format(DateTimeFormatter.ISO_LOCAL_DATE));
+            td.setTripDayDate(PersistenceFormats.toDateString(tripViewModel.getDepartureDate().plusDays(day)));
             tripDays.add(td);
         }
 

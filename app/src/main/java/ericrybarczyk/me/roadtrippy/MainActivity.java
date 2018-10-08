@@ -418,20 +418,21 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onFragmentNavigationRequest(String fragmentTag, String tripId, String tripDescription) {
+    public void onFragmentNavigationRequest(String fragmentTag, String tripId, String tripNodeKey) {
         Fragment fragment = getFragmentInstance(fragmentTag, true);
         Bundle args = new Bundle();
         args.putString(TripDetailFragment.KEY_TRIP_ID, tripId);
-        args.putString(TripDetailFragment.KEY_TRIP_DESCRIPTION, tripDescription);
+        args.putString(TripDetailFragment.KEY_TRIP_NODE_KEY, tripNodeKey);
         fragment.setArguments(args);
         loadFragment(fragment, fragmentTag, true);
     }
 
     @Override
-    public void onTripDayEditFragmentRequest(String fragmentTag, String tripId, int dayNumber, String nodeKey) {
+    public void onTripDayEditFragmentRequest(String fragmentTag, String tripId, String tripNodeKey, int dayNumber, String nodeKey) {
         Fragment fragment = getFragmentInstance(fragmentTag, true);
         Bundle args = new Bundle();
         args.putString(TripDayFragment.KEY_TRIP_ID, tripId);
+        args.putString(TripDetailFragment.KEY_TRIP_NODE_KEY, tripNodeKey);
         args.putInt(TripDayFragment.KEY_TRIP_DAY_NUMBER, dayNumber);
         args.putString(TripDayFragment.KEY_NODE_KEY, nodeKey);
         fragment.setArguments(args);

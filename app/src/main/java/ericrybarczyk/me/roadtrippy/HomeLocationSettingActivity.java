@@ -62,7 +62,7 @@ public class HomeLocationSettingActivity extends AppCompatActivity
     }
 
     @Override
-    public void onTripDayEditFragmentRequest(String fragmentTag, String tripId, int dayNumber, String nodeKey) {
+    public void onTripDayEditFragmentRequest(String fragmentTag, String tripId, String tripNodeKey, int dayNumber, String nodeKey) {
         // this overload is not called from GoogleMapFragment so it is not implemented
         throw new IllegalArgumentException(TAG + ": onTripDayEditFragmentRequest, unable to process argument: dayNumber");
     }

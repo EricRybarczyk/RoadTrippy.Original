@@ -36,6 +36,7 @@ public class TripRepository {
 
             // save all TripDay objects
             for (TripDay day : tripDays) {
+                day.setTripNodeKey(tripPushId);
                 daysDatabaseReference.push().setValue(day);
             }
 
@@ -55,6 +56,10 @@ public class TripRepository {
 
     public DatabaseReference getTripDay(String userId, String tripId, String dayNodeKey) {
         return firebaseDatabase.getReference().child(DatabasePaths.BASE_PATH_TRIPDAYS + userId + "/" + tripId + "/" + dayNodeKey);
+    }
+
+    public DatabaseReference getTrip(String userId, String tripNodeKey) {
+        return firebaseDatabase.getReference().child(DatabasePaths.BASE_PATH_TRIPS + userId + "/" + tripNodeKey);
     }
 
     public void updateTripDayHighlight(String userId, String tripId, String dayNodeKey, boolean isHighlight) {
