@@ -77,23 +77,25 @@
         android:src="@drawable/ic_action_google_maps"
         android:contentDescription="@string/aria_day_destination_button_map_search" />
 
-    <Button
-        android:id="@+id/save_destination_button"
+    <TextView
+        android:id="@+id/destination_list_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/destination_item"
-        app:layout_constraintEnd_toEndOf="parent"
-        style="@style/AccentButton.Condensed"
-        android:text="@string/trip_day_additional_destination_button_label" />
+        app:layout_constraintStart_toStartOf="parent"
+        style="@style/TripDayDestinationLabel"
+        android:text="@string/trip_day_destination_list_label" />
 
-    <TextView
+    <!-- TODO: evaluate how RecyclerView height is set -->
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/day_destination_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="150dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/save_destination_button"
-        app:layout_constraintBottom_toTopOf="@id/day_user_notes"/>
+        app:layout_constraintTop_toBottomOf="@id/destination_list_label"
+        app:layout_constraintBottom_toTopOf="@id/day_user_notes" />
+    <!-- android:nestedScrollingEnabled="false" -->
 
     <EditText
         android:id="@+id/day_user_notes"

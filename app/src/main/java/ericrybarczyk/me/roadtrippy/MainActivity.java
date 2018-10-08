@@ -314,6 +314,7 @@ public class MainActivity extends AppCompatActivity
                 break;
         }
         try {
+
             result = (Fragment) fragmentClass.newInstance();
         } catch (InstantiationException e) {
             Log.e(TAG, "Unable to instantiate instance of " + fragmentClass.getSimpleName() + " : " + e.getMessage());

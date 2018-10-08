@@ -52,9 +52,11 @@
     <string name="input_trip_day_primary_description">Primary activity or event today</string>
     <string name="input_trip_day_secondary_notes">Enter additional notes here if you wish</string>
     <string name="trip_day_save_button_label">DONE</string>
-    <string name="trip_day_additional_destination_button_label">ADD ANOTHER</string>
+    <string name="trip_day_destination_list_label">Destinations Today:</string>
 
     <string name="fa_icon_star">&#xf005;</string>
+    <string name="fa_icon_trash">&#xf2ed;</string>
+    <string name="fa_icon_undo">&#xf058;</string>
 
     <!-- ContentDescription items-->
     <string name="aria_trip_item_image_description">Simple map image for trip</string>
@@ -62,6 +64,7 @@
     <string name="aria_trip_overview_theme_image">Trip Overview Theme Image</string>
     <string name="aria_icon_get_directions">Get Directions Icon</string>
     <string name="aria_day_destination_button_map_search">Map Search Icon</string>
+    <string name="aria_divider_line">divider line</string>
 
     <!-- words and abbreviations injected into generated strings -->
     <string name="word_for_TO">to</string>

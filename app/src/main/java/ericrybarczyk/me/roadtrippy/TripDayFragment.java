@@ -6,6 +6,8 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,8 +47,8 @@ public class TripDayFragment extends Fragment {
     @BindView(R.id.day_primary_description) protected EditText dayPrimaryDescription;
     @BindView(R.id.destination_item) protected EditText destinationItem;
     @BindView(R.id.search_destination_button) protected ImageButton searchDestinationButton;
-    @BindView(R.id.save_destination_button) protected Button saveDestinationButton;
-    @BindView(R.id.day_destination_list) protected TextView dayDestinationList;
+    @BindView(R.id.destination_list_label) protected TextView destinationListLabel;
+    @BindView(R.id.day_destination_list) protected RecyclerView dayDestinationList;
     @BindView(R.id.day_user_notes) protected EditText dayUserNotes;
     @BindView(R.id.save_trip_day_button) protected Button saveTripDayButton;
 
@@ -112,14 +114,15 @@ public class TripDayFragment extends Fragment {
                 }
 
                 if (tripDayViewModel.getDestinations().size() > 0) {
-                    StringBuilder sb = new StringBuilder();
-                    for (TripLocationViewModel destination : tripDayViewModel.getDestinations()) {
-                        sb.append(destination.getDescription());
-                        sb.append(System.lineSeparator());
-                    }
-                    dayDestinationList.setText(sb.toString());
+                    dayDestinationList.setVisibility(View.VISIBLE);
+                    destinationListLabel.setVisibility(View.VISIBLE);
+                    TripLocationAdapter adapter = new TripLocationAdapter(getContext(), tripDayViewModel.getDestinations());
+                    LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+                    dayDestinationList.setLayoutManager(layoutManager);
+                    dayDestinationList.setAdapter(adapter);
                 } else {
-                    // TODO: display something if nothing in this list?
+                    dayDestinationList.setVisibility(View.INVISIBLE);
+                    destinationListLabel.setVisibility(View.INVISIBLE);
                 }
 
             }
