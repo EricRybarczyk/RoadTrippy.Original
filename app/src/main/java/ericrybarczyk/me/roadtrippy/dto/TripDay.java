@@ -6,6 +6,7 @@ import java.util.UUID;
 public class TripDay {
 
     private String tripDayId;
+    private String tripDayNodeKey; // key to TripDay object in Firebase (the pushKey for the TripDay)
     private String tripId; // key to Trip object that contains this TripDay
     private String tripNodeKey; // key to Trip object in Firebase (the pushKey for the Trip) that contains this TripDay
     private int dayNumber;
@@ -30,6 +31,14 @@ public class TripDay {
 
     public void setTripDayId(String tripDayId) {
         this.tripDayId = tripDayId;
+    }
+
+    public String getTripDayNodeKey() {
+        return tripDayNodeKey;
+    }
+
+    public void setTripDayNodeKey(String tripDayNodeKey) {
+        this.tripDayNodeKey = tripDayNodeKey;
     }
 
     public String getTripId() {

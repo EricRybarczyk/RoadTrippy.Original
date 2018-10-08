@@ -6,4 +6,5 @@ public class RequestCodes {
     public static final int TRIP_ORIGIN_REQUEST_CODE = 200;
     public static final int TRIP_DESTINATION_REQUEST_CODE = 300;
     public static final int PREFERENCE_HOME_LOCATION_REQUEST_CODE = 400;
+    public static final int TRIP_DAY_DESTINATION_REQUEST_CODE = 500;
 }

@@ -30,6 +30,15 @@ public class TripLocationViewModel {
         return viewModel;
     }
 
+    public TripLocation asTripLocation() {
+        TripLocation tripLocation = new TripLocation();
+        tripLocation.setLatitude(this.getLatitude());
+        tripLocation.setLongitude(this.getLongitude());
+        tripLocation.setDescription(this.getDescription());
+        tripLocation.setPlaceId(this.getPlaceId());
+        return tripLocation;
+    }
+
     public double getLatitude() {
         return latitude;
     }

@@ -46,6 +46,7 @@ import ericrybarczyk.me.roadtrippy.places.PlacesResponse;
 import ericrybarczyk.me.roadtrippy.util.InputUtils;
 import ericrybarczyk.me.roadtrippy.util.MapSettings;
 import ericrybarczyk.me.roadtrippy.util.RequestCodes;
+import ericrybarczyk.me.roadtrippy.viewmodels.TripDayViewModel;
 import ericrybarczyk.me.roadtrippy.viewmodels.TripViewModel;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -63,6 +64,7 @@ public class GoogleMapFragment extends Fragment
     @BindView(R.id.search_text) protected EditText searchText;
 
     private TripViewModel tripViewModel;
+    private TripDayViewModel tripDayViewModel;
     private SupportMapFragment mapFragment;
     private String googleMapsApiKey;
     private GoogleMap googleMap;
@@ -85,22 +87,9 @@ public class GoogleMapFragment extends Fragment
     public GoogleMapFragment() {
     }
 
-//    public static GoogleMapFragment newInstance(Location initialLocation, int requestCode, String returnToFragmentTag) {
-//        GoogleMapFragment mapFragment = new GoogleMapFragment();
-//        Bundle args = new Bundle();
-//        args.putDouble(KEY_START_LAT, initialLocation.getLatitude());
-//        args.putDouble(KEY_START_LNG, initialLocation.getLongitude());
-//        args.putInt(KEY_REQUEST_CODE, requestCode);
-//        args.putString(KEY_RETURN_FRAGMENT_TAG, returnToFragmentTag);
-//        mapFragment.setArguments(args);
-//        return mapFragment;
-//    }
-
     public static GoogleMapFragment newInstance(int requestCode, String returnToFragmentTag) {
         GoogleMapFragment mapFragment = new GoogleMapFragment();
         Bundle args = new Bundle();
-//        args.putDouble(KEY_START_LAT, 0);
-//        args.putDouble(KEY_START_LNG, 0);
         args.putInt(KEY_REQUEST_CODE, requestCode);
         args.putString(KEY_RETURN_FRAGMENT_TAG, returnToFragmentTag);
         mapFragment.setArguments(args);
@@ -116,18 +105,17 @@ public class GoogleMapFragment extends Fragment
 
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(KEY_START_LAT)) {
-                //mapLocation = new LatLng(savedInstanceState.getDouble(KEY_START_LAT), savedInstanceState.getDouble(KEY_START_LNG));
                 requestCode = savedInstanceState.getInt(KEY_REQUEST_CODE);
                 returnFragmentTag = savedInstanceState.getString(KEY_RETURN_FRAGMENT_TAG);
                 lastMapZoomLevel = savedInstanceState.getFloat(KEY_LAST_MAP_ZOOM_LEVEL);
             }
         } else if (getArguments() != null) {
-            //mapLocation = new LatLng(getArguments().getDouble(KEY_START_LAT), getArguments().getDouble(KEY_START_LNG));
             requestCode = getArguments().getInt(KEY_REQUEST_CODE);
             returnFragmentTag = getArguments().getString(KEY_RETURN_FRAGMENT_TAG);
         }
 
         tripViewModel = ViewModelProviders.of(getActivity()).get(TripViewModel.class);
+        tripDayViewModel = ViewModelProviders.of(getActivity()).get(TripDayViewModel.class);
     }
 
     @Nullable
@@ -144,7 +132,6 @@ public class GoogleMapFragment extends Fragment
         }
 
         setLocationButton.setOnClickListener(v -> {
-
             if (v.getId() == setLocationButton.getId()) {
                 if (requestCode == RequestCodes.TRIP_DESTINATION_REQUEST_CODE) {
                     updateMapView(MapSettings.MAP_SEARCH_RESULT_ZOOM); // make sure the map is displayed in a way that works well for the snapshot
@@ -158,7 +145,13 @@ public class GoogleMapFragment extends Fragment
                     });
                 }
                 InputUtils.hideKeyboardFrom(getContext(), searchText);
-                locationSelectedListener.onLocationSelected(mapLocation, requestCode, locationDescription.getText().toString());
+
+                if (requestCode == RequestCodes.TRIP_DAY_DESTINATION_REQUEST_CODE) {
+                    locationSelectedListener.onTripDayDestinationSelected(mapLocation, requestCode, locationDescription.getText().toString());
+                } else {
+                    locationSelectedListener.onLocationSelected(mapLocation, requestCode, locationDescription.getText().toString());
+                }
+
                 fragmentNavigationRequestListener.onFragmentNavigationRequest(returnFragmentTag);
             }
         });
@@ -178,8 +171,6 @@ public class GoogleMapFragment extends Fragment
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//        updateLocation();
         switch (requestCode) {
             case RequestCodes.LOCATION_PERMISSIONS_REQUEST_CODE: {
                 updateLocation();
@@ -198,7 +189,7 @@ public class GoogleMapFragment extends Fragment
         // slice a part of the image for use in trip list view
         int currentWidth = bitmap.getWidth();
         int currentHeight = bitmap.getHeight();
-        // original is more portrait. Remove 20% horizontal 60% vertical, keep centered remainder. Looks good in List View, Picasso centers to fit.
+        // original is slightly portrait. Remove 20% horizontal 60% vertical, keep centered remainder. Looks good in List View, Picasso centers to fit.
         int startX = Math.round(currentWidth * 0.1f);
         int startY = Math.round(currentHeight * 0.3f);
         int resizedWidth = currentWidth - (startX * 2);
@@ -286,10 +277,7 @@ public class GoogleMapFragment extends Fragment
     @Override
     public void onCameraMoveStarted(int i) {
         InputUtils.hideKeyboardFrom(getContext(), getView());
-//        if (i == REASON_GESTURE) {
-//        }
     }
-
 
     private void updateMapView() {
         updateMapView(lastMapZoomLevel);
@@ -355,14 +343,13 @@ public class GoogleMapFragment extends Fragment
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
-//        savedInstanceState.putDouble(KEY_START_LAT, mapLocation.latitude);
-//        savedInstanceState.putDouble(KEY_START_LNG, mapLocation.longitude);
         savedInstanceState.putInt(KEY_REQUEST_CODE, requestCode);
         savedInstanceState.putString(KEY_RETURN_FRAGMENT_TAG, returnFragmentTag);
         super.onSaveInstanceState(savedInstanceState);
     }
     public interface LocationSelectedListener {
         void onLocationSelected(LatLng location, int requestCode, String locationDescription);
+        void onTripDayDestinationSelected(LatLng location, int requestCode, String locationDescription); // , Bundle args
     }
 
 }

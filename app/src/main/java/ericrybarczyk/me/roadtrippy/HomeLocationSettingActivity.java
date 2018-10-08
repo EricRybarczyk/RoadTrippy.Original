@@ -58,13 +58,13 @@ public class HomeLocationSettingActivity extends AppCompatActivity
     @Override
     public void onFragmentNavigationRequest(String fragmentTag, String tripId, String tripDescription) {
         // this overload is not called from GoogleMapFragment so it is not implemented
-        throw new IllegalArgumentException(TAG + ": onFragmentNavigationRequest, unable to process argument: tripId");
+        throw new UnsupportedOperationException(TAG + ": onFragmentNavigationRequest is not implemented in this Activity");
     }
 
     @Override
     public void onTripDayEditFragmentRequest(String fragmentTag, String tripId, String tripNodeKey, int dayNumber, String nodeKey) {
         // this overload is not called from GoogleMapFragment so it is not implemented
-        throw new IllegalArgumentException(TAG + ": onTripDayEditFragmentRequest, unable to process argument: dayNumber");
+        throw new UnsupportedOperationException(TAG + ": onTripDayEditFragmentRequest is not implemented in this Activity");
     }
 
     @Override
@@ -74,5 +74,11 @@ public class HomeLocationSettingActivity extends AppCompatActivity
         editor.putFloat(getString(R.string.pref_key_home_latitude), (float)location.latitude);
         editor.putFloat(getString(R.string.pref_key_home_longitude), (float)location.longitude);
         editor.apply();
+    }
+
+    @Override
+    public void onTripDayDestinationSelected(LatLng location, int requestCode, String locationDescription) {
+        // this interface method is not called from the Google map fragment when setting Home location preference so it is not implemented
+        throw new UnsupportedOperationException(TAG + ": onTripDayDestinationSelected is not implemented in this Activity");
     }
 }

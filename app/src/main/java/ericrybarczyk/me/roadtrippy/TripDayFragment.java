@@ -1,5 +1,6 @@
 package ericrybarczyk.me.roadtrippy;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -33,13 +34,14 @@ import ericrybarczyk.me.roadtrippy.persistence.TripRepository;
 import ericrybarczyk.me.roadtrippy.util.FontManager;
 import ericrybarczyk.me.roadtrippy.util.FragmentTags;
 import ericrybarczyk.me.roadtrippy.util.InputUtils;
+import ericrybarczyk.me.roadtrippy.util.RequestCodes;
 import ericrybarczyk.me.roadtrippy.viewmodels.TripDayViewModel;
 import ericrybarczyk.me.roadtrippy.viewmodels.TripLocationViewModel;
 
 public class TripDayFragment extends Fragment {
 
     public static final String KEY_TRIP_ID = "trip_id_key";
-    public static final String KEY_NODE_KEY = "trip_day_node_key";
+    public static final String KEY_DAY_NODE_KEY = "trip_day_node_key";
     public static final String KEY_TRIP_DAY_NUMBER = "trip_day_number_key";
 
     @BindView(R.id.day_number_header) protected TextView dayNumberHeader;
@@ -59,6 +61,7 @@ public class TripDayFragment extends Fragment {
     String userId;
     TripRepository tripRepository;
     TripDayViewModel tripDayViewModel;
+    private MapDisplayRequestListener mapDisplayRequestListener;
     private FragmentNavigationRequestListener fragmentNavigationRequestListener;
     private static final String TAG = TripDayFragment.class.getSimpleName();
 
@@ -69,22 +72,35 @@ public class TripDayFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        boolean stateInitialized = false;
 
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(KEY_TRIP_ID)) {
                 tripId = savedInstanceState.getString(KEY_TRIP_ID);
                 tripNodeKey = savedInstanceState.getString(TripDetailFragment.KEY_TRIP_NODE_KEY);
-                dayNodeKey = savedInstanceState.getString(KEY_NODE_KEY);
+                dayNodeKey = savedInstanceState.getString(KEY_DAY_NODE_KEY);
                 dayNumber = savedInstanceState.getInt(KEY_TRIP_DAY_NUMBER);
+                stateInitialized = true;
             }
         } else if (getArguments() != null) {
             tripId = getArguments().getString(KEY_TRIP_ID);
             tripNodeKey = getArguments().getString(TripDetailFragment.KEY_TRIP_NODE_KEY);
-            dayNodeKey = getArguments().getString(KEY_NODE_KEY);
+            dayNodeKey = getArguments().getString(KEY_DAY_NODE_KEY);
             dayNumber = getArguments().getInt(KEY_TRIP_DAY_NUMBER);
+            stateInitialized = true;
         }
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         userId = firebaseUser.getUid();
+
+        tripDayViewModel = ViewModelProviders.of(getActivity()).get(TripDayViewModel.class);
+
+        if (!stateInitialized) {
+            // this happens when we get here after adding a destination to this TripDay
+            tripId = tripDayViewModel.getTripId();
+            tripNodeKey = tripDayViewModel.getTripNodeKey();
+            dayNodeKey = tripDayViewModel.getTripDayNodeKey();
+            dayNumber = tripDayViewModel.getDayNumber();
+        }
     }
 
     @Override
@@ -93,7 +109,6 @@ public class TripDayFragment extends Fragment {
         final View rootView =  inflater.inflate(R.layout.fragment_trip_day, container, false);
         ButterKnife.bind(this, rootView);
         InputUtils.hideKeyboardFrom(getContext(), rootView);
-
 
         tripRepository = new TripRepository();
         DatabaseReference reference = tripRepository.getTripDay(userId, tripId, dayNodeKey);
@@ -105,7 +120,7 @@ public class TripDayFragment extends Fragment {
                     Log.e(TAG, "onCreateView - onDataChange: TripDay object is null from Firebase");
                     return;
                 }
-                tripDayViewModel = TripDayViewModel.from(tripDay);
+                tripDayViewModel.updateFrom(tripDay); // tripDayViewModel = TripDayViewModel.from(tripDay);
 
                 setHighlightIndicator(tripDayViewModel.getIsHighlight());
                 if (!tripDayViewModel.getIsDefaultText()) {
@@ -137,6 +152,16 @@ public class TripDayFragment extends Fragment {
         String headerText = getString(R.string.word_for_Day) + " " + String.valueOf(dayNumber);
         dayNumberHeader.setText(headerText);
 
+        // provide map fragment for location searching
+        searchDestinationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveTripDay();
+                mapDisplayRequestListener.onMapDisplayRequested(RequestCodes.TRIP_DAY_DESTINATION_REQUEST_CODE, FragmentTags.TAG_TRIP_DAY);
+            }
+        });
+
+
         rootView.clearFocus();
         return rootView;
     }
@@ -160,18 +185,23 @@ public class TripDayFragment extends Fragment {
 
     @OnClick(R.id.save_trip_day_button)
     public void onSaveClick() {
+        saveTripDay();
+        fragmentNavigationRequestListener.onFragmentNavigationRequest(FragmentTags.TAG_TRIP_DETAIL, tripId, tripNodeKey);
+    }
+
+    private void saveTripDay() {
         tripDayViewModel.setPrimaryDescription(dayPrimaryDescription.getText().toString().trim());
         tripDayViewModel.setUserNotes(dayUserNotes.getText().toString().trim());
         tripDayViewModel.setIsDefaultText(false);
+        tripDayViewModel.setTripDayNodeKey(dayNodeKey);
         tripRepository.updateTripDay(userId, tripId, dayNodeKey, tripDayViewModel.asTripDay());
-        fragmentNavigationRequestListener.onFragmentNavigationRequest(FragmentTags.TAG_TRIP_DETAIL, tripId, tripNodeKey);
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putString(KEY_TRIP_ID, tripId);
         outState.putString(TripDetailFragment.KEY_TRIP_NODE_KEY, tripNodeKey);
-        outState.putString(KEY_NODE_KEY, dayNodeKey);
+        outState.putString(KEY_DAY_NODE_KEY, dayNodeKey);
         outState.putInt(KEY_TRIP_DAY_NUMBER, dayNumber);
         super.onSaveInstanceState(outState);
     }
@@ -179,6 +209,11 @@ public class TripDayFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        if (context instanceof MapDisplayRequestListener) {
+            mapDisplayRequestListener = (MapDisplayRequestListener) context;
+        } else {
+            throw new RuntimeException(context.toString() + " must implement MapDisplayRequestListener");
+        }
         if (context instanceof FragmentNavigationRequestListener) {
             fragmentNavigationRequestListener = (FragmentNavigationRequestListener) context;
         } else {

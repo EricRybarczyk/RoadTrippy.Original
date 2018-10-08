@@ -161,18 +161,18 @@
         <item name="android:textSize">20sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/colorTextPrimary</item>
-        <item name="android:layout_marginTop">@dimen/trip_day_destination_label_vertical_margin</item>
+        <item name="android:layout_marginTop">@dimen/trip_day_destination_label_top_margin</item>
     </style>
 
     <style name="TripDayDestinationItem" parent="AppTheme">
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">18sp</item>
         <item name="android:textStyle">normal</item>
         <item name="android:textColor">@color/colorTextPrimary</item>
         <item name="android:layout_marginTop">@dimen/trip_day_destination_item_vertical_margin</item>
     </style>
 
     <style name="TripDayDestinationIcon" parent="AppTheme">
-        <item name="android:textSize">24sp</item>
+        <item name="android:textSize">22sp</item>
         <item name="android:textStyle">normal</item>
         <item name="android:textColor">@color/colorTextPrimary</item>
         <item name="android:layout_marginTop">@dimen/trip_day_destination_item_vertical_margin</item>

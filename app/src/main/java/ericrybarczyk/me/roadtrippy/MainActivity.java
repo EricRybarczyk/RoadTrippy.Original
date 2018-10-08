@@ -50,6 +50,8 @@ import ericrybarczyk.me.roadtrippy.persistence.TripRepository;
 import ericrybarczyk.me.roadtrippy.util.FragmentTags;
 import ericrybarczyk.me.roadtrippy.util.InputUtils;
 import ericrybarczyk.me.roadtrippy.util.RequestCodes;
+import ericrybarczyk.me.roadtrippy.viewmodels.TripDayViewModel;
+import ericrybarczyk.me.roadtrippy.viewmodels.TripLocationViewModel;
 import ericrybarczyk.me.roadtrippy.viewmodels.TripViewModel;
 
 
@@ -72,6 +74,7 @@ public class MainActivity extends AppCompatActivity
     private Location lastKnownLocation;
     private FusedLocationProviderClient fusedLocationProviderClient;
     private TripViewModel tripViewModel;
+    private TripDayViewModel tripDayViewModel;
     private int preferenceDrivingHours;
 
     @BindView(R.id.toolbar) protected Toolbar toolbar;
@@ -99,6 +102,7 @@ public class MainActivity extends AppCompatActivity
         loadPreferences();
 
         tripViewModel = ViewModelProviders.of(this).get(TripViewModel.class);
+        tripDayViewModel = ViewModelProviders.of(this).get(TripDayViewModel.class);
 
         firebaseAuth = FirebaseAuth.getInstance();
 
@@ -342,12 +346,15 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onMapDisplayRequested(int requestCode, String returnToFragmentTag) {
+    public void onMapDisplayRequested(int requestCode, String returnToFragmentTag) { //, Bundle args
         if (lastKnownLocation == null) {
             Toast.makeText(this, R.string.error_device_location_null, Toast.LENGTH_LONG).show();
             return;
         }
         Fragment fragment = GoogleMapFragment.newInstance(requestCode, returnToFragmentTag);
+//        if (args != null) {
+//            fragment.setArguments(args);
+//        }
         loadFragment(fragment, FragmentTags.TAG_MAP_SELECT_LOCATION, true);
     }
 
@@ -364,6 +371,20 @@ public class MainActivity extends AppCompatActivity
                 break;
             default:
                 throw new IllegalArgumentException("Invalid requestCode argument: " + String.valueOf(requestCode));
+        }
+    }
+
+    @Override
+    public void onTripDayDestinationSelected(LatLng location, int requestCode, String locationDescription) {
+        if (requestCode == RequestCodes.TRIP_DAY_DESTINATION_REQUEST_CODE) {
+            tripDayViewModel.getDestinations().add(new TripLocationViewModel(location.latitude, location.longitude, locationDescription, null));
+            TripRepository repository = new TripRepository();
+            repository.updateTripDay(
+                    firebaseUser.getUid(),
+                    tripDayViewModel.getTripId(),
+                    tripDayViewModel.getTripDayNodeKey(),
+                    tripDayViewModel.asTripDay()
+            );
         }
     }
 
@@ -435,7 +456,7 @@ public class MainActivity extends AppCompatActivity
         args.putString(TripDayFragment.KEY_TRIP_ID, tripId);
         args.putString(TripDetailFragment.KEY_TRIP_NODE_KEY, tripNodeKey);
         args.putInt(TripDayFragment.KEY_TRIP_DAY_NUMBER, dayNumber);
-        args.putString(TripDayFragment.KEY_NODE_KEY, nodeKey);
+        args.putString(TripDayFragment.KEY_DAY_NODE_KEY, nodeKey);
         fragment.setArguments(args);
         loadFragment(fragment, fragmentTag, true);
     }

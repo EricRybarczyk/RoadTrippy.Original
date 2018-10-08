@@ -1,5 +1,7 @@
 package ericrybarczyk.me.roadtrippy.viewmodels;
 
+import android.arch.lifecycle.ViewModel;
+
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.format.DateTimeFormatter;
 
@@ -9,9 +11,10 @@ import ericrybarczyk.me.roadtrippy.dto.TripDay;
 import ericrybarczyk.me.roadtrippy.dto.TripLocation;
 import ericrybarczyk.me.roadtrippy.persistence.PersistenceFormats;
 
-public class TripDayViewModel {
+public class TripDayViewModel extends ViewModel {
 
     private String tripDayId;
+    private String tripDayNodeKey; // key to TripDay object in Firebase (the pushKey for the TripDay)
     private String tripId; // key to Trip object that contains this TripDay
     private String tripNodeKey; // key to Trip object in Firebase (the pushKey for the Trip) that contains this TripDay
     private int dayNumber;
@@ -33,6 +36,7 @@ public class TripDayViewModel {
         TripDayViewModel viewModel = new TripDayViewModel();
 
         viewModel.setTripDayId(tripDay.getTripDayId());
+        viewModel.setTripDayNodeKey(tripDay.getTripDayNodeKey());
         viewModel.setTripId(tripDay.getTripId());
         viewModel.setTripNodeKey(tripDay.getTripNodeKey());
         viewModel.setDayNumber(tripDay.getDayNumber());
@@ -54,9 +58,28 @@ public class TripDayViewModel {
         return viewModel;
     }
 
+    public void updateFrom(TripDay tripDay) {
+        this.setTripDayId(tripDay.getTripDayId());
+        this.setTripDayNodeKey(tripDay.getTripDayNodeKey());
+        this.setTripId(tripDay.getTripId());
+        this.setTripNodeKey(tripDay.getTripNodeKey());
+        this.setDayNumber(tripDay.getDayNumber());
+        this.setIsDrivingDay(tripDay.getIsDrivingDay());
+        this.setIsHighlight(tripDay.getIsHighlight());
+        this.setTripDayDate(LocalDate.parse(tripDay.getTripDayDate()));
+        this.setPrimaryDescription(tripDay.getPrimaryDescription());
+        this.setUserNotes(tripDay.getUserNotes());
+        this.setIsDefaultText(tripDay.getIsDefaultText());
+        this.setDestinations(new ArrayList<>());
+        for (TripLocation loc : tripDay.getDestinations()) {
+            this.getDestinations().add(TripLocationViewModel.from(loc));
+        }
+    }
+
     public TripDay asTripDay() {
         TripDay tripDay = new TripDay();
         tripDay.setTripDayId(this.getTripDayId());
+        tripDay.setTripDayNodeKey(this.getTripDayNodeKey());
         tripDay.setTripNodeKey(this.getTripNodeKey());
         tripDay.setTripId(this.getTripId());
         tripDay.setDayNumber(this.getDayNumber());
@@ -66,6 +89,10 @@ public class TripDayViewModel {
         tripDay.setPrimaryDescription(this.getPrimaryDescription());
         tripDay.setUserNotes(this.getUserNotes());
         tripDay.setIsDefaultText(this.getIsDefaultText());
+        for (TripLocationViewModel loc : this.getDestinations()) {
+            tripDay.getDestinations().add(loc.asTripLocation());
+        }
+
         // TODO: finish asTripDay() with child objects
         return tripDay;
     }
@@ -76,6 +103,14 @@ public class TripDayViewModel {
 
     public void setTripDayId(String tripDayId) {
         this.tripDayId = tripDayId;
+    }
+
+    public String getTripDayNodeKey() {
+        return tripDayNodeKey;
+    }
+
+    public void setTripDayNodeKey(String tripDayNodeKey) {
+        this.tripDayNodeKey = tripDayNodeKey;
     }
 
     public String getTripId() {
@@ -149,6 +184,8 @@ public class TripDayViewModel {
     public void setDestinations(ArrayList<TripLocationViewModel> destinations) {
         this.destinations = destinations;
     }
+
+    // TODO: eval if start/end location values are needed
 
     public TripLocationViewModel getStartLocation() {
         return startLocation;
