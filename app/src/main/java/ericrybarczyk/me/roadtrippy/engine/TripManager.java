@@ -11,6 +11,7 @@ import java.util.List;
 
 import ericrybarczyk.me.roadtrippy.dto.Trip;
 import ericrybarczyk.me.roadtrippy.dto.TripDay;
+import ericrybarczyk.me.roadtrippy.dto.TripLocation;
 import ericrybarczyk.me.roadtrippy.persistence.PersistenceFormats;
 import ericrybarczyk.me.roadtrippy.viewmodels.TripViewModel;
 
@@ -90,8 +91,33 @@ public class TripManager {
             tripDays.add(td);
         }
 
+        // set TripLocation on appropriate driving day
+        // for start of trip, main trip location is destination for the last driving day
+        tripDays.get(daysOfDriving - 1).getDestinations().add(
+                new TripLocation(
+                        tripViewModel.getDestinationLatLng().latitude,
+                        tripViewModel.getDestinationLatLng().longitude,
+                        tripViewModel.getDestinationDescription(),
+                        null
+                )
+        );
+        // if return driving is included in trip plans, trip origin is destination for last day of trip
+        if (tripViewModel.isIncludeReturn()) {
+            tripDays.get(tripDays.size()-1).getDestinations().add(
+                    new TripLocation(
+                            tripViewModel.getOriginLatLng().latitude,
+                            tripViewModel.getOriginLatLng().longitude,
+                            tripViewModel.getOriginDescription(),
+                            null
+                    )
+            );
+        }
+
         return tripDays;
     }
+
+
+    // TODO: get these hard-coded strings pulled into Resources (two methods below)
 
     private String getInitialDayPrimaryDescription(int dayNumber, int daysOfDriving, int totalDays, boolean includeReturnDrivingDays) {
 

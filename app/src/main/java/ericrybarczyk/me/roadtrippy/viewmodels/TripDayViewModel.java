@@ -6,6 +6,7 @@ import org.threeten.bp.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import ericrybarczyk.me.roadtrippy.dto.TripDay;
+import ericrybarczyk.me.roadtrippy.dto.TripLocation;
 import ericrybarczyk.me.roadtrippy.persistence.PersistenceFormats;
 
 public class TripDayViewModel {
@@ -41,7 +42,12 @@ public class TripDayViewModel {
         viewModel.setPrimaryDescription(tripDay.getPrimaryDescription());
         viewModel.setUserNotes(tripDay.getUserNotes());
         viewModel.setIsDefaultText(tripDay.getIsDefaultText());
+        for (TripLocation loc : tripDay.getDestinations()) {
+            viewModel.getDestinations().add(TripLocationViewModel.from(loc));
+        }
+
         // TODO: finish TripDayViewModel.from() with child objects
+        // DO I NEED THESE??? FOR VERSION 1 ???
 //        viewModel.setStartLocation(TripLocationViewModel.from(tripDay.getStartLocation()));
 //        viewModel.setEndLocation(TripLocationViewModel.from(tripDay.getEndLocation()));
 

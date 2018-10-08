@@ -79,6 +79,7 @@ public class CreateTripFragment extends Fragment
         }
 
         departureDateButton.setOnClickListener(v -> {
+            saveTripName();
             departureDateButton.requestFocus();
             InputUtils.hideKeyboardFrom(getContext(), rootView);
             DatePickerFragment datePickerDialog = new DatePickerFragment();
@@ -91,6 +92,7 @@ public class CreateTripFragment extends Fragment
             datePickerDialog.show(getChildFragmentManager(), FragmentTags.TAG_DEPARTURE_DATE_DIALOG);
         });
         returnDateButton.setOnClickListener(v -> {
+            saveTripName();
             returnDateButton.requestFocus();
             InputUtils.hideKeyboardFrom(getContext(), rootView);
             DatePickerFragment datePickerDialog = new DatePickerFragment();
@@ -104,16 +106,18 @@ public class CreateTripFragment extends Fragment
         });
 
         originButton.setOnClickListener(v -> {
+            saveTripName();
             TripOriginPickerFragment pickerFragment = TripOriginPickerFragment.newInstance(this);
             pickerFragment.show(getChildFragmentManager(), TAG_PICK_ORIGIN_DIALOG);
         });
 
         destinationButton.setOnClickListener(v -> {
+            saveTripName();
             mapDisplayRequestListener.onMapDisplayRequested(RequestCodes.TRIP_DESTINATION_REQUEST_CODE, FragmentTags.TAG_CREATE_TRIP);
         });
 
         nextStepButton.setOnClickListener(v -> {
-            tripViewModel.setDescription(tripNameText.getText().toString());
+            saveTripName();
             if (isValidForSave()) {
                 fragmentNavigationRequestListener.onFragmentNavigationRequest(FragmentTags.TAG_TRIP_OVERVIEW_MAP);
             } else {
@@ -123,6 +127,12 @@ public class CreateTripFragment extends Fragment
 
         rootView.clearFocus();
         return rootView;
+    }
+
+    private void saveTripName() {
+        if (tripNameText.getText().length() > 0) {
+            tripViewModel.setDescription(tripNameText.getText().toString().trim());
+        }
     }
 
     private boolean isValidForSave() {
