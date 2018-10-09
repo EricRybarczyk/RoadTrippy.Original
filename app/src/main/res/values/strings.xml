@@ -56,7 +56,7 @@
 
     <string name="fa_icon_star">&#xf005;</string>
     <string name="fa_icon_trash">&#xf2ed;</string>
-    <string name="fa_icon_undo">&#xf058;</string>
+    <string name="fa_icon_back">&#xf359;</string>
 
     <!-- ContentDescription items-->
     <string name="aria_trip_item_image_description">Simple map image for trip</string>

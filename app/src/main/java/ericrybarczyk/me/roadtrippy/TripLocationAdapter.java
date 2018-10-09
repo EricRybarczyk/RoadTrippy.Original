@@ -1,6 +1,5 @@
 package ericrybarczyk.me.roadtrippy;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
@@ -14,17 +13,22 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import ericrybarczyk.me.roadtrippy.persistence.TripRepository;
 import ericrybarczyk.me.roadtrippy.util.FontManager;
 import ericrybarczyk.me.roadtrippy.viewmodels.TripLocationViewModel;
 
 public class TripLocationAdapter extends RecyclerView.Adapter<TripLocationAdapter.TripLocationHolder> {
 
     private List<TripLocationViewModel> locations;
-    private final Context parentContext;
+    private String userId;
+    private String tripId;
+    private String dayNodeKey;
 
-    public TripLocationAdapter(Context parentContext, List<TripLocationViewModel> tripLocationViewModelList) {
-        this.parentContext = parentContext;
+    public TripLocationAdapter(List<TripLocationViewModel> tripLocationViewModelList, String userId, String tripId, String dayNodeKey) {
         this.locations = tripLocationViewModelList;
+        this.userId = userId;
+        this.tripId = tripId;
+        this.dayNodeKey = dayNodeKey;
     }
 
 
@@ -41,8 +45,7 @@ public class TripLocationAdapter extends RecyclerView.Adapter<TripLocationAdapte
         TripLocationViewModel viewModel = locations.get(position);
 
         holder.destinationDescription.setText(viewModel.getDescription());
-
-        Context c = parentContext;
+        holder.adapter = this;
 
         holder.iconKeep.setTypeface(FontManager.getTypeface(holder.iconKeep.getContext(), FontManager.FONTAWESOME_REGULAR));
         holder.iconKeep.setTextColor(ContextCompat.getColor(holder.iconKeep.getContext(), R.color.colorControlHighlightSafe));
@@ -64,14 +67,12 @@ public class TripLocationAdapter extends RecyclerView.Adapter<TripLocationAdapte
 
     public class TripLocationHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.destination_description)
-        protected TextView destinationDescription;
-        @BindView(R.id.icon_keep)
-        protected TextView iconKeep;
-        @BindView(R.id.icon_trash)
-        protected TextView iconTrash;
+        @BindView(R.id.destination_description) protected TextView destinationDescription;
+        @BindView(R.id.icon_keep) protected TextView iconKeep;
+        @BindView(R.id.icon_trash) protected TextView iconTrash;
 
         private boolean trashIconActivated;
+        private TripLocationAdapter adapter;
 
         public TripLocationHolder(View itemView) {
             super(itemView);
@@ -80,11 +81,18 @@ public class TripLocationAdapter extends RecyclerView.Adapter<TripLocationAdapte
 
         @OnClick(R.id.icon_trash)
         public void onClickTrash() {
-            trashIconActivated = !trashIconActivated;
+            trashIconActivated = !trashIconActivated; // flip the toggle
             if (trashIconActivated) {
                 iconTrash.setTextColor(ContextCompat.getColor(iconTrash.getContext(), R.color.colorControlHighlightWarning));
                 iconKeep.setVisibility(View.VISIBLE);
             } else {
+                // not-activated means second click so we delete the item and then reset state of the icons
+                int index = this.getAdapterPosition();
+                TripRepository repository = new TripRepository();
+                repository.removeTripDayDestination(userId, tripId, dayNodeKey, index);
+                locations.remove(index);
+                notifyItemRemoved(index);
+                notifyItemRangeChanged(index, getItemCount());
                 iconTrash.setTextColor(ContextCompat.getColor(iconTrash.getContext(), R.color.colorControlHighlightOff));
                 iconKeep.setVisibility(View.INVISIBLE);
             }

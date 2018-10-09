@@ -28,7 +28,7 @@
         app:layout_constraintEnd_toStartOf="@+id/icon_trash"
         app:layout_constraintBaseline_toBaselineOf="@id/icon_trash"
         style="@style/TripDayDestinationIcon"
-        android:text="@string/fa_icon_undo"
+        android:text="@string/fa_icon_back"
         android:textColor="@color/colorControlHighlightOff"/>
 
     <TextView

@@ -17,7 +17,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -36,7 +35,6 @@ import ericrybarczyk.me.roadtrippy.util.FragmentTags;
 import ericrybarczyk.me.roadtrippy.util.InputUtils;
 import ericrybarczyk.me.roadtrippy.util.RequestCodes;
 import ericrybarczyk.me.roadtrippy.viewmodels.TripDayViewModel;
-import ericrybarczyk.me.roadtrippy.viewmodels.TripLocationViewModel;
 
 public class TripDayFragment extends Fragment {
 
@@ -50,7 +48,7 @@ public class TripDayFragment extends Fragment {
     @BindView(R.id.destination_item) protected EditText destinationItem;
     @BindView(R.id.search_destination_button) protected ImageButton searchDestinationButton;
     @BindView(R.id.destination_list_label) protected TextView destinationListLabel;
-    @BindView(R.id.day_destination_list) protected RecyclerView dayDestinationList;
+    @BindView(R.id.day_destination_list) protected RecyclerView dayDestinationRecyclerView;
     @BindView(R.id.day_user_notes) protected EditText dayUserNotes;
     @BindView(R.id.save_trip_day_button) protected Button saveTripDayButton;
 
@@ -129,14 +127,19 @@ public class TripDayFragment extends Fragment {
                 }
 
                 if (tripDayViewModel.getDestinations().size() > 0) {
-                    dayDestinationList.setVisibility(View.VISIBLE);
+                    dayDestinationRecyclerView.setVisibility(View.VISIBLE);
                     destinationListLabel.setVisibility(View.VISIBLE);
-                    TripLocationAdapter adapter = new TripLocationAdapter(getContext(), tripDayViewModel.getDestinations());
+                    TripLocationAdapter adapter = new TripLocationAdapter(
+                            tripDayViewModel.getDestinations(),
+                            userId,
+                            tripId,
+                            dayNodeKey
+                    );
                     LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-                    dayDestinationList.setLayoutManager(layoutManager);
-                    dayDestinationList.setAdapter(adapter);
+                    dayDestinationRecyclerView.setLayoutManager(layoutManager);
+                    dayDestinationRecyclerView.setAdapter(adapter);
                 } else {
-                    dayDestinationList.setVisibility(View.INVISIBLE);
+                    dayDestinationRecyclerView.setVisibility(View.INVISIBLE);
                     destinationListLabel.setVisibility(View.INVISIBLE);
                 }
 

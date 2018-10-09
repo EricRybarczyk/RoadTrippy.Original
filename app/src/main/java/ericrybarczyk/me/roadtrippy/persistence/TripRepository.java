@@ -1,15 +1,21 @@
 package ericrybarczyk.me.roadtrippy.persistence;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ericrybarczyk.me.roadtrippy.dto.Trip;
 import ericrybarczyk.me.roadtrippy.dto.TripDay;
+import ericrybarczyk.me.roadtrippy.dto.TripLocation;
 
 public class TripRepository {
 
@@ -70,5 +76,28 @@ public class TripRepository {
     public void updateTripDay(String userId, String tripId, String dayNodeKey, TripDay tripDay) {
         DatabaseReference reference = getTripDay(userId, tripId, dayNodeKey);
         reference.setValue(tripDay);
+    }
+
+    public void removeTripDayDestination(String userId, String tripId, String dayNodeKey, int destinationIndex) {
+        // to maintain the destinations with expected array-like indexing, need to re-save the list after item removal. Using ArrayList to avoid manually re-indexing.
+        DatabaseReference reference = getTripDay(userId, tripId, dayNodeKey).child(DatabasePaths.TRIPDAY_DESTINATIONS_CHILD_KEY); // + "/" + destinationIndex);
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                ArrayList<TripLocation> destinations = new ArrayList<>();
+                for (DataSnapshot item: dataSnapshot.getChildren()) {
+                    destinations.add(item.getValue(TripLocation.class));
+                }
+                destinations.remove(destinationIndex);
+                reference.setValue(destinations);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e(TAG, "Firebase DatabaseError: " + databaseError.getMessage());
+            }
+        });
+
+//        reference.removeValue();
     }
 }
