@@ -29,7 +29,8 @@ public class TripRepository {
 
     public void saveTrip(Trip trip, List<TripDay> tripDays) {
         try {
-            DatabaseReference tripsDatabaseReference = firebaseDatabase.getReference().child(DatabasePaths.BASE_PATH_TRIPS + trip.getUserId());
+            DatabaseReference tripsDatabaseReference = firebaseDatabase.getReference()
+                    .child(DatabasePaths.BASE_PATH_TRIPS + trip.getUserId());
 
             // get the pushId to use in path when storing the child TripDay records
             String tripPushId = tripsDatabaseReference.push().getKey();
@@ -38,7 +39,8 @@ public class TripRepository {
             tripsDatabaseReference.child(tripPushId).setValue(trip);
 
             // build a path for the TripDay child objects so they can be associated with the saved Trip object
-            DatabaseReference daysDatabaseReference = firebaseDatabase.getReference().child(DatabasePaths.BASE_PATH_TRIPDAYS + trip.getUserId() + "/" + trip.getTripId()); //tripPushId
+            DatabaseReference daysDatabaseReference = firebaseDatabase.getReference()
+                    .child(DatabasePaths.BASE_PATH_TRIPDAYS + trip.getUserId() + "/" + trip.getTripId()); //tripPushId
 
             // save all TripDay objects
             for (TripDay day : tripDays) {
@@ -53,7 +55,9 @@ public class TripRepository {
     }
 
     public DatabaseReference getTripList(String userId) {
-        return firebaseDatabase.getReference().child(DatabasePaths.BASE_PATH_TRIPS + userId + "/");
+        DatabaseReference reference = firebaseDatabase.getReference().child(DatabasePaths.BASE_PATH_TRIPS + userId + "/");
+        reference.orderByChild(DatabasePaths.KEY_TRIP_LIST_DEFAULT_SORT);
+        return reference;
     }
 
     public DatabaseReference getTripDaysList(String userId, String tripId) {
@@ -70,7 +74,7 @@ public class TripRepository {
 
     public void updateTripDayHighlight(String userId, String tripId, String dayNodeKey, boolean isHighlight) {
         DatabaseReference reference = getTripDay(userId, tripId, dayNodeKey);
-        reference.child(DatabasePaths.TRIPDAY_HIGHLIGHT_CHILD_KEY).setValue(isHighlight);
+        reference.child(DatabasePaths.KEY_TRIPDAY_HIGHLIGHT_CHILD).setValue(isHighlight);
     }
 
     public void updateTripDay(String userId, String tripId, String dayNodeKey, TripDay tripDay) {
@@ -79,8 +83,10 @@ public class TripRepository {
     }
 
     public void removeTripDayDestination(String userId, String tripId, String dayNodeKey, int destinationIndex) {
-        // to maintain the destinations with expected array-like indexing, need to re-save the list after item removal. Using ArrayList to avoid manually re-indexing.
-        DatabaseReference reference = getTripDay(userId, tripId, dayNodeKey).child(DatabasePaths.TRIPDAY_DESTINATIONS_CHILD_KEY); // + "/" + destinationIndex);
+        // to maintain the destinations with expected array-like indexing, need to re-save the list after item removal.
+        // Using ArrayList to avoid manually re-indexing.
+        DatabaseReference reference = getTripDay(userId, tripId, dayNodeKey)
+                .child(DatabasePaths.KEY_TRIPDAY_DESTINATIONS_CHILD); // + "/" + destinationIndex);
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -97,7 +103,5 @@ public class TripRepository {
                 Log.e(TAG, "Firebase DatabaseError: " + databaseError.getMessage());
             }
         });
-
-//        reference.removeValue();
     }
 }
