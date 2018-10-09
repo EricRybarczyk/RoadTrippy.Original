@@ -3,7 +3,6 @@ package ericrybarczyk.me.roadtrippy;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -357,7 +356,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onMapDisplayRequested(int requestCode, String returnToFragmentTag, LatLng displayLocation) {
+    public void onMapDisplayRequested(int requestCode, String returnToFragmentTag, LatLng displayLocation, String locationDescription) {
         if (lastKnownLocation == null) {
             Toast.makeText(this, R.string.error_device_location_null, Toast.LENGTH_LONG).show();
             return;
@@ -365,6 +364,9 @@ public class MainActivity extends AppCompatActivity
         Bundle args = new Bundle();
         args.putFloat(MapSettings.KEY_MAP_DISPLAY_LATITUDE, (float)displayLocation.latitude);
         args.putFloat(MapSettings.KEY_MAP_DISPLAY_LONGITUDE, (float)displayLocation.longitude);
+        if (locationDescription != null) {
+            args.putString(MapSettings.KEY_MAP_DISPLAY_LOCATION_DESCRIPTION, locationDescription);
+        }
         Fragment fragment = GoogleMapFragment.newInstance(requestCode, returnToFragmentTag);
         if (fragment.getArguments() != null) {
             fragment.getArguments().putAll(args);

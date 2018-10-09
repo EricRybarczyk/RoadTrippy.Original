@@ -9,7 +9,6 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -84,6 +83,7 @@ public class GoogleMapFragment extends Fragment
     private int requestCode; // passed in from caller to be returned with map location
     private FragmentNavigationRequestListener fragmentNavigationRequestListener;
     private String returnFragmentTag;
+    private String argumentLocationDescription;
 
     public GoogleMapFragment() {
     }
@@ -120,6 +120,9 @@ public class GoogleMapFragment extends Fragment
                 double longitude = (double) getArguments().getFloat(MapSettings.KEY_MAP_DISPLAY_LONGITUDE);
                 mapLocation = new LatLng(latitude, longitude);
             }
+            if (getArguments().containsKey(MapSettings.KEY_MAP_DISPLAY_LOCATION_DESCRIPTION)) {
+                argumentLocationDescription = getArguments().getString(MapSettings.KEY_MAP_DISPLAY_LOCATION_DESCRIPTION);
+            }
         }
 
         tripViewModel = ViewModelProviders.of(getActivity()).get(TripViewModel.class);
@@ -137,6 +140,11 @@ public class GoogleMapFragment extends Fragment
         if (requestCode == RequestCodes.PREFERENCE_HOME_LOCATION_REQUEST_CODE) {
             locationDescription.setText(getString(R.string.word_for_HOME));
             setLocationButton.setText(getString(R.string.map_home_location_button_save_label));
+        }
+
+        if (argumentLocationDescription != null) {
+            locationDescription.setText(argumentLocationDescription);
+            argumentLocationDescription = null; // clear this out so it doesn't persist if the fragment is loaded again
         }
 
         setLocationButton.setOnClickListener(v -> {

@@ -180,16 +180,6 @@ public class TripDayFragment extends Fragment {
         String headerText = getString(R.string.word_for_Day) + " " + String.valueOf(dayNumber);
         dayNumberHeader.setText(headerText);
 
-        // provide map fragment for location searching
-        searchDestinationButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                saveTripDay();
-                mapDisplayRequestListener.onMapDisplayRequested(RequestCodes.TRIP_DAY_DESTINATION_REQUEST_CODE, FragmentTags.TAG_TRIP_DAY, tripViewModel.getDestinationLatLng());
-            }
-        });
-
-
         rootView.clearFocus();
         return rootView;
     }
@@ -209,6 +199,12 @@ public class TripDayFragment extends Fragment {
         tripDayViewModel.setIsHighlight(!tripDayViewModel.getIsHighlight());
         tripRepository.updateTripDayHighlight(userId, tripId, dayNodeKey, tripDayViewModel.getIsHighlight());
         setHighlightIndicator(tripDayViewModel.getIsHighlight());
+    }
+
+    @OnClick(R.id.search_destination_button)
+    public void onClick(View v) {
+        saveTripDay();
+        mapDisplayRequestListener.onMapDisplayRequested(RequestCodes.TRIP_DAY_DESTINATION_REQUEST_CODE, FragmentTags.TAG_TRIP_DAY, tripViewModel.getDestinationLatLng(), null);
     }
 
     @OnClick(R.id.save_trip_day_button)

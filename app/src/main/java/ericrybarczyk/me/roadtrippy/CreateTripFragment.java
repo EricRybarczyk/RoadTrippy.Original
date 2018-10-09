@@ -113,7 +113,12 @@ public class CreateTripFragment extends Fragment
 
         destinationButton.setOnClickListener(v -> {
             saveTripName();
-            mapDisplayRequestListener.onMapDisplayRequested(RequestCodes.TRIP_DESTINATION_REQUEST_CODE, FragmentTags.TAG_CREATE_TRIP);
+            if (tripViewModel.getDestinationLatLng() != null) {
+                // request a map centered on the location already selected
+                mapDisplayRequestListener.onMapDisplayRequested(RequestCodes.TRIP_DESTINATION_REQUEST_CODE, FragmentTags.TAG_CREATE_TRIP, tripViewModel.getDestinationLatLng(), tripViewModel.getDestinationDescription());
+            } else {
+                mapDisplayRequestListener.onMapDisplayRequested(RequestCodes.TRIP_DESTINATION_REQUEST_CODE, FragmentTags.TAG_CREATE_TRIP);
+            }
         });
 
         nextStepButton.setOnClickListener(v -> {
@@ -211,7 +216,12 @@ public class CreateTripFragment extends Fragment
             }
 
         } else {
-            mapDisplayRequestListener.onMapDisplayRequested(RequestCodes.TRIP_ORIGIN_REQUEST_CODE, FragmentTags.TAG_CREATE_TRIP);
+            if (tripViewModel.getOriginLatLng() != null) {
+                // request a map centered on the location already selected
+                mapDisplayRequestListener.onMapDisplayRequested(RequestCodes.TRIP_ORIGIN_REQUEST_CODE, FragmentTags.TAG_CREATE_TRIP, tripViewModel.getOriginLatLng(), tripViewModel.getOriginDescription());
+            } else {
+                mapDisplayRequestListener.onMapDisplayRequested(RequestCodes.TRIP_ORIGIN_REQUEST_CODE, FragmentTags.TAG_CREATE_TRIP);
+            }
         }
     }
 }

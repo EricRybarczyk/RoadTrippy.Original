@@ -13,4 +13,5 @@ public class MapSettings {
     public static final String DESTINATION_MAP_SLICED_PREFIX = "s_";
     public static final String KEY_MAP_DISPLAY_LATITUDE = "map_display_latitude";
     public static final String KEY_MAP_DISPLAY_LONGITUDE = "map_display_longitude";
+    public static final String KEY_MAP_DISPLAY_LOCATION_DESCRIPTION = "map_display_location_name";
 }

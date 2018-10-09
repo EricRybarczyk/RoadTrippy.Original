@@ -4,5 +4,5 @@ import com.google.android.gms.maps.model.LatLng;
 
 public interface MapDisplayRequestListener {
     void onMapDisplayRequested(int requestCode, String returnToFragmentTag);
-    void onMapDisplayRequested(int requestCode, String returnToFragmentTag, LatLng displayLocation);
+    void onMapDisplayRequested(int requestCode, String returnToFragmentTag, LatLng displayLocation, String locationDescription);
 }
