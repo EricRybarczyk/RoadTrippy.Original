@@ -66,6 +66,20 @@ public class TripViewModel extends ViewModel {
         return viewModel;
     }
 
+    public void updateFrom(Trip trip) {
+        this.setTripId(trip.getTripId());
+        this.setDescription(trip.getDescription());
+        this.setDepartureDate(LocalDate.parse(trip.getDepartureDate()));
+        this.setReturnDate(LocalDate.parse(trip.getReturnDate()));
+        this.setOriginLatLng(new LatLng(trip.getOriginLatitude(), trip.getOriginLongitude()));
+        this.setDestinationLatLng(new LatLng(trip.getDestinationLatitude(), trip.getDestinationLongitude()));
+        this.setOriginDescription(trip.getOriginDescription());
+        this.setDestinationDescription(trip.getDestinationDescription());
+        this.setIncludeReturn(trip.getIncludeReturn());
+        this.setDurationMinutes(trip.getDurationMinutes());
+        // TODO: not sure if isEdited value needs to be maintained across persistence
+    }
+
     public void reset() {
         init();
     }
@@ -202,6 +216,7 @@ public class TripViewModel extends ViewModel {
         isEdited = true;
     }
 
+    // TODO: eval if tripDays collection will be used on this viewmodel
     public ArrayList<TripDayViewModel> getTripDays() {
         return tripDays;
     }

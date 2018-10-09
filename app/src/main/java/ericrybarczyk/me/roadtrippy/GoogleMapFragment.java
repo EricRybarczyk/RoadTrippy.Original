@@ -77,6 +77,7 @@ public class GoogleMapFragment extends Fragment
     private static final String TAG = GoogleMapFragment.class.getSimpleName();
 
     private LatLng mapLocation;
+    private boolean displayForUserCurrentLocation;
     private CameraPosition cameraPosition;
     private float lastMapZoomLevel;
     private LocationSelectedListener locationSelectedListener;
@@ -102,6 +103,7 @@ public class GoogleMapFragment extends Fragment
 
         googleMapsApiKey = getString(R.string.google_maps_key);
         lastMapZoomLevel = MapSettings.MAP_DEFAULT_ZOOM;
+        displayForUserCurrentLocation = true; // by default map will show users current location
 
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(KEY_START_LAT)) {
@@ -112,6 +114,12 @@ public class GoogleMapFragment extends Fragment
         } else if (getArguments() != null) {
             requestCode = getArguments().getInt(KEY_REQUEST_CODE);
             returnFragmentTag = getArguments().getString(KEY_RETURN_FRAGMENT_TAG);
+            if (getArguments().containsKey(MapSettings.KEY_MAP_DISPLAY_LATITUDE)) {
+                displayForUserCurrentLocation = false; // flag request to show a requested location instead of user current location
+                double latitude = (double) getArguments().getFloat(MapSettings.KEY_MAP_DISPLAY_LATITUDE);
+                double longitude = (double) getArguments().getFloat(MapSettings.KEY_MAP_DISPLAY_LONGITUDE);
+                mapLocation = new LatLng(latitude, longitude);
+            }
         }
 
         tripViewModel = ViewModelProviders.of(getActivity()).get(TripViewModel.class);
@@ -247,7 +255,9 @@ public class GoogleMapFragment extends Fragment
                 .addOnSuccessListener(new OnSuccessListener<Location>() {
                     @Override
                     public void onSuccess(Location location) {
-                        mapLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                        if (displayForUserCurrentLocation) {
+                            mapLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                        }
                         mapFragment.getMapAsync(GoogleMapFragment.this);
                     }
                 });

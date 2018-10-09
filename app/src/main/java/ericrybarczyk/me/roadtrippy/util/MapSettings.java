@@ -11,4 +11,6 @@ public class MapSettings {
     public static final String DESTINATION_MAP_IMAGE_EXTENSION = ".png";
     public static final String DESTINATION_MAP_MAIN_PREFIX = "t_";
     public static final String DESTINATION_MAP_SLICED_PREFIX = "s_";
+    public static final String KEY_MAP_DISPLAY_LATITUDE = "map_display_latitude";
+    public static final String KEY_MAP_DISPLAY_LONGITUDE = "map_display_longitude";
 }

@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -28,6 +29,7 @@ import com.google.firebase.database.ValueEventListener;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import ericrybarczyk.me.roadtrippy.dto.Trip;
 import ericrybarczyk.me.roadtrippy.dto.TripDay;
 import ericrybarczyk.me.roadtrippy.persistence.TripRepository;
 import ericrybarczyk.me.roadtrippy.util.FontManager;
@@ -35,6 +37,7 @@ import ericrybarczyk.me.roadtrippy.util.FragmentTags;
 import ericrybarczyk.me.roadtrippy.util.InputUtils;
 import ericrybarczyk.me.roadtrippy.util.RequestCodes;
 import ericrybarczyk.me.roadtrippy.viewmodels.TripDayViewModel;
+import ericrybarczyk.me.roadtrippy.viewmodels.TripViewModel;
 
 public class TripDayFragment extends Fragment {
 
@@ -59,6 +62,7 @@ public class TripDayFragment extends Fragment {
     String userId;
     TripRepository tripRepository;
     TripDayViewModel tripDayViewModel;
+    TripViewModel tripViewModel;
     private MapDisplayRequestListener mapDisplayRequestListener;
     private FragmentNavigationRequestListener fragmentNavigationRequestListener;
     private static final String TAG = TripDayFragment.class.getSimpleName();
@@ -91,6 +95,7 @@ public class TripDayFragment extends Fragment {
         userId = firebaseUser.getUid();
 
         tripDayViewModel = ViewModelProviders.of(getActivity()).get(TripDayViewModel.class);
+        tripViewModel = ViewModelProviders.of(this).get(TripViewModel.class);
 
         if (!stateInitialized) {
             // this happens when we get here after adding a destination to this TripDay
@@ -109,6 +114,7 @@ public class TripDayFragment extends Fragment {
         InputUtils.hideKeyboardFrom(getContext(), rootView);
 
         tripRepository = new TripRepository();
+
         DatabaseReference reference = tripRepository.getTripDay(userId, tripId, dayNodeKey);
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -118,7 +124,7 @@ public class TripDayFragment extends Fragment {
                     Log.e(TAG, "onCreateView - onDataChange: TripDay object is null from Firebase");
                     return;
                 }
-                tripDayViewModel.updateFrom(tripDay); // tripDayViewModel = TripDayViewModel.from(tripDay);
+                tripDayViewModel.updateFrom(tripDay);
 
                 setHighlightIndicator(tripDayViewModel.getIsHighlight());
                 if (!tripDayViewModel.getIsDefaultText()) {
@@ -147,7 +153,26 @@ public class TripDayFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e(TAG, "Error loading tripId: " + tripId);
+                Log.e(TAG, "Error loading tripDay with dayNodeKey: " + dayNodeKey);
+                fragmentNavigationRequestListener.onFragmentNavigationRequest(FragmentTags.TAG_TRIP_LIST);
+            }
+        });
+
+        DatabaseReference tripReference = tripRepository.getTrip(userId, tripNodeKey);
+        tripReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Trip trip = dataSnapshot.getValue(Trip.class);
+                if (trip == null) {
+                    Log.e(TAG, "onCreateView - onDataChange: Trip object is null from Firebase");
+                    return;
+                }
+                tripViewModel.updateFrom(trip);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e(TAG, "Error loading tripDay: " + tripId);
                 fragmentNavigationRequestListener.onFragmentNavigationRequest(FragmentTags.TAG_TRIP_LIST);
             }
         });
@@ -160,7 +185,7 @@ public class TripDayFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 saveTripDay();
-                mapDisplayRequestListener.onMapDisplayRequested(RequestCodes.TRIP_DAY_DESTINATION_REQUEST_CODE, FragmentTags.TAG_TRIP_DAY);
+                mapDisplayRequestListener.onMapDisplayRequested(RequestCodes.TRIP_DAY_DESTINATION_REQUEST_CODE, FragmentTags.TAG_TRIP_DAY, tripViewModel.getDestinationLatLng());
             }
         });
 

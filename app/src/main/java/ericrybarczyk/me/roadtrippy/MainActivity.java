@@ -49,6 +49,7 @@ import ericrybarczyk.me.roadtrippy.dto.Trip;
 import ericrybarczyk.me.roadtrippy.persistence.TripRepository;
 import ericrybarczyk.me.roadtrippy.util.FragmentTags;
 import ericrybarczyk.me.roadtrippy.util.InputUtils;
+import ericrybarczyk.me.roadtrippy.util.MapSettings;
 import ericrybarczyk.me.roadtrippy.util.RequestCodes;
 import ericrybarczyk.me.roadtrippy.viewmodels.TripDayViewModel;
 import ericrybarczyk.me.roadtrippy.viewmodels.TripLocationViewModel;
@@ -346,15 +347,30 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onMapDisplayRequested(int requestCode, String returnToFragmentTag) { //, Bundle args
+    public void onMapDisplayRequested(int requestCode, String returnToFragmentTag) {
         if (lastKnownLocation == null) {
             Toast.makeText(this, R.string.error_device_location_null, Toast.LENGTH_LONG).show();
             return;
         }
         Fragment fragment = GoogleMapFragment.newInstance(requestCode, returnToFragmentTag);
-//        if (args != null) {
-//            fragment.setArguments(args);
-//        }
+        loadFragment(fragment, FragmentTags.TAG_MAP_SELECT_LOCATION, true);
+    }
+
+    @Override
+    public void onMapDisplayRequested(int requestCode, String returnToFragmentTag, LatLng displayLocation) {
+        if (lastKnownLocation == null) {
+            Toast.makeText(this, R.string.error_device_location_null, Toast.LENGTH_LONG).show();
+            return;
+        }
+        Bundle args = new Bundle();
+        args.putFloat(MapSettings.KEY_MAP_DISPLAY_LATITUDE, (float)displayLocation.latitude);
+        args.putFloat(MapSettings.KEY_MAP_DISPLAY_LONGITUDE, (float)displayLocation.longitude);
+        Fragment fragment = GoogleMapFragment.newInstance(requestCode, returnToFragmentTag);
+        if (fragment.getArguments() != null) {
+            fragment.getArguments().putAll(args);
+        } else {
+            fragment.setArguments(args);
+        }
         loadFragment(fragment, FragmentTags.TAG_MAP_SELECT_LOCATION, true);
     }
 
@@ -470,7 +486,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     private class FragmentLifecycleListener extends FragmentManager.FragmentLifecycleCallbacks {
-
         // required to maintain activeFragmentTag when device back key is pressed
         // without this, pressing device back key, followed by device rotation which triggered lifecycle events, would load incorrect fragment
         @Override
