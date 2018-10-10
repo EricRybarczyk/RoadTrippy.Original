@@ -72,6 +72,11 @@ public class TripRepository {
         return firebaseDatabase.getReference().child(DatabasePaths.BASE_PATH_TRIPS + userId + "/" + tripNodeKey);
     }
 
+    public DatabaseReference getDestinationsForTripDay(String userId, String tripId, String dayNodeKey) {
+        return firebaseDatabase.getReference().child(DatabasePaths.BASE_PATH_TRIPDAYS + userId + "/" + tripId + "/"
+                + dayNodeKey + "/" + DatabasePaths.KEY_TRIPDAY_DESTINATIONS_CHILD);
+    }
+
     public void updateTripDayHighlight(String userId, String tripId, String dayNodeKey, boolean isHighlight) {
         DatabaseReference reference = getTripDay(userId, tripId, dayNodeKey);
         reference.child(DatabasePaths.KEY_TRIPDAY_HIGHLIGHT_CHILD).setValue(isHighlight);

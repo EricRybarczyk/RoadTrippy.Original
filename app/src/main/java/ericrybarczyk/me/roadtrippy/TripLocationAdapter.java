@@ -19,13 +19,13 @@ import ericrybarczyk.me.roadtrippy.viewmodels.TripLocationViewModel;
 
 public class TripLocationAdapter extends RecyclerView.Adapter<TripLocationAdapter.TripLocationHolder> {
 
-    private List<TripLocationViewModel> locations;
+    private List<TripLocationViewModel> destinations;
     private String userId;
     private String tripId;
     private String dayNodeKey;
 
     public TripLocationAdapter(List<TripLocationViewModel> tripLocationViewModelList, String userId, String tripId, String dayNodeKey) {
-        this.locations = tripLocationViewModelList;
+        this.destinations = tripLocationViewModelList;
         this.userId = userId;
         this.tripId = tripId;
         this.dayNodeKey = dayNodeKey;
@@ -42,10 +42,9 @@ public class TripLocationAdapter extends RecyclerView.Adapter<TripLocationAdapte
 
     @Override
     public void onBindViewHolder(@NonNull TripLocationHolder holder, int position) {
-        TripLocationViewModel viewModel = locations.get(position);
+        TripLocationViewModel viewModel = destinations.get(position);
 
         holder.destinationDescription.setText(viewModel.getDescription());
-        holder.adapter = this;
 
         holder.iconKeep.setTypeface(FontManager.getTypeface(holder.iconKeep.getContext(), FontManager.FONTAWESOME_REGULAR));
         holder.iconKeep.setTextColor(ContextCompat.getColor(holder.iconKeep.getContext(), R.color.colorControlHighlightSafe));
@@ -58,10 +57,10 @@ public class TripLocationAdapter extends RecyclerView.Adapter<TripLocationAdapte
 
     @Override
     public int getItemCount() {
-        if (locations == null) {
+        if (destinations == null) {
             return 0;
         }
-        return locations.size();
+        return destinations.size();
     }
 
 
@@ -72,7 +71,6 @@ public class TripLocationAdapter extends RecyclerView.Adapter<TripLocationAdapte
         @BindView(R.id.icon_trash) protected TextView iconTrash;
 
         private boolean trashIconActivated;
-        private TripLocationAdapter adapter;
 
         public TripLocationHolder(View itemView) {
             super(itemView);
@@ -90,7 +88,7 @@ public class TripLocationAdapter extends RecyclerView.Adapter<TripLocationAdapte
                 int index = this.getAdapterPosition();
                 TripRepository repository = new TripRepository();
                 repository.removeTripDayDestination(userId, tripId, dayNodeKey, index);
-                locations.remove(index);
+                destinations.remove(index);
                 notifyItemRemoved(index);
                 notifyItemRangeChanged(index, getItemCount());
                 iconTrash.setTextColor(ContextCompat.getColor(iconTrash.getContext(), R.color.colorControlHighlightOff));

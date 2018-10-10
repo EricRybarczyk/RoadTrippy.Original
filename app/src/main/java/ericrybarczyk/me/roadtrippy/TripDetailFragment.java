@@ -1,6 +1,8 @@
 package ericrybarczyk.me.roadtrippy;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
@@ -32,6 +35,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import ericrybarczyk.me.roadtrippy.dto.Trip;
 import ericrybarczyk.me.roadtrippy.dto.TripDay;
+import ericrybarczyk.me.roadtrippy.endpoints.NavigationIntentService;
 import ericrybarczyk.me.roadtrippy.persistence.DatabasePaths;
 import ericrybarczyk.me.roadtrippy.persistence.TripRepository;
 import ericrybarczyk.me.roadtrippy.util.FragmentTags;
@@ -42,6 +46,7 @@ public class TripDetailFragment extends Fragment {
 
     public static final String KEY_TRIP_ID = "trip_id_key";
     public static final String KEY_TRIP_NODE_KEY = "trip_node_key";
+    private static final String TAG_PICK_NAVIGATION_DIALOG = "pick_navigation_dialog";
 
     private FragmentNavigationRequestListener fragmentNavigationRequestListener;
 
@@ -125,7 +130,34 @@ public class TripDetailFragment extends Fragment {
                     }
                 });
 
-                // TODO: bind icon click listener for maps directions intent
+                if (viewModel.getDestinations().size() == 0) {
+                    holder.iconNavigation.setVisibility(View.GONE);
+                } else {
+                    holder.setNavigationClickListener(new TripDayViewHolder.OnNavigationClickListener() {
+                        @Override
+                        public void onNavigationClick() {
+                            switch (viewModel.getDestinations().size()) {
+                                case 0:
+                                    Log.e(TAG, "onNavigationIconClick with no destinations. Code flow prevents this. git blame!");
+                                    return;
+                                case 1:
+                                    // navigate directly to the single destination;
+                                    Intent navigationIntent = NavigationIntentService.getNavigationIntent(viewModel.getDestinations().get(0));
+                                    if (navigationIntent.resolveActivity(getContext().getPackageManager()) != null) {
+                                        startActivity(navigationIntent);
+                                    } else {
+                                        Toast.makeText(getContext(), R.string.error_message_system_missing_google_maps, Toast.LENGTH_LONG).show();
+                                    }
+                                    return;
+                                default:
+                                    // show the picker
+                                    //Toast.makeText(getContext(), "PICKER! " + String.valueOf(viewModel.getDestinations().size()), Toast.LENGTH_LONG).show();
+                                    NavigationPickerFragment pickerFragment = NavigationPickerFragment.newInstance(tripId, dayNodeKey);
+                                    pickerFragment.show(getChildFragmentManager(), TAG_PICK_NAVIGATION_DIALOG);
+                            }
+                        }
+                    });
+                }
             }
         };
 

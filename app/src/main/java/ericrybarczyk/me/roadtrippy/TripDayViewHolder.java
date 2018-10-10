@@ -13,11 +13,11 @@ import butterknife.OnClick;
 class TripDayViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
     private OnTripDayListClickListener onTripDayListClickListener;
-
+    private OnNavigationClickListener onNavigationClickListener;
     @BindView(R.id.day_number) protected TextView dayNumber;
     @BindView(R.id.day_primary_description) protected TextView dayPrimaryDescription;
     @BindView(R.id.day_user_notes) protected TextView dayUserNotes;
-    @BindView(R.id.icon_directions) protected ImageView iconDirections;
+    @BindView(R.id.icon_navigate_trip_day) protected ImageView iconNavigation;
 
 
     private static final String TAG = TripDayViewHolder.class.getSimpleName();
@@ -27,9 +27,13 @@ class TripDayViewHolder extends RecyclerView.ViewHolder implements View.OnClickL
         ButterKnife.bind(this, itemView);
     }
 
-    public void setTripDayListClickListener(OnTripDayListClickListener listener) {
-        onTripDayListClickListener = listener;
+    public void setTripDayListClickListener(OnTripDayListClickListener listClickistener) {
+        onTripDayListClickListener = listClickistener;
     }
+    public void setNavigationClickListener(OnNavigationClickListener navigationListener) {
+        onNavigationClickListener = navigationListener;
+    }
+
 
     @Override
     @OnClick
@@ -41,8 +45,18 @@ class TripDayViewHolder extends RecyclerView.ViewHolder implements View.OnClickL
         onTripDayListClickListener.onTripDayListItemClick();
     }
 
+    @OnClick(R.id.icon_navigate_trip_day)
+    public void onNavigationIconClick() {
+        onNavigationClickListener.onNavigationClick();
+    }
+
     interface OnTripDayListClickListener {
         void onTripDayListItemClick();
     }
+
+    interface OnNavigationClickListener {
+        void onNavigationClick();
+    }
+
 
 }

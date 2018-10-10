@@ -53,6 +53,7 @@
     <string name="input_trip_day_secondary_notes">Enter additional notes here if you wish</string>
     <string name="trip_day_save_button_label">DONE</string>
     <string name="trip_day_destination_list_label">Destinations Today:</string>
+    <string name="input_trip_day_destination">Add a destination for today</string>
 
     <string name="fa_icon_star">&#xf005;</string>
     <string name="fa_icon_trash">&#xf2ed;</string>
@@ -81,6 +82,6 @@
     <string name="error_device_location_null">Device location not found, please check your Location Settings.</string>
     <string name="error_create_trip_data_validation">Please provide all trip information</string>
     <string name="error_home_location_preference_not_found">Please use the Settings menu to set your Home location</string>
-    <string name="input_trip_day_destination">Add a destination for today</string>
+    <string name="error_message_system_missing_google_maps">Unable to locate Google Maps on your device. Google Maps is required for Navigation features.</string>
 
 </resources>
