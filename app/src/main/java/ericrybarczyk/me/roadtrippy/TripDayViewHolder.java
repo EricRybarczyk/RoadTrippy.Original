@@ -1,5 +1,6 @@
 package ericrybarczyk.me.roadtrippy;
 
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -14,6 +15,7 @@ class TripDayViewHolder extends RecyclerView.ViewHolder implements View.OnClickL
 
     private OnTripDayListClickListener onTripDayListClickListener;
     private OnNavigationClickListener onNavigationClickListener;
+    @BindView(R.id.trip_day_item_container) protected ConstraintLayout layoutContainer;
     @BindView(R.id.day_number) protected TextView dayNumber;
     @BindView(R.id.day_primary_description) protected TextView dayPrimaryDescription;
     @BindView(R.id.day_user_notes) protected TextView dayUserNotes;

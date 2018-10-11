@@ -29,6 +29,8 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import org.threeten.bp.LocalDate;
+
 import java.io.File;
 
 import butterknife.BindView;
@@ -118,6 +120,10 @@ public class TripDetailFragment extends Fragment {
                 holder.dayPrimaryDescription.setText(viewModel.getPrimaryDescription());
                 holder.dayUserNotes.setText(viewModel.getUserNotes());
 
+                if (isToday(viewModel.getTripDayDate())) {
+                    holder.layoutContainer.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLight));
+                }
+
                 holder.setTripDayListClickListener(new TripDayViewHolder.OnTripDayListClickListener() {
                     @Override
                     public void onTripDayListItemClick() {
@@ -131,7 +137,7 @@ public class TripDetailFragment extends Fragment {
                 });
 
                 if (viewModel.getDestinations().size() == 0) {
-                    holder.iconNavigation.setVisibility(View.GONE);
+                    holder.iconNavigation.setVisibility(View.INVISIBLE);
                 } else {
                     holder.setNavigationClickListener(new TripDayViewHolder.OnNavigationClickListener() {
                         @Override
@@ -151,13 +157,16 @@ public class TripDetailFragment extends Fragment {
                                     return;
                                 default:
                                     // show the picker
-                                    //Toast.makeText(getContext(), "PICKER! " + String.valueOf(viewModel.getDestinations().size()), Toast.LENGTH_LONG).show();
                                     NavigationPickerFragment pickerFragment = NavigationPickerFragment.newInstance(tripId, dayNodeKey);
                                     pickerFragment.show(getChildFragmentManager(), TAG_PICK_NAVIGATION_DIALOG);
                             }
                         }
                     });
                 }
+            }
+
+            private boolean isToday(LocalDate tripDayDate) {
+                return LocalDate.now().equals(tripDayDate);
             }
         };
 
