@@ -139,7 +139,7 @@ public class TripViewModel extends ViewModel {
                 0,0,0);
 
         Duration duration = Duration.between(now, departure);
-        int daysToGo = (int)duration.toDays() + 1; // add one to make it inclusive of last day
+        int daysToGo = (int)duration.toDays(); // add one to make it inclusive of last day
         if (daysToGo < 0) {
             return 0;
         }
