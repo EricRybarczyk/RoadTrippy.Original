@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/widget_trip_countdown_config_trip_name_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/TripListItemName"
+        tools:text="Trip Name Here" />
+
+    <TextView
+        android:id="@+id/widget_trip_countdown_config_trip_date_range_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/TripListItemContent"
+        tools:text="October 17 to 21" />
+
+</LinearLayout>

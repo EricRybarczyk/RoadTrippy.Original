@@ -26,7 +26,10 @@
 
     <dimen name="trip_day_destination_label_top_margin">28dp</dimen>
     <dimen name="trip_day_user_notes_top_margin">32dp</dimen>
-    <!-- dimen name="trip_day_destination_list_bottom_margin">28dp</dimen -->
     <dimen name="trip_day_destination_divider_vertical_margin">6dp</dimen>
     <dimen name="trip_day_destination_item_vertical_margin">6dp</dimen>
+
+    <dimen name="widget_trip_countdown_margin">8dp</dimen>
+    <dimen name="widget_trip_countdown_text_margin_start">6dp</dimen>
+    <dimen name="widget_trip_countdown_text_margin_top">4dp</dimen>
 </resources>

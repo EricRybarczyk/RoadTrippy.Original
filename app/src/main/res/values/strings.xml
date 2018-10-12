@@ -84,4 +84,8 @@
     <string name="error_home_location_preference_not_found">Please use the Settings menu to set your Home location</string>
     <string name="error_message_system_missing_google_maps">Unable to locate Google Maps on your device. Google Maps is required for Navigation features.</string>
 
+    <string name="widget_trip_countdown_label">Road Trippy: Countdown Widget</string>
+    <string name="widget_trip_countdown_config_heading">Select a trip</string>
+    <string name="widget_trip_countdown_subtitle">days until you drive!</string>
+
 </resources>

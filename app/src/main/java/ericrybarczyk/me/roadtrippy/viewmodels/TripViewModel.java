@@ -4,7 +4,9 @@ import android.arch.lifecycle.ViewModel;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import org.threeten.bp.Duration;
 import org.threeten.bp.LocalDate;
+import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.format.TextStyle;
 
 import java.util.ArrayList;
@@ -120,6 +122,28 @@ public class TripViewModel extends ViewModel {
             return String.valueOf(numHours) + h + " " + String.valueOf(numMinutes) + m;
         }
 
+    }
+
+    public int getDaysUntilDeparture() {
+
+        LocalDateTime now = LocalDateTime.of(
+                LocalDateTime.now().getYear(),
+                LocalDateTime.now().getMonthValue(),
+                LocalDateTime.now().getDayOfMonth(),
+                0, 0, 0);
+
+        LocalDateTime departure = LocalDateTime.of(
+                this.getDepartureDate().getYear(),
+                this.getDepartureDate().getMonthValue(),
+                this.getDepartureDate().getDayOfMonth(),
+                0,0,0);
+
+        Duration duration = Duration.between(now, departure);
+        int daysToGo = (int)duration.toDays() + 1; // add one to make it inclusive of last day
+        if (daysToGo < 0) {
+            return 0;
+        }
+        return daysToGo;
     }
 
     public String getTripId() {
