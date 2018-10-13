@@ -51,9 +51,11 @@ public class WidgetTripCountdown extends AppWidgetProvider {
                 remoteViews.setTextViewText(R.id.widget_trip_countdown_subtitle, subtitle);
 
                 Intent intent = new Intent(context, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
                 intent.putExtra(ArgumentKeys.WIDGET_REQUEST_TRIP_ID, tripId);
                 intent.putExtra(ArgumentKeys.WIDGET_REQUEST_TRIP_NODE_KEY, tripNodeKey);
-                PendingIntent pendingIntent = PendingIntent.getActivity(context, RequestCodes.WIDGET_TRIP_COUNTDOWN_TRIP_CLICK, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent pendingIntent = PendingIntent.getActivity(context, appWidgetId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
                 remoteViews.setOnClickPendingIntent(R.id.widget_trip_countdown_layout_container, pendingIntent);
 
                 appWidgetManager.updateAppWidget(appWidgetId, remoteViews);

@@ -46,6 +46,11 @@ public class WidgetTripCountdownConfigActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Set the result to CANCELED.  This will cause the widget host to cancel
+        // out of the widget placement if the user presses the back button.
+        setResult(RESULT_CANCELED, null);
+
         setContentView(R.layout.widget_trip_countdown_configuration);
         ButterKnife.bind(this);
 
