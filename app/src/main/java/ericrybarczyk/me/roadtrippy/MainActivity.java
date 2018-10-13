@@ -46,6 +46,7 @@ import ericrybarczyk.me.roadtrippy.dto.TripDay;
 import ericrybarczyk.me.roadtrippy.engine.TripManager;
 import ericrybarczyk.me.roadtrippy.dto.Trip;
 import ericrybarczyk.me.roadtrippy.persistence.TripRepository;
+import ericrybarczyk.me.roadtrippy.tasks.UserInfoSave;
 import ericrybarczyk.me.roadtrippy.util.ArgumentKeys;
 import ericrybarczyk.me.roadtrippy.util.FragmentTags;
 import ericrybarczyk.me.roadtrippy.util.InputUtils;
@@ -113,12 +114,11 @@ public class MainActivity extends AppCompatActivity
         authStateListener = firebaseAuth -> {
             firebaseUser = firebaseAuth.getCurrentUser();
             if (firebaseUser != null) {
-                // TODO: look at this https://stackoverflow.com/questions/32806735/refresh-header-in-navigation-drawer/35952939#35952939 and consider different spot to set this username textview
                 View header = navigationView.getHeaderView(0);
                 activeUsername = firebaseUser.getDisplayName();
                 TextView usernameText = header.findViewById(R.id.username_display_text);
                 usernameText.setText(activeUsername);
-                onSignedInInitialize(activeUsername);
+                onSignedInInitialize(firebaseUser);
 
             } else {
 
@@ -202,8 +202,17 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void onSignedInInitialize(String username) {
-        this.activeUsername = username;
+    private void onSignedInInitialize(FirebaseUser firebaseUser) {
+        this.activeUsername = firebaseUser.getDisplayName();
+        this.saveUserPreference(firebaseUser.getUid());
+        new UserInfoSave().execute(firebaseUser);
+    }
+
+    private void saveUserPreference(String userId) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(ArgumentKeys.APPLICATION_USER_ID, userId);
+        editor.apply();
     }
 
     private void onSignedOutCleanup() {
