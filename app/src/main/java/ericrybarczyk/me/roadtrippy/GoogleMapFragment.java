@@ -110,6 +110,11 @@ public class GoogleMapFragment extends Fragment
                 requestCode = savedInstanceState.getInt(KEY_REQUEST_CODE);
                 returnFragmentTag = savedInstanceState.getString(KEY_RETURN_FRAGMENT_TAG);
                 lastMapZoomLevel = savedInstanceState.getFloat(KEY_LAST_MAP_ZOOM_LEVEL);
+            } else if (savedInstanceState.containsKey(MapSettings.KEY_MAP_DISPLAY_LATITUDE)) {
+                displayForUserCurrentLocation = false; // flag request to show a requested location instead of user current location
+                double latitude = (double) savedInstanceState.getFloat(MapSettings.KEY_MAP_DISPLAY_LATITUDE);
+                double longitude = (double) savedInstanceState.getFloat(MapSettings.KEY_MAP_DISPLAY_LONGITUDE);
+                mapLocation = new LatLng(latitude, longitude);
             }
         } else if (getArguments() != null) {
             requestCode = getArguments().getInt(KEY_REQUEST_CODE);
@@ -363,6 +368,9 @@ public class GoogleMapFragment extends Fragment
     public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
         savedInstanceState.putInt(KEY_REQUEST_CODE, requestCode);
         savedInstanceState.putString(KEY_RETURN_FRAGMENT_TAG, returnFragmentTag);
+        savedInstanceState.putFloat(KEY_LAST_MAP_ZOOM_LEVEL, lastMapZoomLevel);
+        savedInstanceState.putFloat(MapSettings.KEY_MAP_DISPLAY_LATITUDE, (float)mapLocation.latitude);
+        savedInstanceState.putFloat(MapSettings.KEY_MAP_DISPLAY_LONGITUDE, (float)mapLocation.longitude);
         super.onSaveInstanceState(savedInstanceState);
     }
     public interface LocationSelectedListener {
