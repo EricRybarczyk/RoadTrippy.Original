@@ -10,8 +10,8 @@
 
     <TextView
         android:id="@+id/widget_trip_countdown_days_to_go"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
         android:gravity="center"

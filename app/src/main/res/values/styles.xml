@@ -196,7 +196,7 @@
     </style>
 
     <style name="WidgetTripCountdownDayNumber" parent="AppTheme">
-        <item name="android:textSize">24sp</item>
+        <item name="android:textSize">26sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/colorTextLight</item>
         <item name="android:textAlignment">center</item>
@@ -208,15 +208,15 @@
     </style>
 
     <style name="WidgetTripCountdownTitle" parent="AppTheme">
-        <item name="android:textSize">16sp</item>
-        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/colorTextPrimary</item>
         <item name="android:layout_marginStart">@dimen/widget_trip_countdown_text_margin_start</item>
         <item name="android:layout_marginTop">@dimen/widget_trip_countdown_text_margin_top</item>
     </style>
 
     <style name="WidgetTripCountdownSubtitle" parent="AppTheme">
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">16sp</item>
         <item name="android:textStyle">normal</item>
         <item name="android:textColor">@color/colorTextSecondary</item>
         <item name="android:layout_marginStart">@dimen/widget_trip_countdown_text_margin_start</item>

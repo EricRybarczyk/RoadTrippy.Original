@@ -46,6 +46,7 @@ import ericrybarczyk.me.roadtrippy.dto.TripDay;
 import ericrybarczyk.me.roadtrippy.engine.TripManager;
 import ericrybarczyk.me.roadtrippy.dto.Trip;
 import ericrybarczyk.me.roadtrippy.persistence.TripRepository;
+import ericrybarczyk.me.roadtrippy.util.ArgumentKeys;
 import ericrybarczyk.me.roadtrippy.util.FragmentTags;
 import ericrybarczyk.me.roadtrippy.util.InputUtils;
 import ericrybarczyk.me.roadtrippy.util.MapSettings;
@@ -145,6 +146,17 @@ public class MainActivity extends AppCompatActivity
                 activeFragmentTag = savedInstanceState.getString(FragmentTags.KEY_ACTIVE_FRAGMENT_TAG, FragmentTags.TAG_TRIP_LIST);
             }
         }
+
+        // see if we got here from a widget
+        Intent starter = getIntent();
+        if (starter.hasExtra(ArgumentKeys.WIDGET_REQUEST_TRIP_ID)) {
+            activeFragmentTag = FragmentTags.TAG_TRIP_DETAIL;
+            String tripId = starter.getStringExtra(ArgumentKeys.WIDGET_REQUEST_TRIP_ID);
+            String tripNodeKey = starter.getStringExtra(ArgumentKeys.WIDGET_REQUEST_TRIP_NODE_KEY);
+            onFragmentNavigationRequest(activeFragmentTag, tripId, tripNodeKey);
+            return;
+        }
+
         if (activeFragmentTag == null) {
             activeFragmentTag = FragmentTags.TAG_TRIP_LIST;
         }

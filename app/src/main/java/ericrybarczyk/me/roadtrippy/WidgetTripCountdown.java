@@ -17,6 +17,7 @@ import com.google.firebase.database.ValueEventListener;
 import ericrybarczyk.me.roadtrippy.dto.Trip;
 import ericrybarczyk.me.roadtrippy.persistence.TripRepository;
 import ericrybarczyk.me.roadtrippy.util.ArgumentKeys;
+import ericrybarczyk.me.roadtrippy.util.RequestCodes;
 import ericrybarczyk.me.roadtrippy.viewmodels.TripViewModel;
 
 public class WidgetTripCountdown extends AppWidgetProvider {
@@ -52,7 +53,7 @@ public class WidgetTripCountdown extends AppWidgetProvider {
                 Intent intent = new Intent(context, MainActivity.class);
                 intent.putExtra(ArgumentKeys.WIDGET_REQUEST_TRIP_ID, tripId);
                 intent.putExtra(ArgumentKeys.WIDGET_REQUEST_TRIP_NODE_KEY, tripNodeKey);
-                PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT); // TODO - use a distinct request code?
+                PendingIntent pendingIntent = PendingIntent.getActivity(context, RequestCodes.WIDGET_TRIP_COUNTDOWN_TRIP_CLICK, intent, PendingIntent.FLAG_UPDATE_CURRENT);
                 remoteViews.setOnClickPendingIntent(R.id.widget_trip_countdown_layout_container, pendingIntent);
 
                 appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
