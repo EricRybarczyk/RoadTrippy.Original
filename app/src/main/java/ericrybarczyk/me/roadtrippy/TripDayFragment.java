@@ -48,8 +48,7 @@ public class TripDayFragment extends Fragment {
     @BindView(R.id.day_number_header) protected TextView dayNumberHeader;
     @BindView(R.id.icon_highlight) protected TextView iconHighlight;
     @BindView(R.id.day_primary_description) protected EditText dayPrimaryDescription;
-    @BindView(R.id.destination_item) protected EditText destinationItem;
-    @BindView(R.id.search_destination_button) protected ImageButton searchDestinationButton;
+    @BindView(R.id.search_destination_button) protected Button searchDestinationButton;
     @BindView(R.id.destination_list_label) protected TextView destinationListLabel;
     @BindView(R.id.day_destination_list) protected RecyclerView dayDestinationRecyclerView;
     @BindView(R.id.day_user_notes) protected EditText dayUserNotes;

@@ -52,36 +52,24 @@
         style="@style/TextInput"
         android:hint="@string/input_trip_day_primary_description"/>
 
-    <EditText
-        android:id="@+id/destination_item"
-        style="@style/TextInput"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/input_vertical_margin"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/search_destination_button"
-        app:layout_constraintTop_toBottomOf="@id/day_primary_description"
-        android:hint="@string/input_trip_day_destination"
-        android:inputType="text|textCapSentences"
-        android:lines="1"
-        android:maxLines="1" />
-
-    <ImageButton
+    <Button
         android:id="@+id/search_destination_button"
-        android:layout_width="wrap_content"
+        android:layout_width="210dp"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toEndOf="@id/destination_item"
-        app:layout_constraintTop_toBottomOf="@id/day_primary_description"
         app:layout_constraintEnd_toEndOf="parent"
-        style="@style/AppButton"
-        android:src="@drawable/ic_action_google_maps"
-        android:contentDescription="@string/aria_day_destination_button_map_search" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/day_primary_description"
+        android:contentDescription="@string/aria_day_destination_button_map_search"
+        android:text="@string/trip_day_add_destination_button_label"
+        android:background="@drawable/button_shape"
+        android:drawableEnd="@drawable/ic_action_google_maps"
+        style="@style/AppButton"/>
 
     <TextView
         android:id="@+id/destination_list_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/destination_item"
+        app:layout_constraintTop_toBottomOf="@id/search_destination_button"
         app:layout_constraintStart_toStartOf="parent"
         style="@style/TripDayDestinationLabel"
         android:text="@string/trip_day_destination_list_label" />

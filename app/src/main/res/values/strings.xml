@@ -51,6 +51,7 @@
 
     <string name="input_trip_day_primary_description">Primary activity or event today</string>
     <string name="input_trip_day_secondary_notes">Enter additional notes here if you wish</string>
+    <string name="trip_day_add_destination_button_label">ADD DESTINATION</string>
     <string name="trip_day_save_button_label">DONE</string>
     <string name="trip_day_destination_list_label">Destinations Today:</string>
     <string name="input_trip_day_destination">Add a destination for today</string>
