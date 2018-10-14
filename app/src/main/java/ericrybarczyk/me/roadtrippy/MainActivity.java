@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity
                     MapDisplayRequestListener,
                     GoogleMapFragment.LocationSelectedListener,
                     FragmentNavigationRequestListener,
-        TripDetailFragment.TripDisplayCommunicationListener,
+                    TripDetailFragment.TripDisplayCommunicationListener,
                     TripManager.TripSaveRequestListener,
                     SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -543,8 +543,8 @@ public class MainActivity extends AppCompatActivity
     public void onFragmentNavigationRequest(String fragmentTag, String tripId, String tripNodeKey, boolean isArchived) {
         Fragment fragment = getFragmentInstance(fragmentTag, true);
         Bundle args = new Bundle();
-        args.putString(TripDetailFragment.KEY_TRIP_ID, tripId);
-        args.putString(TripDetailFragment.KEY_TRIP_NODE_KEY, tripNodeKey);
+        args.putString(ArgumentKeys.KEY_TRIP_ID, tripId);
+        args.putString(ArgumentKeys.KEY_TRIP_NODE_KEY, tripNodeKey);
         args.putBoolean(ArgumentKeys.TRIP_IS_ARCHIVED_KEY, isArchived);
         fragment.setArguments(args);
         loadFragment(fragment, fragmentTag, true);
@@ -554,10 +554,10 @@ public class MainActivity extends AppCompatActivity
     public void onTripDayEditFragmentRequest(String fragmentTag, String tripId, String tripNodeKey, int dayNumber, String nodeKey) {
         Fragment fragment = getFragmentInstance(fragmentTag, true);
         Bundle args = new Bundle();
-        args.putString(TripDayFragment.KEY_TRIP_ID, tripId);
-        args.putString(TripDetailFragment.KEY_TRIP_NODE_KEY, tripNodeKey);
-        args.putInt(TripDayFragment.KEY_TRIP_DAY_NUMBER, dayNumber);
-        args.putString(TripDayFragment.KEY_DAY_NODE_KEY, nodeKey);
+        args.putString(ArgumentKeys.KEY_TRIP_ID, tripId);
+        args.putString(ArgumentKeys.KEY_TRIP_NODE_KEY, tripNodeKey);
+        args.putInt(ArgumentKeys.KEY_TRIP_DAY_NUMBER, dayNumber);
+        args.putString(ArgumentKeys.KEY_DAY_NODE_KEY, nodeKey);
         fragment.setArguments(args);
         loadFragment(fragment, fragmentTag, true);
     }

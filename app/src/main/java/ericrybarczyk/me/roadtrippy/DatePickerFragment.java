@@ -24,7 +24,6 @@ public class DatePickerFragment extends DialogFragment
     private TripDateSelectedListener tripDateSelectedListener;
     private static final String TAG = DatePickerFragment.class.getSimpleName();
     private LocalDate date;
-    static final String KEY_CALENDAR_FOR_DISPLAY = "calendar_for_display";
 
 
     @NonNull

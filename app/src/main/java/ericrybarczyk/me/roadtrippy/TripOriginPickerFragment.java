@@ -11,12 +11,10 @@ import android.widget.Button;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import ericrybarczyk.me.roadtrippy.util.ArgumentKeys;
 
 public class TripOriginPickerFragment extends DialogFragment  {
 
-    public static final String KEY_DIALOG_TITLE = "dialog_title";
-    public static final String KEY_HOME_ORIGIN = "home_origin";
-    public static final String KEY_PICK_ORIGIN = "pick_origin";
     @BindView(R.id.home_origin_button) protected Button homeOriginButton;
     @BindView(R.id.pick_origin_button) protected Button pickOriginButton;
 
@@ -41,13 +39,13 @@ public class TripOriginPickerFragment extends DialogFragment  {
 
         homeOriginButton.setOnClickListener(v -> {
             if (listener != null) {
-                listener.onTripOriginSelected(KEY_HOME_ORIGIN);
+                listener.onTripOriginSelected(ArgumentKeys.KEY_HOME_ORIGIN);
                 this.dismiss();
             }
         });
         pickOriginButton.setOnClickListener(v -> {
             if (listener != null) {
-                listener.onTripOriginSelected(KEY_PICK_ORIGIN);
+                listener.onTripOriginSelected(ArgumentKeys.KEY_PICK_ORIGIN);
                 this.dismiss();
             }
         });

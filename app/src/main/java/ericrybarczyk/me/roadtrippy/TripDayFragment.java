@@ -30,6 +30,7 @@ import butterknife.OnClick;
 import ericrybarczyk.me.roadtrippy.dto.Trip;
 import ericrybarczyk.me.roadtrippy.dto.TripDay;
 import ericrybarczyk.me.roadtrippy.persistence.TripRepository;
+import ericrybarczyk.me.roadtrippy.util.ArgumentKeys;
 import ericrybarczyk.me.roadtrippy.util.FontManager;
 import ericrybarczyk.me.roadtrippy.util.FragmentTags;
 import ericrybarczyk.me.roadtrippy.util.InputUtils;
@@ -38,10 +39,6 @@ import ericrybarczyk.me.roadtrippy.viewmodels.TripDayViewModel;
 import ericrybarczyk.me.roadtrippy.viewmodels.TripViewModel;
 
 public class TripDayFragment extends Fragment {
-
-    public static final String KEY_TRIP_ID = "trip_id_key";
-    public static final String KEY_DAY_NODE_KEY = "trip_day_node_key";
-    public static final String KEY_TRIP_DAY_NUMBER = "trip_day_number_key";
 
     @BindView(R.id.day_number_header) protected TextView dayNumberHeader;
     @BindView(R.id.icon_highlight) protected TextView iconHighlight;
@@ -74,18 +71,18 @@ public class TripDayFragment extends Fragment {
         boolean stateInitialized = false;
 
         if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(KEY_TRIP_ID)) {
-                tripId = savedInstanceState.getString(KEY_TRIP_ID);
-                tripNodeKey = savedInstanceState.getString(TripDetailFragment.KEY_TRIP_NODE_KEY);
-                dayNodeKey = savedInstanceState.getString(KEY_DAY_NODE_KEY);
-                dayNumber = savedInstanceState.getInt(KEY_TRIP_DAY_NUMBER);
+            if (savedInstanceState.containsKey(ArgumentKeys.KEY_TRIP_ID)) {
+                tripId = savedInstanceState.getString(ArgumentKeys.KEY_TRIP_ID);
+                tripNodeKey = savedInstanceState.getString(ArgumentKeys.KEY_TRIP_NODE_KEY);
+                dayNodeKey = savedInstanceState.getString(ArgumentKeys.KEY_DAY_NODE_KEY);
+                dayNumber = savedInstanceState.getInt(ArgumentKeys.KEY_TRIP_DAY_NUMBER);
                 stateInitialized = true;
             }
         } else if (getArguments() != null) {
-            tripId = getArguments().getString(KEY_TRIP_ID);
-            tripNodeKey = getArguments().getString(TripDetailFragment.KEY_TRIP_NODE_KEY);
-            dayNodeKey = getArguments().getString(KEY_DAY_NODE_KEY);
-            dayNumber = getArguments().getInt(KEY_TRIP_DAY_NUMBER);
+            tripId = getArguments().getString(ArgumentKeys.KEY_TRIP_ID);
+            tripNodeKey = getArguments().getString(ArgumentKeys.KEY_TRIP_NODE_KEY);
+            dayNodeKey = getArguments().getString(ArgumentKeys.KEY_DAY_NODE_KEY);
+            dayNumber = getArguments().getInt(ArgumentKeys.KEY_TRIP_DAY_NUMBER);
             stateInitialized = true;
         }
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -220,10 +217,10 @@ public class TripDayFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putString(KEY_TRIP_ID, tripId);
-        outState.putString(TripDetailFragment.KEY_TRIP_NODE_KEY, tripNodeKey);
-        outState.putString(KEY_DAY_NODE_KEY, dayNodeKey);
-        outState.putInt(KEY_TRIP_DAY_NUMBER, dayNumber);
+        outState.putString(ArgumentKeys.KEY_TRIP_ID, tripId);
+        outState.putString(ArgumentKeys.KEY_TRIP_NODE_KEY, tripNodeKey);
+        outState.putString(ArgumentKeys.KEY_DAY_NODE_KEY, dayNodeKey);
+        outState.putInt(ArgumentKeys.KEY_TRIP_DAY_NUMBER, dayNumber);
         super.onSaveInstanceState(outState);
     }
 

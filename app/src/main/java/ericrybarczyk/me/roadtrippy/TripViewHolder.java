@@ -12,7 +12,7 @@ import butterknife.OnClick;
 
 public class TripViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-    OnTripListClickListener onTripListClickListener;
+    private OnTripListClickListener onTripListClickListener;
     private String tripId;
     private String tripNodeKey;
 

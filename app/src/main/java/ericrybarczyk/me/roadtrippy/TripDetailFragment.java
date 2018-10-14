@@ -44,10 +44,6 @@ import ericrybarczyk.me.roadtrippy.viewmodels.TripDayViewModel;
 
 public class TripDetailFragment extends Fragment {
 
-    public static final String KEY_TRIP_ID = "trip_id_key";
-    public static final String KEY_TRIP_NODE_KEY = "trip_node_key";
-    private static final String TAG_PICK_NAVIGATION_DIALOG = "pick_navigation_dialog";
-
     private FragmentNavigationRequestListener fragmentNavigationRequestListener;
     private TripDisplayCommunicationListener tripDisplayCommunicationListener;
 
@@ -83,14 +79,14 @@ public class TripDetailFragment extends Fragment {
         userId = firebaseUser.getUid();
 
         if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(KEY_TRIP_ID)) {
-                tripId = savedInstanceState.getString(KEY_TRIP_ID);
-                tripNodeKey = savedInstanceState.getString(KEY_TRIP_NODE_KEY);
+            if (savedInstanceState.containsKey(ArgumentKeys.KEY_TRIP_ID)) {
+                tripId = savedInstanceState.getString(ArgumentKeys.KEY_TRIP_ID);
+                tripNodeKey = savedInstanceState.getString(ArgumentKeys.KEY_TRIP_NODE_KEY);
             }
         } else if (getArguments() != null) {
-            if (getArguments().containsKey(KEY_TRIP_ID)) {
-                tripId = getArguments().getString(KEY_TRIP_ID);
-                tripNodeKey = getArguments().getString(KEY_TRIP_NODE_KEY);
+            if (getArguments().containsKey(ArgumentKeys.KEY_TRIP_ID)) {
+                tripId = getArguments().getString(ArgumentKeys.KEY_TRIP_ID);
+                tripNodeKey = getArguments().getString(ArgumentKeys.KEY_TRIP_NODE_KEY);
             }
             if (getArguments().containsKey(ArgumentKeys.TRIP_IS_ARCHIVED_KEY)) {
                 tripIsArchived = getArguments().getBoolean(ArgumentKeys.TRIP_IS_ARCHIVED_KEY);
@@ -180,7 +176,7 @@ public class TripDetailFragment extends Fragment {
                                 default:
                                     // show the picker
                                     NavigationPickerFragment pickerFragment = NavigationPickerFragment.newInstance(tripId, dayNodeKey);
-                                    pickerFragment.show(getChildFragmentManager(), TAG_PICK_NAVIGATION_DIALOG);
+                                    pickerFragment.show(getChildFragmentManager(), ArgumentKeys.TAG_PICK_NAVIGATION_DIALOG);
                             }
                         }
                     });
@@ -254,8 +250,8 @@ public class TripDetailFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putString(KEY_TRIP_ID, tripId);
-        outState.putString(KEY_TRIP_NODE_KEY, tripNodeKey);
+        outState.putString(ArgumentKeys.KEY_TRIP_ID, tripId);
+        outState.putString(ArgumentKeys.KEY_TRIP_NODE_KEY, tripNodeKey);
         super.onSaveInstanceState(outState);
     }
 

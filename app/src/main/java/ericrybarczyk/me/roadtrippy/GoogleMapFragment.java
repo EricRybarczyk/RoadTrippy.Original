@@ -42,6 +42,7 @@ import ericrybarczyk.me.roadtrippy.endpoints.FindPlacesEndpoint;
 import ericrybarczyk.me.roadtrippy.endpoints.SearchService;
 import ericrybarczyk.me.roadtrippy.places.Candidate;
 import ericrybarczyk.me.roadtrippy.places.PlacesResponse;
+import ericrybarczyk.me.roadtrippy.util.ArgumentKeys;
 import ericrybarczyk.me.roadtrippy.util.InputUtils;
 import ericrybarczyk.me.roadtrippy.util.MapSettings;
 import ericrybarczyk.me.roadtrippy.util.RequestCodes;
@@ -68,11 +69,6 @@ public class GoogleMapFragment extends Fragment
     private String googleMapsApiKey;
     private GoogleMap googleMap;
 
-    public static final String KEY_START_LAT = "start_location_latitude";
-    public static final String KEY_START_LNG = "start_location_longitude";
-    public static final String KEY_REQUEST_CODE = "request_code_from_caller";
-    public static final String KEY_RETURN_FRAGMENT_TAG = "return_fragment_tag";
-    public static final String KEY_LAST_MAP_ZOOM_LEVEL = "last_map_zoom_level";
     private static final String TAG = GoogleMapFragment.class.getSimpleName();
 
     private LatLng mapLocation;
@@ -91,8 +87,8 @@ public class GoogleMapFragment extends Fragment
     public static GoogleMapFragment newInstance(int requestCode, String returnToFragmentTag) {
         GoogleMapFragment mapFragment = new GoogleMapFragment();
         Bundle args = new Bundle();
-        args.putInt(KEY_REQUEST_CODE, requestCode);
-        args.putString(KEY_RETURN_FRAGMENT_TAG, returnToFragmentTag);
+        args.putInt(ArgumentKeys.KEY_REQUEST_CODE, requestCode);
+        args.putString(ArgumentKeys.KEY_RETURN_FRAGMENT_TAG, returnToFragmentTag);
         mapFragment.setArguments(args);
         return mapFragment;
     }
@@ -106,10 +102,10 @@ public class GoogleMapFragment extends Fragment
         displayForUserCurrentLocation = true; // by default map will show users current location
 
         if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(KEY_START_LAT)) {
-                requestCode = savedInstanceState.getInt(KEY_REQUEST_CODE);
-                returnFragmentTag = savedInstanceState.getString(KEY_RETURN_FRAGMENT_TAG);
-                lastMapZoomLevel = savedInstanceState.getFloat(KEY_LAST_MAP_ZOOM_LEVEL);
+            if (savedInstanceState.containsKey(ArgumentKeys.KEY_START_LAT)) {
+                requestCode = savedInstanceState.getInt(ArgumentKeys.KEY_REQUEST_CODE);
+                returnFragmentTag = savedInstanceState.getString(ArgumentKeys.KEY_RETURN_FRAGMENT_TAG);
+                lastMapZoomLevel = savedInstanceState.getFloat(ArgumentKeys.KEY_LAST_MAP_ZOOM_LEVEL);
             } else if (savedInstanceState.containsKey(MapSettings.KEY_MAP_DISPLAY_LATITUDE)) {
                 displayForUserCurrentLocation = false; // flag request to show a requested location instead of user current location
                 double latitude = (double) savedInstanceState.getFloat(MapSettings.KEY_MAP_DISPLAY_LATITUDE);
@@ -117,8 +113,8 @@ public class GoogleMapFragment extends Fragment
                 mapLocation = new LatLng(latitude, longitude);
             }
         } else if (getArguments() != null) {
-            requestCode = getArguments().getInt(KEY_REQUEST_CODE);
-            returnFragmentTag = getArguments().getString(KEY_RETURN_FRAGMENT_TAG);
+            requestCode = getArguments().getInt(ArgumentKeys.KEY_REQUEST_CODE);
+            returnFragmentTag = getArguments().getString(ArgumentKeys.KEY_RETURN_FRAGMENT_TAG);
             if (getArguments().containsKey(MapSettings.KEY_MAP_DISPLAY_LATITUDE)) {
                 displayForUserCurrentLocation = false; // flag request to show a requested location instead of user current location
                 double latitude = (double) getArguments().getFloat(MapSettings.KEY_MAP_DISPLAY_LATITUDE);
@@ -366,9 +362,9 @@ public class GoogleMapFragment extends Fragment
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
-        savedInstanceState.putInt(KEY_REQUEST_CODE, requestCode);
-        savedInstanceState.putString(KEY_RETURN_FRAGMENT_TAG, returnFragmentTag);
-        savedInstanceState.putFloat(KEY_LAST_MAP_ZOOM_LEVEL, lastMapZoomLevel);
+        savedInstanceState.putInt(ArgumentKeys.KEY_REQUEST_CODE, requestCode);
+        savedInstanceState.putString(ArgumentKeys.KEY_RETURN_FRAGMENT_TAG, returnFragmentTag);
+        savedInstanceState.putFloat(ArgumentKeys.KEY_LAST_MAP_ZOOM_LEVEL, lastMapZoomLevel);
         savedInstanceState.putFloat(MapSettings.KEY_MAP_DISPLAY_LATITUDE, (float)mapLocation.latitude);
         savedInstanceState.putFloat(MapSettings.KEY_MAP_DISPLAY_LONGITUDE, (float)mapLocation.longitude);
         super.onSaveInstanceState(savedInstanceState);

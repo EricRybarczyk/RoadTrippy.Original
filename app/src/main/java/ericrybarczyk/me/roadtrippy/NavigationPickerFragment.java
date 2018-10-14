@@ -23,6 +23,7 @@ import butterknife.ButterKnife;
 import ericrybarczyk.me.roadtrippy.dto.TripLocation;
 import ericrybarczyk.me.roadtrippy.endpoints.NavigationIntentService;
 import ericrybarczyk.me.roadtrippy.persistence.TripRepository;
+import ericrybarczyk.me.roadtrippy.util.ArgumentKeys;
 import ericrybarczyk.me.roadtrippy.viewmodels.TripLocationViewModel;
 
 public class NavigationPickerFragment extends DialogFragment {
@@ -41,8 +42,8 @@ public class NavigationPickerFragment extends DialogFragment {
     public static NavigationPickerFragment newInstance(String tripId, String dayNodeKey) {
         NavigationPickerFragment navFragment = new NavigationPickerFragment();
         Bundle args = new Bundle();
-        args.putString(TripDetailFragment.KEY_TRIP_ID, tripId);
-        args.putString(TripDayFragment.KEY_DAY_NODE_KEY, dayNodeKey);
+        args.putString(ArgumentKeys.KEY_TRIP_ID, tripId);
+        args.putString(ArgumentKeys.KEY_DAY_NODE_KEY, dayNodeKey);
         navFragment.setArguments(args);
         navFragment.setStyle(STYLE_NO_TITLE, 0);
         return navFragment;
@@ -52,11 +53,11 @@ public class NavigationPickerFragment extends DialogFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
-            dayNodeKey = savedInstanceState.getString(TripDayFragment.KEY_DAY_NODE_KEY);
-            tripId = savedInstanceState.getString(TripDetailFragment.KEY_TRIP_ID);
+            dayNodeKey = savedInstanceState.getString(ArgumentKeys.KEY_DAY_NODE_KEY);
+            tripId = savedInstanceState.getString(ArgumentKeys.KEY_TRIP_ID);
         } else if (getArguments() != null) {
-            dayNodeKey = getArguments().getString(TripDayFragment.KEY_DAY_NODE_KEY);
-            tripId = getArguments().getString(TripDetailFragment.KEY_TRIP_ID);
+            dayNodeKey = getArguments().getString(ArgumentKeys.KEY_DAY_NODE_KEY);
+            tripId = getArguments().getString(ArgumentKeys.KEY_TRIP_ID);
         }
 
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -132,8 +133,8 @@ public class NavigationPickerFragment extends DialogFragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putString(TripDetailFragment.KEY_TRIP_ID, tripId);
-        outState.putString(TripDayFragment.KEY_DAY_NODE_KEY, dayNodeKey);
+        outState.putString(ArgumentKeys.KEY_TRIP_ID, tripId);
+        outState.putString(ArgumentKeys.KEY_DAY_NODE_KEY, dayNodeKey);
         super.onSaveInstanceState(outState);
     }
 }

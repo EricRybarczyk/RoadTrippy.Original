@@ -24,6 +24,7 @@ import org.threeten.bp.format.FormatStyle;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import ericrybarczyk.me.roadtrippy.util.ArgumentKeys;
 import ericrybarczyk.me.roadtrippy.util.FragmentTags;
 import ericrybarczyk.me.roadtrippy.util.InputUtils;
 import ericrybarczyk.me.roadtrippy.util.RequestCodes;
@@ -47,7 +48,6 @@ public class CreateTripFragment extends Fragment
     private MapDisplayRequestListener mapDisplayRequestListener;
     private FragmentNavigationRequestListener fragmentNavigationRequestListener;
     private static final String TAG = CreateTripFragment.class.getSimpleName();
-    private static final String TAG_PICK_ORIGIN_DIALOG= "pick_origin_dialog";
 
 
     public CreateTripFragment() {
@@ -85,7 +85,7 @@ public class CreateTripFragment extends Fragment
             DatePickerFragment datePickerDialog = new DatePickerFragment();
 
             Bundle args = new Bundle();
-            args.putSerializable(DatePickerFragment.KEY_CALENDAR_FOR_DISPLAY, tripViewModel.getDepartureDate());
+            args.putSerializable(ArgumentKeys.KEY_CALENDAR_FOR_DISPLAY, tripViewModel.getDepartureDate());
             datePickerDialog.setArguments(args);
 
             datePickerDialog.setTripDateSelectedListener(this);
@@ -98,7 +98,7 @@ public class CreateTripFragment extends Fragment
             DatePickerFragment datePickerDialog = new DatePickerFragment();
 
             Bundle args = new Bundle();
-            args.putSerializable(DatePickerFragment.KEY_CALENDAR_FOR_DISPLAY, tripViewModel.getReturnDate());
+            args.putSerializable(ArgumentKeys.KEY_CALENDAR_FOR_DISPLAY, tripViewModel.getReturnDate());
             datePickerDialog.setArguments(args);
 
             datePickerDialog.setTripDateSelectedListener(this);
@@ -108,7 +108,7 @@ public class CreateTripFragment extends Fragment
         originButton.setOnClickListener(v -> {
             saveTripName();
             TripOriginPickerFragment pickerFragment = TripOriginPickerFragment.newInstance(this);
-            pickerFragment.show(getChildFragmentManager(), TAG_PICK_ORIGIN_DIALOG);
+            pickerFragment.show(getChildFragmentManager(), ArgumentKeys.TAG_PICK_ORIGIN_DIALOG);
         });
 
         destinationButton.setOnClickListener(v -> {
@@ -199,7 +199,7 @@ public class CreateTripFragment extends Fragment
     @Override
     public void onTripOriginSelected(String key) {
         Log.i(TAG, "onTripOriginSelected: key = " + key);
-        if (key.equals(TripOriginPickerFragment.KEY_HOME_ORIGIN)) {
+        if (key.equals(ArgumentKeys.KEY_HOME_ORIGIN)) {
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
             if (preferences.contains(getString(R.string.pref_key_home_latitude)) && preferences.contains(getString(R.string.pref_key_home_longitude))) {
                 tripViewModel.setOriginLatLng(
