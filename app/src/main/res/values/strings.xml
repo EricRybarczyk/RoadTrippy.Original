@@ -98,5 +98,7 @@
     <string name="widget_trip_countdown_label">Road Trippy: Countdown Widget</string>
     <string name="widget_trip_countdown_config_heading">Select a trip</string>
     <string name="widget_trip_countdown_subtitle">days until you drive!</string>
+    <string name="widget_config_launch_app_button_label">Launch App</string>
+    <string name="widget_config_require_login_message">Please launch the App and Log In before creating a widget</string>
 
 </resources>

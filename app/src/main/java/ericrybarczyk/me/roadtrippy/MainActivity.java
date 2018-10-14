@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity
                 TextView usernameText = header.findViewById(R.id.username_display_text);
                 usernameText.setText(activeUsername);
                 onSignedInInitialize(firebaseUser);
-
+                onFragmentNavigationRequest(FragmentTags.TAG_TRIP_LIST);
             } else {
 
                 onSignedOutCleanup();

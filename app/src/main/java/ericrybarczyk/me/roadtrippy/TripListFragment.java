@@ -19,6 +19,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -53,9 +54,14 @@ public class TripListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        String userId;
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-        String userId = firebaseUser.getUid();
+        if (firebaseUser != null) {
+            userId = firebaseUser.getUid();
+        } else {
+            userId = UUID.randomUUID().toString(); // a value that will return no data - expect Firebase authStateListener in MainActivity to receive callback
+        }
 
         tripRepository = new TripRepository();
 

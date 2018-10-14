@@ -7,9 +7,12 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -24,6 +27,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import ericrybarczyk.me.roadtrippy.dto.Trip;
 import ericrybarczyk.me.roadtrippy.persistence.TripRepository;
+import ericrybarczyk.me.roadtrippy.util.ArgumentKeys;
+import ericrybarczyk.me.roadtrippy.util.NetworkChecker;
 import ericrybarczyk.me.roadtrippy.viewmodels.TripViewModel;
 
 public class WidgetTripCountdownConfigActivity extends AppCompatActivity {
@@ -42,6 +47,7 @@ public class WidgetTripCountdownConfigActivity extends AppCompatActivity {
     String userId;
     @BindView(R.id.widget_trip_countdown_config_heading) protected TextView headingText;
     @BindView(R.id.widget_trip_countdown_config_trip_list) protected ListView tripList;
+    @BindView(R.id.widget_trip_countdown_config_launch_app_button) protected Button launchAppButton;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -59,8 +65,24 @@ public class WidgetTripCountdownConfigActivity extends AppCompatActivity {
         if (firebaseUser != null) {
             userId = firebaseUser.getUid();
         } else {
-            // launch the auth
-            // TODO: FirebaseAuth because user may not be logged in when they initialize a widget
+            // check network
+            if (!NetworkChecker.isNetworkConnected(this)) {
+                Snackbar.make(tripList, R.string.warning_message_no_network, Snackbar.LENGTH_LONG).show();
+            }
+            // send them to the app if no userId
+            if (userId == null) {
+                launchAppButton.setVisibility(View.VISIBLE);
+                launchAppButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Class destination = MainActivity.class;
+                        Intent intent = new Intent(getApplicationContext(), destination);
+                        startActivity(intent);
+                    }
+                });
+                Snackbar.make(tripList, R.string.widget_config_require_login_message, Snackbar.LENGTH_INDEFINITE).show();
+                return;
+            }
         }
 
         // get the appWidgetId from the Intent
@@ -161,12 +183,16 @@ public class WidgetTripCountdownConfigActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        adapter.startListening();
+        if (adapter != null) {
+            adapter.startListening();
+        }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        adapter.stopListening();
+        if (adapter != null) {
+            adapter.stopListening();
+        }
     }
 }
