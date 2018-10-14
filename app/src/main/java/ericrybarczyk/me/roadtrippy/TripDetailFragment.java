@@ -2,7 +2,6 @@ package ericrybarczyk.me.roadtrippy;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -24,8 +23,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
@@ -38,7 +35,6 @@ import butterknife.ButterKnife;
 import ericrybarczyk.me.roadtrippy.dto.Trip;
 import ericrybarczyk.me.roadtrippy.dto.TripDay;
 import ericrybarczyk.me.roadtrippy.endpoints.NavigationIntentService;
-import ericrybarczyk.me.roadtrippy.persistence.DatabasePaths;
 import ericrybarczyk.me.roadtrippy.persistence.TripRepository;
 import ericrybarczyk.me.roadtrippy.util.FragmentTags;
 import ericrybarczyk.me.roadtrippy.util.MapSettings;
@@ -51,6 +47,7 @@ public class TripDetailFragment extends Fragment {
     private static final String TAG_PICK_NAVIGATION_DIALOG = "pick_navigation_dialog";
 
     private FragmentNavigationRequestListener fragmentNavigationRequestListener;
+    private TripDisplayCommunicationListener tripDisplayCommunicationListener;
 
     private String tripId;
     private String tripNodeKey;
@@ -68,6 +65,12 @@ public class TripDetailFragment extends Fragment {
     public TripDetailFragment() {
         // Required empty public constructor
     }
+
+    // allows fragment to tell MainActivity the lookup key for the current Trip, to support menu actions
+    public interface TripDisplayCommunicationListener {
+        void tripDisplayCommunication(String tripNodeKey);
+    }
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -91,6 +94,9 @@ public class TripDetailFragment extends Fragment {
             Log.e(TAG, "tripId is null, must be in getArguments() for this fragment");
             return;
         }
+
+        // tell parent activity which trip is being displayed, to support menu item actions
+        tripDisplayCommunicationListener.tripDisplayCommunication(tripNodeKey);
 
         tripRepository = new TripRepository();
 
@@ -244,6 +250,11 @@ public class TripDetailFragment extends Fragment {
             fragmentNavigationRequestListener = (FragmentNavigationRequestListener) context;
         } else {
             throw new RuntimeException(context.toString() + " must implement FragmentNavigationRequestListener");
+        }
+        if (context instanceof TripDisplayCommunicationListener) {
+            tripDisplayCommunicationListener = (TripDisplayCommunicationListener) context;
+        } else {
+            throw new RuntimeException(context.toString() + " must implement TripDisplayCommunicationListener");
         }
     }
 

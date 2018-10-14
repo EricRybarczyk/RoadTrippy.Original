@@ -27,41 +27,45 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import org.threeten.bp.LocalDate;
 
 import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
+import ericrybarczyk.me.roadtrippy.dto.Trip;
 import ericrybarczyk.me.roadtrippy.dto.TripDay;
 import ericrybarczyk.me.roadtrippy.engine.TripManager;
-import ericrybarczyk.me.roadtrippy.dto.Trip;
+import ericrybarczyk.me.roadtrippy.persistence.PersistenceFormats;
 import ericrybarczyk.me.roadtrippy.persistence.TripRepository;
+import ericrybarczyk.me.roadtrippy.tasks.TripArchiver;
 import ericrybarczyk.me.roadtrippy.tasks.UserInfoSave;
 import ericrybarczyk.me.roadtrippy.util.ArgumentKeys;
 import ericrybarczyk.me.roadtrippy.util.FragmentTags;
 import ericrybarczyk.me.roadtrippy.util.InputUtils;
 import ericrybarczyk.me.roadtrippy.util.MapSettings;
+import ericrybarczyk.me.roadtrippy.util.MenuCodes;
 import ericrybarczyk.me.roadtrippy.util.RequestCodes;
 import ericrybarczyk.me.roadtrippy.viewmodels.TripDayViewModel;
 import ericrybarczyk.me.roadtrippy.viewmodels.TripLocationViewModel;
 import ericrybarczyk.me.roadtrippy.viewmodels.TripViewModel;
-
 
 public class MainActivity extends AppCompatActivity
         implements  NavigationView.OnNavigationItemSelectedListener,
                     MapDisplayRequestListener,
                     GoogleMapFragment.LocationSelectedListener,
                     FragmentNavigationRequestListener,
+        TripDetailFragment.TripDisplayCommunicationListener,
                     TripManager.TripSaveRequestListener,
                     SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -69,6 +73,7 @@ public class MainActivity extends AppCompatActivity
 
     public static final String ANONYMOUS = "anonymous";
     private String activeUsername = ANONYMOUS;
+    private String userId;
     private String activeFragmentTag;
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener authStateListener;
@@ -78,6 +83,7 @@ public class MainActivity extends AppCompatActivity
     private TripViewModel tripViewModel;
     private TripDayViewModel tripDayViewModel;
     private int preferenceDrivingHours;
+    private String activeDisplayedTripNodeKey;
 
     @BindView(R.id.toolbar) protected Toolbar toolbar;
     @BindView(R.id.drawer_layout) protected DrawerLayout drawer;
@@ -116,6 +122,7 @@ public class MainActivity extends AppCompatActivity
             if (firebaseUser != null) {
                 View header = navigationView.getHeaderView(0);
                 activeUsername = firebaseUser.getDisplayName();
+                userId = firebaseUser.getUid();
                 TextView usernameText = header.findViewById(R.id.username_display_text);
                 usernameText.setText(activeUsername);
                 onSignedInInitialize(firebaseUser);
@@ -204,8 +211,25 @@ public class MainActivity extends AppCompatActivity
 
     private void onSignedInInitialize(FirebaseUser firebaseUser) {
         this.activeUsername = firebaseUser.getDisplayName();
-        this.saveUserPreference(firebaseUser.getUid());
+        String userId = firebaseUser.getUid();
+        this.saveUserPreference(userId);
         new UserInfoSave().execute(firebaseUser);
+        // TODO - TripArchiver async task
+        this.tripArchiveCheck(userId);
+    }
+
+    private void tripArchiveCheck(String userId) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String now = PersistenceFormats.toDateString(LocalDate.now());
+        String lastArchiveCheck = preferences.getString(ArgumentKeys.LAST_TRIP_ARCHIVE_CHECK_DATE, now);
+        LocalDate lastArchiveCheckDate = LocalDate.parse(lastArchiveCheck);
+        // run TripArchiver task if last archive check was prior to current date
+        if (lastArchiveCheckDate.compareTo(LocalDate.now()) < 0) {
+            new TripArchiver().execute(userId);
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putString(ArgumentKeys.LAST_TRIP_ARCHIVE_CHECK_DATE, now);
+            editor.apply();
+        }
     }
 
     private void saveUserPreference(String userId) {
@@ -254,11 +278,39 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (activeFragmentTag.equals(FragmentTags.TAG_TRIP_DETAIL)) {
+            if (menu.findItem(MenuCodes.ID_EDIT_TRIP) == null) {
+                menu.add(0, MenuCodes.ID_EDIT_TRIP, 1, getString(R.string.menu_label_edit_trip));
+            }
+            if (menu.findItem(MenuCodes.ID_ARCHIVE_TRIP) == null) {
+                menu.add(0, MenuCodes.ID_ARCHIVE_TRIP, 2, getString(R.string.menu_label_archive_trip));
+            }
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public void tripDisplayCommunication(String tripNodeKey) {
+        activeDisplayedTripNodeKey = tripNodeKey;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_sign_out:
                 AuthUI.getInstance().signOut(this);
                 return true;
+            case MenuCodes.ID_EDIT_TRIP:
+                // TODO - implement edit via CreateTripFragment
+                Toast.makeText(this, "Edit menu request", Toast.LENGTH_SHORT).show();
+                return true;
+            case MenuCodes.ID_ARCHIVE_TRIP:
+                TripRepository repository = new TripRepository();
+                repository.archiveTrip(userId, activeDisplayedTripNodeKey);
+                onFragmentNavigationRequest(FragmentTags.TAG_TRIP_LIST);
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }

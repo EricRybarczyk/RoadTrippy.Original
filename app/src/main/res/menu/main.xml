@@ -3,12 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <!-- item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/menu_label_settings"
-        app:showAsAction="never" / -->
-
     <item
         android:id="@+id/action_sign_out"
         android:orderInCategory="100"

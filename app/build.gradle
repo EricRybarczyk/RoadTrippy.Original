@@ -30,10 +30,11 @@ ext {
     googlePlayVersion = "15.0.1"
     mapUtilsVersion = "0.5"
     preferencesVersion = "27.1.1"
-    firebaseCoreVersion = "16.0.3"
-    firebaseDatabaseVersion = "16.0.2"
-    firebaseAuthVersion = "16.0.3"
+    firebaseCoreVersion = "16.0.4"
+    firebaseDatabaseVersion = "16.0.3"
+    firebaseAuthVersion = "16.0.4"
     firebaseUiVersion = "4.2.0"
+    firebaseJobDispatcherVersion = "0.8.5"
     lifecycleVersion = "1.1.1"
     constraintLayoutVersion = "1.1.3"
     butterknifeVersion = "8.8.1"
@@ -70,6 +71,7 @@ dependencies {
     implementation "com.google.firebase:firebase-auth:$firebaseAuthVersion"
     implementation "com.firebaseui:firebase-ui-auth:$firebaseUiVersion"
     implementation "com.firebaseui:firebase-ui-database:$firebaseUiVersion"
+    implementation "com.firebase:firebase-jobdispatcher:$firebaseJobDispatcherVersion"
 
     implementation "com.jakewharton:butterknife:$butterknifeVersion"
     implementation 'com.android.support:support-v4:27.1.1'
