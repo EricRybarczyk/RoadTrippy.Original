@@ -80,6 +80,11 @@
     <string name="word_for_HOME">Home</string>
     <string name="word_for_Day">Day</string>
     <string name="phrase_for_YourTrip">Your Trip</string>
+    <string name="phrase_for_DrivingDay">Driving Day</string>
+    <string name="phrase_for_ReturnDrive">Return Drive</string>
+    <string name="phrase_for_PlanYourDay">Plan Your Day</string>
+    <string name="phrase_for_EnjoyYourDay">enjoy your day</string>
+    <string name="phrase_for_EnjoyYourDrive">enjoy your drive</string>
 
     <string name="error_device_location_null">Device location not found, please check your Location Settings.</string>
     <string name="error_create_trip_data_validation">Please provide all trip information</string>

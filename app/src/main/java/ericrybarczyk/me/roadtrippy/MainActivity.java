@@ -195,7 +195,7 @@ public class MainActivity extends AppCompatActivity
     public void onTripSaveRequest() {
         TripManager tripManager = new TripManager();
         Trip trip = tripManager.buildTrip(tripViewModel, firebaseUser.getUid());
-        List<TripDay> tripDays = tripManager.buildInitialTripDays(tripViewModel, preferenceDrivingHours);
+        List<TripDay> tripDays = tripManager.buildInitialTripDays(this, tripViewModel, preferenceDrivingHours);
         TripRepository repository = new TripRepository();
         repository.saveTrip(trip, tripDays);
         // reset the state of the ViewModel to default

@@ -1,14 +1,15 @@
 package ericrybarczyk.me.roadtrippy.engine;
 
+import android.content.Context;
 
 import org.threeten.bp.Duration;
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.LocalDateTime;
-import org.threeten.bp.format.DateTimeFormatter;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import ericrybarczyk.me.roadtrippy.R;
 import ericrybarczyk.me.roadtrippy.dto.Trip;
 import ericrybarczyk.me.roadtrippy.dto.TripDay;
 import ericrybarczyk.me.roadtrippy.dto.TripLocation;
@@ -50,7 +51,7 @@ public class TripManager {
         return trip;
     }
 
-    public List<TripDay> buildInitialTripDays(TripViewModel tripViewModel, int prefDrivingDuration) {
+    public List<TripDay> buildInitialTripDays(Context context, TripViewModel tripViewModel, int prefDrivingDuration) {
         // build the list of trip days based on DepartureDate and ReturnDate (inclusive)
 
         LocalDateTime start = LocalDateTime.of(
@@ -83,8 +84,8 @@ public class TripManager {
                 td.setIsDrivingDay(true);
             }
 
-            td.setPrimaryDescription(getInitialDayPrimaryDescription(tripDayNumber, daysOfDriving, numberOfTripDays, tripViewModel.isIncludeReturn()));
-            td.setUserNotes(getInitialUserNotes(tripDayNumber, daysOfDriving, numberOfTripDays, tripViewModel.isIncludeReturn()));
+            td.setPrimaryDescription(getInitialDayPrimaryDescription(context, tripDayNumber, daysOfDriving, numberOfTripDays, tripViewModel.isIncludeReturn()));
+            td.setUserNotes(getInitialUserNotes(context, tripDayNumber, daysOfDriving, numberOfTripDays, tripViewModel.isIncludeReturn()));
             td.setIsDefaultText(true);
 
             td.setTripDayDate(PersistenceFormats.toDateString(tripViewModel.getDepartureDate().plusDays(day)));
@@ -116,25 +117,24 @@ public class TripManager {
         return tripDays;
     }
 
+    private String getInitialDayPrimaryDescription(Context context, int dayNumber, int daysOfDriving, int totalDays, boolean includeReturnDrivingDays) {
 
-    // TODO: get these hard-coded strings pulled into Resources (two methods below)
-
-    private String getInitialDayPrimaryDescription(int dayNumber, int daysOfDriving, int totalDays, boolean includeReturnDrivingDays) {
+        String drivingDay = context.getString(R.string.phrase_for_DrivingDay);
 
         if (isBeginDrivingDay(dayNumber, daysOfDriving)) {
-            return "Driving Day " + String.valueOf(dayNumber);
+            return drivingDay + " " + String.valueOf(dayNumber);
         }
         if (isReturnDrivingDay(dayNumber, daysOfDriving, totalDays, includeReturnDrivingDays)) {
-            return "Return Drive";
+            return context.getString(R.string.phrase_for_ReturnDrive);
         }
-        return "Plan Your Day";
+        return context.getString(R.string.phrase_for_PlanYourDay);
     }
 
-    private String getInitialUserNotes(int dayNumber, int daysOfDriving, int totalDays, boolean includeReturnDrivingDays) {
+    private String getInitialUserNotes(Context context, int dayNumber, int daysOfDriving, int totalDays, boolean includeReturnDrivingDays) {
         if (isBeginDrivingDay(dayNumber, daysOfDriving) || isReturnDrivingDay(dayNumber, daysOfDriving, totalDays, includeReturnDrivingDays)) {
-            return "enjoy your drive";
+            return context.getString(R.string.phrase_for_EnjoyYourDrive);
         }
-        return "enjoy your day";
+        return context.getString(R.string.phrase_for_EnjoyYourDay);
     }
 
     private boolean isBeginDrivingDay(int dayNumber, int daysOfDriving) {
