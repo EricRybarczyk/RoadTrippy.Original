@@ -86,6 +86,9 @@
     <string name="error_home_location_preference_not_found">Please use the Settings menu to set your Home location</string>
     <string name="error_message_system_missing_google_maps">Unable to locate Google Maps on your device. Google Maps is required for Navigation features.</string>
     <string name="error_message_archived_trip_no_edit">Sorry, we do not allow editing of archived trips</string>
+    <string name="warning_message_no_network">No Network Available. App features are limited.</string>
+    <string name="error_message_no_network_no_maps">No Network Available. Maps are not available.</string>
+    <string name="error_log_message_no_network">No network available</string>
 
     <string name="widget_trip_countdown_label">Road Trippy: Countdown Widget</string>
     <string name="widget_trip_countdown_config_heading">Select a trip</string>

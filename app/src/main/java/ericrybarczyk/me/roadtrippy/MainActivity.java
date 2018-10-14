@@ -10,6 +10,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -24,6 +25,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -55,6 +57,7 @@ import ericrybarczyk.me.roadtrippy.util.FragmentTags;
 import ericrybarczyk.me.roadtrippy.util.InputUtils;
 import ericrybarczyk.me.roadtrippy.util.MapSettings;
 import ericrybarczyk.me.roadtrippy.util.MenuCodes;
+import ericrybarczyk.me.roadtrippy.util.NetworkChecker;
 import ericrybarczyk.me.roadtrippy.util.RequestCodes;
 import ericrybarczyk.me.roadtrippy.viewmodels.TripDayViewModel;
 import ericrybarczyk.me.roadtrippy.viewmodels.TripLocationViewModel;
@@ -88,6 +91,7 @@ public class MainActivity extends AppCompatActivity
     @BindView(R.id.toolbar) protected Toolbar toolbar;
     @BindView(R.id.drawer_layout) protected DrawerLayout drawer;
     @BindView(R.id.nav_view) protected NavigationView navigationView;
+    @BindView(R.id.content_container) protected FrameLayout contentFrameLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -403,6 +407,9 @@ public class MainActivity extends AppCompatActivity
     // Fragment will not be explicitly loaded, allowing the system to restore it with view hierarchy.
     private void loadFragment(Fragment fragment, String fragmentTag, boolean forceNavigation) {
         InputUtils.hideKeyboard(this);
+        if (!NetworkChecker.isNetworkConnected(this)) {
+            Snackbar.make(contentFrameLayout, R.string.warning_message_no_network, Snackbar.LENGTH_LONG).show();
+        }
         if (forceNavigation || getSupportFragmentManager().findFragmentByTag(fragmentTag) == null) {
             getSupportFragmentManager()
                     .beginTransaction()
@@ -416,7 +423,11 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onMapDisplayRequested(int requestCode, String returnToFragmentTag) {
         if (lastKnownLocation == null) {
-            Toast.makeText(this, R.string.error_device_location_null, Toast.LENGTH_LONG).show();
+            Snackbar.make(contentFrameLayout, R.string.error_device_location_null, Snackbar.LENGTH_LONG).show();
+            return;
+        }
+        if (!NetworkChecker.isNetworkConnected(this)) {
+            Snackbar.make(contentFrameLayout, R.string.error_message_no_network_no_maps, Snackbar.LENGTH_LONG).show();
             return;
         }
         Fragment fragment = GoogleMapFragment.newInstance(requestCode, returnToFragmentTag);
@@ -426,7 +437,11 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onMapDisplayRequested(int requestCode, String returnToFragmentTag, LatLng displayLocation, String locationDescription) {
         if (lastKnownLocation == null) {
-            Toast.makeText(this, R.string.error_device_location_null, Toast.LENGTH_LONG).show();
+            Snackbar.make(contentFrameLayout, R.string.error_device_location_null, Snackbar.LENGTH_LONG).show();
+            return;
+        }
+        if (!NetworkChecker.isNetworkConnected(this)) {
+            Snackbar.make(contentFrameLayout, R.string.error_message_no_network_no_maps, Snackbar.LENGTH_LONG).show();
             return;
         }
         Bundle args = new Bundle();
@@ -556,8 +571,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     private class FragmentLifecycleListener extends FragmentManager.FragmentLifecycleCallbacks {
-        // required to maintain activeFragmentTag when device back key is pressed
-        // without this, pressing device back key, followed by device rotation which triggered lifecycle events, would load incorrect fragment
+        // Required to maintain activeFragmentTag when device back key is pressed.
+        // Without this, pressing device back key, followed by device rotation which triggered lifecycle events, would load incorrect fragment.
         @Override
         public void onFragmentViewCreated(FragmentManager fm, Fragment f, View v, Bundle savedInstanceState) {
             String tag = f.getTag();
