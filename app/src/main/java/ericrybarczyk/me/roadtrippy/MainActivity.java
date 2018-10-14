@@ -214,7 +214,6 @@ public class MainActivity extends AppCompatActivity
         String userId = firebaseUser.getUid();
         this.saveUserPreference(userId);
         new UserInfoSave().execute(firebaseUser);
-        // TODO - TripArchiver async task
         this.tripArchiveCheck(userId);
     }
 
@@ -280,9 +279,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         if (activeFragmentTag.equals(FragmentTags.TAG_TRIP_DETAIL)) {
-            if (menu.findItem(MenuCodes.ID_EDIT_TRIP) == null) {
-                menu.add(0, MenuCodes.ID_EDIT_TRIP, 1, getString(R.string.menu_label_edit_trip));
-            }
             if (menu.findItem(MenuCodes.ID_ARCHIVE_TRIP) == null) {
                 menu.add(0, MenuCodes.ID_ARCHIVE_TRIP, 2, getString(R.string.menu_label_archive_trip));
             }
@@ -300,10 +296,6 @@ public class MainActivity extends AppCompatActivity
         switch (item.getItemId()) {
             case R.id.action_sign_out:
                 AuthUI.getInstance().signOut(this);
-                return true;
-            case MenuCodes.ID_EDIT_TRIP:
-                // TODO - implement edit via CreateTripFragment
-                Toast.makeText(this, "Edit menu request", Toast.LENGTH_SHORT).show();
                 return true;
             case MenuCodes.ID_ARCHIVE_TRIP:
                 TripRepository repository = new TripRepository();
@@ -478,7 +470,6 @@ public class MainActivity extends AppCompatActivity
             );
         }
     }
-
 
     private void verifyPermissions() {
         if (ContextCompat.checkSelfPermission(this,

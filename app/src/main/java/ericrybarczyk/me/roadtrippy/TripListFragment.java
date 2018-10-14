@@ -53,12 +53,7 @@ public class TripListFragment extends Fragment {
 
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-        String userId;
-        if (firebaseUser == null) {
-            userId = "anonymous-user"; // TODO: gonna have to rework something to avoid this order-of-events problem - user is null on first load (sometimes?)
-        } else {
-            userId = firebaseUser.getUid();
-        }
+        String userId = firebaseUser.getUid();
 
         tripRepository = new TripRepository();
 

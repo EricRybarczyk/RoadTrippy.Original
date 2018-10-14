@@ -27,7 +27,6 @@ public class TripViewModel extends ViewModel {
     private String destinationDescription;
     private int durationMinutes;
     private boolean includeReturn;
-    private ArrayList<TripDayViewModel> tripDays;
     private boolean isEdited; // to help UI know if values are selected by user or just new instance defaults
 
     public TripViewModel() {
@@ -42,7 +41,6 @@ public class TripViewModel extends ViewModel {
         departureDate = LocalDate.now();
         returnDate = LocalDate.now().plusDays(1);
         includeReturn = true;
-        tripDays = new ArrayList<>();
         durationMinutes = 0;
         if (isEdited) {
             originLatLng = null;
@@ -79,7 +77,6 @@ public class TripViewModel extends ViewModel {
         this.setDestinationDescription(trip.getDestinationDescription());
         this.setIncludeReturn(trip.getIncludeReturn());
         this.setDurationMinutes(trip.getDurationMinutes());
-        // TODO: not sure if isEdited value needs to be maintained across persistence
     }
 
     public void reset() {
@@ -238,15 +235,6 @@ public class TripViewModel extends ViewModel {
     public void setIncludeReturn(boolean includeReturn) {
         this.includeReturn = includeReturn;
         isEdited = true;
-    }
-
-    // TODO: eval if tripDays collection will be used on this viewmodel
-    public ArrayList<TripDayViewModel> getTripDays() {
-        return tripDays;
-    }
-
-    public void setTripDays(ArrayList<TripDayViewModel> tripDays) {
-        this.tripDays = tripDays;
     }
 
     public boolean isEdited() {
