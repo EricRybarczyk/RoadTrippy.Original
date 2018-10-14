@@ -98,6 +98,7 @@ public class GoogleMapFragment extends Fragment
         super.onCreate(savedInstanceState);
 
         googleMapsApiKey = getString(R.string.google_maps_key);
+        Log.d(TAG, "Using Maps API key: " + googleMapsApiKey);
         lastMapZoomLevel = MapSettings.MAP_DEFAULT_ZOOM;
         displayForUserCurrentLocation = true; // by default map will show users current location
 

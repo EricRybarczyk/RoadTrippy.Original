@@ -66,6 +66,7 @@ public class TripOverviewMapFragment extends Fragment implements OnMapReadyCallb
         super.onCreate(savedInstanceState);
 
         googleMapsApiKey = getString(R.string.google_maps_key);
+        Log.d(TAG, "Using Maps API key: " + googleMapsApiKey);
 
         tripViewModel = ViewModelProviders.of(getActivity()).get(TripViewModel.class);
 
