@@ -146,7 +146,7 @@ public class MainActivity extends AppCompatActivity
                 startActivityForResult(
                         AuthUI.getInstance()
                                 .createSignInIntentBuilder()
-                                .setIsSmartLockEnabled(false) // TODO: set true. Udacity tutorial set this to false (default is true: system will basically keep user automatically logged in)
+                                .setIsSmartLockEnabled(true) // Udacity tutorial set this to false (default is true: system will basically keep user automatically logged in)
                                 .setAvailableProviders(providers)
                                 .build(),
                         RequestCodes.SIGN_IN_REQUEST_CODE);
@@ -207,7 +207,7 @@ public class MainActivity extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RequestCodes.SIGN_IN_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) { // TODO: decide what I want to really do here. And maybe snackbar instead of toast?
+            if (resultCode == RESULT_OK) {
                 Toast.makeText(this, "Signed in!", Toast.LENGTH_SHORT).show();
             } else if (resultCode == RESULT_CANCELED) {
                 Toast.makeText(this, "Sign in cancelled", Toast.LENGTH_SHORT).show();
@@ -323,7 +323,6 @@ public class MainActivity extends AppCompatActivity
         String fragmentTag = null;
         Bundle args = null;
 
-        // TODO: support all fragments here
         switch (item.getItemId()) {
             case R.id.nav_trip_plans:
                 fragmentTag = FragmentTags.TAG_TRIP_LIST;
@@ -385,8 +384,6 @@ public class MainActivity extends AppCompatActivity
             case FragmentTags.TAG_TRIP_DAY:
                 fragmentClass = TripDayFragment.class;
                 break;
-
-            // TODO: support all fragments here
 
             default:
                 fragmentClass = TripListFragment.class;

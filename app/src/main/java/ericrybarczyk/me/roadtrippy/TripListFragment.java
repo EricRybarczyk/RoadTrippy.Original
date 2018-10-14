@@ -125,7 +125,6 @@ public class TripListFragment extends Fragment {
                 holder.tripName.setText(viewModel.getDescription());
                 holder.tripDirectionsOverview.setText(viewModel.getOriginDestinationSummaryText(joinWord));
                 holder.tripDateRange.setText(viewModel.getDateRangeSummaryText(joinWord));
-                // TODO: these next three need to be real values
                 holder.highlightOne.setText(viewModel.getOriginDescription());
                 holder.highlightTwo.setText(viewModel.getDestinationDescription());
 

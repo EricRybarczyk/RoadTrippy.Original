@@ -43,7 +43,6 @@ public class WidgetTripCountdown extends AppWidgetProvider {
                     return;
                 }
                 TripViewModel viewModel = TripViewModel.from(trip);
-                // TODO: idea: show a Star (fontawesome) if daysToGo is zero - also adjust subtitle text
                 String daysToGo = String.valueOf(viewModel.getDaysUntilDeparture());
                 String subtitle = daysToGo + " " + context.getString(R.string.widget_trip_countdown_subtitle);
                 remoteViews.setTextViewText(R.id.widget_trip_countdown_days_to_go, daysToGo);

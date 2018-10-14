@@ -24,8 +24,6 @@ public class TripDayViewModel extends ViewModel {
     private String primaryDescription;
     private String userNotes;
     private ArrayList<TripLocationViewModel> destinations;
-    private TripLocationViewModel startLocation;
-    private TripLocationViewModel endLocation;
     private boolean isDefaultText;
 
     public TripDayViewModel() {
@@ -49,11 +47,6 @@ public class TripDayViewModel extends ViewModel {
         for (TripLocation loc : tripDay.getDestinations()) {
             viewModel.getDestinations().add(TripLocationViewModel.from(loc));
         }
-
-        // TODO: finish TripDayViewModel.from() with child objects
-        // DO I NEED THESE??? FOR VERSION 1 ???
-//        viewModel.setStartLocation(TripLocationViewModel.from(tripDay.getStartLocation()));
-//        viewModel.setEndLocation(TripLocationViewModel.from(tripDay.getEndLocation()));
 
         return viewModel;
     }
@@ -93,7 +86,6 @@ public class TripDayViewModel extends ViewModel {
             tripDay.getDestinations().add(loc.asTripLocation());
         }
 
-        // TODO: finish asTripDay() with child objects
         return tripDay;
     }
 
@@ -183,24 +175,6 @@ public class TripDayViewModel extends ViewModel {
 
     public void setDestinations(ArrayList<TripLocationViewModel> destinations) {
         this.destinations = destinations;
-    }
-
-    // TODO: eval if start/end location values are needed
-
-    public TripLocationViewModel getStartLocation() {
-        return startLocation;
-    }
-
-    public void setStartLocation(TripLocationViewModel startLocation) {
-        this.startLocation = startLocation;
-    }
-
-    public TripLocationViewModel getEndLocation() {
-        return endLocation;
-    }
-
-    public void setEndLocation(TripLocationViewModel endLocation) {
-        this.endLocation = endLocation;
     }
 
     public boolean getIsDefaultText() {

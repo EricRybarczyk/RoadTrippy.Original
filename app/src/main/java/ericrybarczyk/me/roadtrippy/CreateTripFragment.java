@@ -66,7 +66,6 @@ public class CreateTripFragment extends Fragment
         ButterKnife.bind(this, rootView);
         InputUtils.hideKeyboardFrom(getContext(), rootView);
 
-        // TODO: probably need to refine isEdited to be per-value and not just the ViewModel as a whole, so only edited items update the display
         if (tripViewModel.isEdited()) {
             tripNameText.setText(tripViewModel.getDescription());
             departureDateButton.setText(tripViewModel.getDepartureDate().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)));

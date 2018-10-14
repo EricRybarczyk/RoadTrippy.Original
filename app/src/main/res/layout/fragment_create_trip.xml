@@ -18,8 +18,6 @@
     android:background="@color/colorBackground"
     tools:context=".MainActivity">
 
-    <!-- TODO: look into using Guidelines instead of the Padding attributes above, as seen here: https://developer.android.com/reference/android/support/percent/PercentRelativeLayout -->
-
     <android.support.constraint.Guideline
         android:id="@+id/right_inset_guideline"
         android:layout_width="wrap_content"

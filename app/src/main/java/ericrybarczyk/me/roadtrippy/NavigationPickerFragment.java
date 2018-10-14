@@ -83,10 +83,6 @@ public class NavigationPickerFragment extends DialogFragment {
             protected void onBindViewHolder(@NonNull NavigationDestinationHolder holder, int position, @NonNull TripLocation model) {
                 TripLocationViewModel viewModel = TripLocationViewModel.from(model);
                 holder.navigateButton.setText(viewModel.getDescription());
-//                holder.setDestinationLatitude(viewModel.getLatitude());
-//                holder.setDestinationLongitude(viewModel.getLongitude());
-
-                // TODO: click listener for Navigate function
                 holder.navigateButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -96,7 +92,7 @@ public class NavigationPickerFragment extends DialogFragment {
                         } else {
                             Toast.makeText(getContext(), R.string.error_message_system_missing_google_maps, Toast.LENGTH_LONG).show();
                         }
-                        dismiss(); // TODO - is this the right call here?
+                        dismiss();
                     }
                 });
             }
