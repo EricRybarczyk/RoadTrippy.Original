@@ -323,9 +323,6 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_create_trip:
                 fragmentTag = FragmentTags.TAG_CREATE_TRIP;
                 break;
-            case R.id.nav_trip_ideas:
-
-                break;
             case R.id.nav_trip_history:
 
                 break;
