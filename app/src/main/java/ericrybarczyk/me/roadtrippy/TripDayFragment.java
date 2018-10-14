@@ -207,7 +207,7 @@ public class TripDayFragment extends Fragment {
     @OnClick(R.id.save_trip_day_button)
     public void onSaveClick() {
         saveTripDay();
-        fragmentNavigationRequestListener.onFragmentNavigationRequest(FragmentTags.TAG_TRIP_DETAIL, tripId, tripNodeKey);
+        fragmentNavigationRequestListener.onFragmentNavigationRequest(FragmentTags.TAG_TRIP_DETAIL, tripId, tripNodeKey, false);
     }
 
     private void saveTripDay() {

@@ -25,6 +25,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import ericrybarczyk.me.roadtrippy.dto.Trip;
 import ericrybarczyk.me.roadtrippy.persistence.TripRepository;
+import ericrybarczyk.me.roadtrippy.util.ArgumentKeys;
 import ericrybarczyk.me.roadtrippy.util.FontManager;
 import ericrybarczyk.me.roadtrippy.util.FragmentTags;
 import ericrybarczyk.me.roadtrippy.util.MapSettings;
@@ -34,6 +35,7 @@ import ericrybarczyk.me.roadtrippy.viewmodels.TripViewModel;
 public class TripListFragment extends Fragment {
 
     private FragmentNavigationRequestListener fragmentNavigationRequestListener;
+    private boolean isTripListFromArchive = false;
 
     TripRepository tripRepository;
     FirebaseRecyclerAdapter firebaseRecyclerAdapter;
@@ -57,7 +59,17 @@ public class TripListFragment extends Fragment {
 
         tripRepository = new TripRepository();
 
-        DatabaseReference reference = tripRepository.getTripList(userId);
+        DatabaseReference reference;
+        if (getArguments() != null) {
+            if (getArguments().containsKey(ArgumentKeys.TRIP_LIST_DISPLAY_ARCHIVE_INDICATOR)) {
+                isTripListFromArchive = true;
+            }
+        }
+        if (isTripListFromArchive) {
+            reference = tripRepository.getArchivedTripList(userId);
+        } else {
+            reference = tripRepository.getTripList(userId);
+        }
 
         FirebaseRecyclerOptions<Trip> options = new FirebaseRecyclerOptions.Builder<Trip>()
                 .setQuery(reference, Trip.class)
@@ -89,7 +101,7 @@ public class TripListFragment extends Fragment {
                 holder.setTripListClickListener(new TripViewHolder.OnTripListClickListener() {
                     @Override
                     public void onTripListItemClick(String tripId, String tripNodeKey) {
-                        fragmentNavigationRequestListener.onFragmentNavigationRequest(FragmentTags.TAG_TRIP_DETAIL, tripId, tripNodeKey);
+                        fragmentNavigationRequestListener.onFragmentNavigationRequest(FragmentTags.TAG_TRIP_DETAIL, tripId, tripNodeKey, isTripListFromArchive);
                     }
                 });
 

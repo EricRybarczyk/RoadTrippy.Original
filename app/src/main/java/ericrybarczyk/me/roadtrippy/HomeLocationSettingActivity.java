@@ -56,7 +56,7 @@ public class HomeLocationSettingActivity extends AppCompatActivity
     }
 
     @Override
-    public void onFragmentNavigationRequest(String fragmentTag, String tripId, String tripDescription) {
+    public void onFragmentNavigationRequest(String fragmentTag, String tripId, String tripDescription, boolean isArchived) {
         // this overload is not called from GoogleMapFragment so it is not implemented
         throw new UnsupportedOperationException(TAG + ": onFragmentNavigationRequest is not implemented in this Activity");
     }

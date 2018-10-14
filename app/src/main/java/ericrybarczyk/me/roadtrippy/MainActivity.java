@@ -160,7 +160,7 @@ public class MainActivity extends AppCompatActivity
             activeFragmentTag = FragmentTags.TAG_TRIP_DETAIL;
             String tripId = starter.getStringExtra(ArgumentKeys.WIDGET_REQUEST_TRIP_ID);
             String tripNodeKey = starter.getStringExtra(ArgumentKeys.WIDGET_REQUEST_TRIP_NODE_KEY);
-            onFragmentNavigationRequest(activeFragmentTag, tripId, tripNodeKey);
+            onFragmentNavigationRequest(activeFragmentTag, tripId, tripNodeKey, false);
             return;
         }
 
@@ -314,6 +314,7 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation clicks by loading the appropriate fragment
         Fragment fragment;
         String fragmentTag = null;
+        Bundle args = null;
 
         // TODO: support all fragments here
         switch (item.getItemId()) {
@@ -324,7 +325,9 @@ public class MainActivity extends AppCompatActivity
                 fragmentTag = FragmentTags.TAG_CREATE_TRIP;
                 break;
             case R.id.nav_trip_history:
-
+                args = new Bundle();
+                args.putString(ArgumentKeys.TRIP_LIST_DISPLAY_ARCHIVE_INDICATOR, String.valueOf(true));
+                fragmentTag = FragmentTags.TAG_TRIP_LIST;
                 break;
             case R.id.nav_settings:
                 fragmentTag = FragmentTags.TAG_SETTINGS_PREFERENCES;
@@ -335,6 +338,9 @@ public class MainActivity extends AppCompatActivity
         }
 
         fragment = getFragmentInstance(fragmentTag, true);
+        if (args != null) {
+            fragment.setArguments(args);
+        }
         loadFragment(fragment, fragmentTag, true);
 
         drawer.closeDrawer(GravityCompat.START);
@@ -519,11 +525,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onFragmentNavigationRequest(String fragmentTag, String tripId, String tripNodeKey) {
+    public void onFragmentNavigationRequest(String fragmentTag, String tripId, String tripNodeKey, boolean isArchived) {
         Fragment fragment = getFragmentInstance(fragmentTag, true);
         Bundle args = new Bundle();
         args.putString(TripDetailFragment.KEY_TRIP_ID, tripId);
         args.putString(TripDetailFragment.KEY_TRIP_NODE_KEY, tripNodeKey);
+        args.putBoolean(ArgumentKeys.TRIP_IS_ARCHIVED_KEY, isArchived);
         fragment.setArguments(args);
         loadFragment(fragment, fragmentTag, true);
     }

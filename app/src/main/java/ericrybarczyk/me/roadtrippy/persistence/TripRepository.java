@@ -66,6 +66,12 @@ public class TripRepository {
         return reference;
     }
 
+    public DatabaseReference getArchivedTripList(String userId) {
+        DatabaseReference reference = firebaseDatabase.getReference().child(DatabasePaths.BASE_PATH_ARCHIVE + userId + "/");
+        reference.orderByChild(DatabasePaths.KEY_TRIP_LIST_DEFAULT_SORT);
+        return reference;
+    }
+
     public DatabaseReference getTripDaysList(String userId, String tripId) {
         return firebaseDatabase.getReference().child(DatabasePaths.BASE_PATH_TRIPDAYS + userId + "/" + tripId);
     }

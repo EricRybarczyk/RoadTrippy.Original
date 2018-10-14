@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -36,6 +37,7 @@ import ericrybarczyk.me.roadtrippy.dto.Trip;
 import ericrybarczyk.me.roadtrippy.dto.TripDay;
 import ericrybarczyk.me.roadtrippy.endpoints.NavigationIntentService;
 import ericrybarczyk.me.roadtrippy.persistence.TripRepository;
+import ericrybarczyk.me.roadtrippy.util.ArgumentKeys;
 import ericrybarczyk.me.roadtrippy.util.FragmentTags;
 import ericrybarczyk.me.roadtrippy.util.MapSettings;
 import ericrybarczyk.me.roadtrippy.viewmodels.TripDayViewModel;
@@ -52,6 +54,7 @@ public class TripDetailFragment extends Fragment {
     private String tripId;
     private String tripNodeKey;
     private String tripDescriptionForDisplay;
+    private boolean tripIsArchived = false;
     String userId;
     TripRepository tripRepository;
     FirebaseRecyclerAdapter firebaseRecyclerAdapter;
@@ -88,6 +91,9 @@ public class TripDetailFragment extends Fragment {
             if (getArguments().containsKey(KEY_TRIP_ID)) {
                 tripId = getArguments().getString(KEY_TRIP_ID);
                 tripNodeKey = getArguments().getString(KEY_TRIP_NODE_KEY);
+            }
+            if (getArguments().containsKey(ArgumentKeys.TRIP_IS_ARCHIVED_KEY)) {
+                tripIsArchived = getArguments().getBoolean(ArgumentKeys.TRIP_IS_ARCHIVED_KEY);
             }
         }
         if (tripId == null || tripNodeKey == null) {
@@ -130,17 +136,27 @@ public class TripDetailFragment extends Fragment {
                     holder.layoutContainer.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLight));
                 }
 
-                holder.setTripDayListClickListener(new TripDayViewHolder.OnTripDayListClickListener() {
-                    @Override
-                    public void onTripDayListItemClick() {
-                        fragmentNavigationRequestListener.onTripDayEditFragmentRequest(
-                                FragmentTags.TAG_TRIP_DAY,
-                                viewModel.getTripId(),
-                                tripNodeKey,
-                                viewModel.getDayNumber(),
-                                dayNodeKey);
-                    }
-                });
+                if (tripIsArchived) {
+                    holder.setTripDayListClickListener(new TripDayViewHolder.OnTripDayListClickListener() {
+                        @Override
+                        public void onTripDayListItemClick() {
+                            Snackbar.make(tripDaysListRecyclerView, getString(R.string.error_message_archived_trip_no_edit), Snackbar.LENGTH_LONG).show();
+                        }
+                    });
+                } else {
+                    holder.setTripDayListClickListener(new TripDayViewHolder.OnTripDayListClickListener() {
+                        @Override
+                        public void onTripDayListItemClick() {
+                            fragmentNavigationRequestListener.onTripDayEditFragmentRequest(
+                                    FragmentTags.TAG_TRIP_DAY,
+                                    viewModel.getTripId(),
+                                    tripNodeKey,
+                                    viewModel.getDayNumber(),
+                                    dayNodeKey);
+                        }
+                    });
+                }
+
 
                 if (viewModel.getDestinations().size() == 0) {
                     holder.iconNavigation.setVisibility(View.INVISIBLE);
