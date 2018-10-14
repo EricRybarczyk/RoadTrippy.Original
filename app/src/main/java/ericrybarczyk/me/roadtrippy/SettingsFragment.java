@@ -1,6 +1,7 @@
 package ericrybarczyk.me.roadtrippy;
 
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +20,11 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         View view = super.onCreateView(inflater, container, savedInstanceState);
         view.setBackgroundColor(getResources().getColor(R.color.colorBackground));
         InputUtils.hideKeyboardFrom(getContext(), view);
+
+        //FragmentActivity activity = getActivity();
+
+
+
         return view;
     }
 }

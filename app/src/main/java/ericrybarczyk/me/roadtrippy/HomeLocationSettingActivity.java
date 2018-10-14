@@ -1,5 +1,6 @@
 package ericrybarczyk.me.roadtrippy;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,6 +11,7 @@ import android.util.Log;
 import com.google.android.gms.maps.model.LatLng;
 
 import ericrybarczyk.me.roadtrippy.util.FragmentTags;
+import ericrybarczyk.me.roadtrippy.util.MapSettings;
 import ericrybarczyk.me.roadtrippy.util.RequestCodes;
 
 public class HomeLocationSettingActivity extends AppCompatActivity
@@ -22,8 +24,24 @@ public class HomeLocationSettingActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_location_setting);
 
-
         Fragment fragment = GoogleMapFragment.newInstance(RequestCodes.PREFERENCE_HOME_LOCATION_REQUEST_CODE, FragmentTags.TAG_SETTINGS_PREFERENCES);
+
+        // center the map on existing home location preference if exists
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        if (preferences.contains(getString(R.string.pref_key_home_latitude))) {
+            Bundle args = new Bundle();
+            float existingHomeLatitude = preferences.getFloat(getString(R.string.pref_key_home_latitude), 0);
+            float existingHomeLongitude = preferences.getFloat(getString(R.string.pref_key_home_longitude), 0);
+            if (existingHomeLatitude != 0 && existingHomeLongitude != 0) {
+                args.putFloat(MapSettings.KEY_MAP_DISPLAY_LATITUDE, existingHomeLatitude);
+                args.putFloat(MapSettings.KEY_MAP_DISPLAY_LONGITUDE, existingHomeLongitude);
+                if (fragment.getArguments() != null) {
+                    fragment.getArguments().putAll(args);
+                } else {
+                    fragment.setArguments(args);
+                }
+            }
+        }
 
         getSupportFragmentManager()
                 .beginTransaction()
@@ -31,28 +49,13 @@ public class HomeLocationSettingActivity extends AppCompatActivity
                 .addToBackStack(null)
                 .commit();
 
-
     }
 
     @Override
     public void onFragmentNavigationRequest(String fragmentTag) {
-        // always go back to the main Settings screen
-        Class fragmentClass = SettingsFragment.class;
-        Fragment result = null;
-        try {
-            result = (Fragment) fragmentClass.newInstance();
-        } catch (InstantiationException e) {
-            Log.e(TAG, "Unable to instantiate instance of " + fragmentClass.getSimpleName() + " : " + e.getMessage());
-        } catch (IllegalAccessException e) {
-            Log.e(TAG, "Illegal Access on instance of " + fragmentClass.getSimpleName() + " : " + e.getMessage());
-        }
-        if (result != null) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.content_container, result, fragmentTag)
-                    .addToBackStack(null)
-                    .commit();
-        }
+        Class destination = MainActivity.class;
+        Intent intent = new Intent(this, destination);
+        startActivity(intent);
     }
 
     @Override
